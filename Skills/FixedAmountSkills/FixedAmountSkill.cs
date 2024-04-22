@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Fire_Emblem.CharacterFiles;
 
-namespace Fire_Emblem.Skills.FixedAmountBonusSkills;
+namespace Fire_Emblem.Skills.FixedAmountSkills;
 
 // FixedAmountBonus: A skill that increases a character's stat(s) by a fixed amount
 public abstract class FixedAmountSkill: IBaseSkill{

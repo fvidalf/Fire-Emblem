@@ -1,5 +1,4 @@
 ﻿using Fire_Emblem.CharacterFiles;
-using Fire_Emblem.Skills.FixedAmountBonusSkills;
 
 namespace Fire_Emblem.Skills.FixedAmountSkills.FixedAmountHybridSkills;
 public class LifeAndDeathSkill: FixedAmountSkill {

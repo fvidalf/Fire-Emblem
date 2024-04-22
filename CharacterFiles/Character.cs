@@ -1,6 +1,6 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.Skills;
-using Fire_Emblem.Skills.FixedAmountBonusSkills;
+using Fire_Emblem.Skills.FixedAmountSkills;
 
 namespace Fire_Emblem.CharacterFiles;
 
