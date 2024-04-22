@@ -7,6 +7,7 @@ public class Game
 {
     private View _view;
     private string _teamsFolder;
+    private Character[][]? _teams;
     
     public Game(View view, string teamsFolder)
     {
@@ -93,6 +94,11 @@ public class Game
             atkPlayerIndex = ChangeAtkCharacter(atkPlayerIndex);
             round++;
         }
+    }
+
+    private void LoadTeams() {
+        var teamsLoader = new TeamsLoader(_view, _teamsFolder);
+        teamsLoader.Execute();
     }
 
     private Character[] RemoveCharacter(Character[] team, Character character) {
