@@ -15,7 +15,8 @@ public abstract class FixedAmountSkill: IBaseSkill{
         _modifiedStats = new Dictionary<Stat, int>();
     }
 
-    public void Apply(Character character) {
+    public void Apply(GameStatus gameStatus) {
+        var character = gameStatus.AttackingCharacter;
         foreach (KeyValuePair<Stat, int> stat in _statsToModify) {
             var characterStat = GetCharacterStat(character, stat.Key);
             if (characterStat != null) {

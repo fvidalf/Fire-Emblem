@@ -14,9 +14,8 @@ public class Game
     private int _round;
     private int _roundPhase;
     private Dictionary<int, Character> _charactersByPlayerIndex = new Dictionary<int, Character>();
-    private Character _firstPlayerCharacter;
-    private Character _secondPlayerCharacter;
     private bool _doesRoundEnd;
+    public GameStatus GameStatus { get; private set; }
     
     public Game(View view, string teamsFolder)
     {
@@ -27,10 +26,10 @@ public class Game
         _round = 1;
         _roundPhase = 0;
         _doesRoundEnd = false;
+        GameStatus = new GameStatus();
     }
 
     public void Play() {
-        // Initialize teams loader. Loads teams and characters if valid
         try {
             LoadTeams();
             StartGameLoop();
@@ -51,25 +50,39 @@ public class Game
         while (true) {
             CheckIfTeamsAreEmpty();
             SetCharacters();
-            WriteRoundStartMessage();
-            ResetRoundParameters();
-
-            HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
-            HandleRoundEnd();
-            if (_doesRoundEnd) continue;
-            
-            HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
-            HandleRoundEnd();
-            if (_doesRoundEnd) continue;
-
-            HandleFollowUpAttack();
-            HandleRoundEnd();
+            HandleRoundStart();
+            HandleCombat();
         }
+    }
+
+    private void HandleRoundStart() {
+        WriteRoundStartMessage();
+        ResetRoundParameters();
+        SetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
     }
 
     private void ResetRoundParameters() {
         _roundPhase = 0;
         _doesRoundEnd = false;
+    }
+
+    private void SetGameStatus(int attackingPlayerIndex, int defendingPlayerIndex) {
+        var attackingCharacter = GetCharacterByPlayerIndex(attackingPlayerIndex);
+        var defendingCharacter = GetCharacterByPlayerIndex(defendingPlayerIndex);
+        GameStatus.SetGameStatus(attackingCharacter, defendingCharacter, _roundPhase);
+    }
+
+    private void HandleCombat() {
+        HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
+        HandleRoundEnd();
+        if (_doesRoundEnd) return;
+            
+        HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
+        HandleRoundEnd();
+        if (_doesRoundEnd) return;
+
+        HandleFollowUpAttack();
+        HandleRoundEnd();
     }
     
     private void CheckIfTeamsAreEmpty() {
@@ -83,10 +96,7 @@ public class Game
 
     private void SetCharacters() {
         SetCharacterForPlayer(_firstPlayerIndex);
-        _firstPlayerCharacter = GetCharacterForPlayer(_firstPlayerIndex);
-        
         SetCharacterForPlayer(_secondPlayerIndex);
-        _secondPlayerCharacter = GetCharacterForPlayer(_secondPlayerIndex);
     }
     
     private void SetCharacterForPlayer(int playerIndex) {
@@ -94,12 +104,9 @@ public class Game
         _charactersByPlayerIndex[playerIndex] = character;
     }
     
-    private Character GetCharacterForPlayer(int playerIndex) {
-        return _charactersByPlayerIndex[playerIndex];
-    }
-    
     private void WriteRoundStartMessage() {
-        _view.WriteLine($"Round {_round}: {_firstPlayerCharacter.Name} (Player {_firstPlayerIndex + 1}) comienza");
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        _view.WriteLine($"Round {_round}: {firstPlayerCharacter.Name} (Player {_firstPlayerIndex + 1}) comienza");
         WriteWta();
     }
 
@@ -115,12 +122,19 @@ public class Game
     }
 
     private void HandleRoundEnd() {
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
         if (_roundPhase == 2 || _doesRoundEnd) {
-            ReportHp(_firstPlayerCharacter, _secondPlayerCharacter);
+            ReportHp(firstPlayerCharacter, secondPlayerCharacter);
             ChangeFirstPlayer();
             _round++;
         }
+        AdvanceRoundPhase();
+    }
+    
+    private void AdvanceRoundPhase() {
         _roundPhase++;
+        GameStatus.AdvancePhase();
     }
     
     private Character GetCharacterByPlayerIndex(int playerIndex) {
@@ -139,6 +153,7 @@ public class Game
     private void ChangeFirstPlayer() {
         _firstPlayerIndex = _firstPlayerIndex == 0 ? 1 : 0;
         _secondPlayerIndex = _secondPlayerIndex == 0 ? 1 : 0;
+        GameStatus.SwapCharacters();
     }
 
     private void HandleFollowUpAttack() {
@@ -153,17 +168,19 @@ public class Game
     }
     
     private void WriteWta() {
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
         
-        switch (_firstPlayerCharacter.Weapon) {
-            case "Sword" when _secondPlayerCharacter.Weapon == "Axe":
-            case "Axe" when _secondPlayerCharacter.Weapon == "Lance":
-            case "Lance" when _secondPlayerCharacter.Weapon == "Sword":
-                _view.WriteLine($"{_firstPlayerCharacter.Name} ({_firstPlayerCharacter.Weapon}) tiene ventaja con respecto a {_secondPlayerCharacter.Name} ({_secondPlayerCharacter.Weapon})");
+        switch (firstPlayerCharacter.Weapon) {
+            case "Sword" when secondPlayerCharacter.Weapon == "Axe":
+            case "Axe" when secondPlayerCharacter.Weapon == "Lance":
+            case "Lance" when secondPlayerCharacter.Weapon == "Sword":
+                _view.WriteLine($"{firstPlayerCharacter.Name} ({firstPlayerCharacter.Weapon}) tiene ventaja con respecto a {secondPlayerCharacter.Name} ({secondPlayerCharacter.Weapon})");
                 break;
-            case "Axe" when _secondPlayerCharacter.Weapon == "Sword":
-            case "Lance" when _secondPlayerCharacter.Weapon == "Axe":
-            case "Sword" when _secondPlayerCharacter.Weapon == "Lance":
-                _view.WriteLine($"{_secondPlayerCharacter.Name} ({_secondPlayerCharacter.Weapon}) tiene ventaja con respecto a {_firstPlayerCharacter.Name} ({_firstPlayerCharacter.Weapon})");
+            case "Axe" when secondPlayerCharacter.Weapon == "Sword":
+            case "Lance" when secondPlayerCharacter.Weapon == "Axe":
+            case "Sword" when secondPlayerCharacter.Weapon == "Lance":
+                _view.WriteLine($"{secondPlayerCharacter.Name} ({secondPlayerCharacter.Weapon}) tiene ventaja con respecto a {firstPlayerCharacter.Name} ({firstPlayerCharacter.Weapon})");
                 break;
             default:
                 _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");

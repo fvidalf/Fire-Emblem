@@ -10,6 +10,7 @@ public class Character {
     public string Weapon { get; set; }
     public string Gender { get; set; }
     public string DeathQuote { get; set; }
+    public IBaseSkill[] Skills { get; private set; }
     
     private int _baseHp;
     private int _baseAtk;
@@ -44,6 +45,7 @@ public class Character {
         string weapon,
         string gender,
         string deathQuote,
+        IBaseSkill[] skills,
         int hp,
         int atk,
         int spd,
@@ -55,6 +57,7 @@ public class Character {
         Weapon = weapon;
         Gender = gender;
         DeathQuote = deathQuote;
+        Skills = skills;
         Hp = hp;
         Atk = atk;
         Spd = spd;
@@ -70,22 +73,14 @@ public class Character {
         _view.WriteLine($"{Name} ataca a {target.Name} con {damage} de daño");
     }
     
-    public void ApplySkills(List<IBaseSkill> skills) {
-        foreach (var skill in skills) {
-            ApplySkill(skill);
+    public void ApplySkills(GameStatus gameStatus) {
+        foreach (var skill in Skills) {
+            ApplySkill(skill, gameStatus);
         }
     }
     
-    private void ApplySkill(IBaseSkill skill) {
-        switch (skill) {
-            case FixedAmountSkill fixedAmountSkill:
-                ApplyFixedAmountSkill(fixedAmountSkill);
-                break;
-        }
-    }
-    
-    private void ApplyFixedAmountSkill(FixedAmountSkill skill) {
-        skill.Apply(this);
+    private void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
+       skill.Apply(gameStatus);
     }
 
     private float WeaponTriangleAdvantage(Character target) {

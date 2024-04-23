@@ -219,6 +219,7 @@ public class TeamsLoader {
             characterInfo.Weapon,
             characterInfo.Gender,
             characterInfo.DeathQuote,
+            unitSkills,
             Convert.ToInt32(characterInfo.HP),
             Convert.ToInt32(characterInfo.Atk),
             Convert.ToInt32(characterInfo.Spd),
