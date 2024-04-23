@@ -15,7 +15,6 @@ public class Game
     private int _roundPhase;
     private Dictionary<int, Character> _charactersByPlayerIndex = new Dictionary<int, Character>();
     private bool _doesRoundEnd;
-    public GameStatus GameStatus { get; private set; }
     
     public Game(View view, string teamsFolder)
     {
@@ -26,7 +25,6 @@ public class Game
         _round = 1;
         _roundPhase = 0;
         _doesRoundEnd = false;
-        GameStatus = new GameStatus();
     }
 
     public void Play() {
@@ -58,7 +56,6 @@ public class Game
     private void HandleRoundStart() {
         WriteRoundStartMessage();
         ResetRoundParameters();
-        SetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
     }
 
     private void ResetRoundParameters() {
@@ -66,13 +63,9 @@ public class Game
         _doesRoundEnd = false;
     }
 
-    private void SetGameStatus(int attackingPlayerIndex, int defendingPlayerIndex) {
-        var attackingCharacter = GetCharacterByPlayerIndex(attackingPlayerIndex);
-        var defendingCharacter = GetCharacterByPlayerIndex(defendingPlayerIndex);
-        GameStatus.SetGameStatus(attackingCharacter, defendingCharacter, _roundPhase);
-    }
-
     private void HandleCombat() {
+        ApplyCharacterSkills();
+        
         HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
         HandleRoundEnd();
         if (_doesRoundEnd) return;
@@ -83,6 +76,21 @@ public class Game
 
         HandleFollowUpAttack();
         HandleRoundEnd();
+    }
+
+    private void ApplyCharacterSkills() {
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
+        var firstPlayerGameStatus = GetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
+        var secondPlayerGameStatus = GetGameStatus(_secondPlayerIndex, _firstPlayerIndex);
+        firstPlayerCharacter.ApplySkills(firstPlayerGameStatus);
+        secondPlayerCharacter.ApplySkills(secondPlayerGameStatus);
+    }
+
+    private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
+        var activatingCharacter = GetCharacterByPlayerIndex(activatingPlayerIndex);
+        var rivalCharacter = GetCharacterByPlayerIndex(rivalPlayerIndex);
+        return new GameStatus(activatingCharacter, rivalCharacter, _roundPhase);
     }
     
     private void CheckIfTeamsAreEmpty() {
@@ -133,8 +141,7 @@ public class Game
     }
     
     private void AdvanceRoundPhase() {
-        _roundPhase++;
-        GameStatus.AdvancePhase();
+        _roundPhase++; 
     }
     
     private Character GetCharacterByPlayerIndex(int playerIndex) {
@@ -153,7 +160,6 @@ public class Game
     private void ChangeFirstPlayer() {
         _firstPlayerIndex = _firstPlayerIndex == 0 ? 1 : 0;
         _secondPlayerIndex = _secondPlayerIndex == 0 ? 1 : 0;
-        GameStatus.SwapCharacters();
     }
 
     private void HandleFollowUpAttack() {
