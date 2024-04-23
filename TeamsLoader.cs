@@ -47,54 +47,54 @@ public class TeamsLoader {
         
         return int.Parse(userString);
     }
-
-    // REFACTORING NEEDED
+    
     private void ReadTeamFile(int option) {
+        var file = GetFile(option);
+        var lines = GetFileLines(file);
+        InitializeTeamsContent(lines);
+        FillTeamsContent(lines);
+    }
 
-        var file = Directory.GetFiles(_teamsFolder)[option];
-        var lines = File.ReadAllText(file).Trim().Split("\n");
+    private string GetFile(int option) {
+        var files = Directory.GetFiles(_teamsFolder);
+        return files[option];
+    }
+    
+    private string[] GetFileLines(string file) {
+        var fileContent = File.ReadAllText(file);
+        var lines = fileContent.Trim().Split("\n");
+        return lines;
+    }
 
+    private void InitializeTeamsContent(string[] lines) {
         var currentTeam = 0;
         var teamUnits = 0;
-
-        // Count units per team to initialize the arrays
         foreach (var line in lines) {
-            // Console.WriteLine(line);
-            if (line.Contains("Player 1")) {
-                continue;
-            }
-
             if (line.Contains("Player 2")) {
                 _teamsContent[currentTeam] = new string[teamUnits];
                 currentTeam++;
                 teamUnits = 0;
-            }
-            else {
+            } else if (!line.Contains("Player 1")) {
                 teamUnits++;
             }
         }
-
         _teamsContent[currentTeam] = new string[teamUnits];
+    }
 
-        // Fill the array with the units
-        currentTeam = 0;
-        var teamUnit = 0;
+    private void FillTeamsContent(string[] lines) {
+        var currentTeam = 0;
+        var unitIndex = 0;
         foreach (var line in lines) {
-            if (line.Contains("Player 1")) {
-                continue;
-            }
-
             if (line.Contains("Player 2")) {
                 currentTeam++;
-                teamUnit = 0;
-            }
-            else {
-                _teamsContent[currentTeam][teamUnit] = line;
-                teamUnit++;
+                unitIndex = 0;
+            } else if (!line.Contains("Player 1")) {
+                _teamsContent[currentTeam][unitIndex] = line;
+                unitIndex++;
             }
         }
     }
-
+    
     private void VerifyTeams() {
         foreach (var team in _teamsContent) {
             CheckValidTeamLength(team);
