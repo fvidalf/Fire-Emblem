@@ -17,13 +17,22 @@ public class Game
 
     public void Play() {
         // Initialize teams loader. Loads teams and characters if valid
+        try {
+            LoadTeams();
+            StartGameLoop();
+        } catch (Exception e) {
+            Console.WriteLine(e.Message);
+            _view.WriteLine("Archivo de equipos no válido");
+        }
+    }
+
+    private void LoadTeams() {
         var teamsLoader = new TeamsLoader(_view, _teamsFolder);
         teamsLoader.Execute();
-        if (!teamsLoader.TeamsAreValid) return;
+        _teams = teamsLoader.TeamsCharacters;
+    }
 
-        var teams = teamsLoader.TeamsCharacters;
-
-        // Start game loop
+    private void StartGameLoop() {
         var game = true;
         var round = 1;
         var atkPlayerIndex = 0;
@@ -34,19 +43,19 @@ public class Game
             var defPlayerIndex = (atkPlayerIndex + 1) % 2;
             
             // Check if any team is empty
-            if (teams[0].Length == 0) {
+            if (_teams[0].Length == 0) {
                 _view.WriteLine("Player 2 ganó");
                 game = false;
                 continue;
             }
-            if (teams[1].Length == 0) {
+            if (_teams[1].Length == 0) {
                 _view.WriteLine("Player 1 ganó");
                 game = false;
                 continue;
             }
             
-            var atkCharacter = AskForCharacter(teams, atkPlayerIndex);
-            var defCharacter = AskForCharacter(teams, defPlayerIndex);
+            var atkCharacter = AskForCharacter(_teams, atkPlayerIndex);
+            var defCharacter = AskForCharacter(_teams, defPlayerIndex);
             
             _view.WriteLine($"Round {round}: {atkCharacter.Name} (Player {atkPlayerIndex + 1}) comienza");
             WriteWta(atkCharacter, defCharacter);
@@ -56,7 +65,7 @@ public class Game
             // Check if char is alive (convert into its own method)
             
             if (defCharacter.IsDead) {
-                teams[defPlayerIndex] = RemoveCharacter(teams[defPlayerIndex], defCharacter);
+                _teams[defPlayerIndex] = RemoveCharacter(_teams[defPlayerIndex], defCharacter);
                 ReportHp(atkCharacter, defCharacter);
                 atkPlayerIndex = ChangeAtkCharacter(atkPlayerIndex);
                 round++;
@@ -67,7 +76,7 @@ public class Game
             defCharacter.Attack(atkCharacter);
             // Check if char is alive
             if (atkCharacter.IsDead) {
-                teams[atkPlayerIndex] = RemoveCharacter(teams[atkPlayerIndex], atkCharacter);
+                _teams[atkPlayerIndex] = RemoveCharacter(_teams[atkPlayerIndex], atkCharacter);
                 ReportHp(atkCharacter, defCharacter);
                 atkPlayerIndex = ChangeAtkCharacter(atkPlayerIndex);
                 round++;
@@ -80,12 +89,12 @@ public class Game
                 if (followUpIndex == atkPlayerIndex) {
                     atkCharacter.Attack(defCharacter);
                     if (defCharacter.IsDead) {
-                        teams[defPlayerIndex] = RemoveCharacter(teams[defPlayerIndex], defCharacter);
+                        _teams[defPlayerIndex] = RemoveCharacter(_teams[defPlayerIndex], defCharacter);
                     }
                 } else {
                     defCharacter.Attack(atkCharacter);
                     if (atkCharacter.IsDead) {
-                        teams[atkPlayerIndex] = RemoveCharacter(teams[atkPlayerIndex], atkCharacter);
+                        _teams[atkPlayerIndex] = RemoveCharacter(_teams[atkPlayerIndex], atkCharacter);
                     }
                 }
             }
@@ -94,11 +103,6 @@ public class Game
             atkPlayerIndex = ChangeAtkCharacter(atkPlayerIndex);
             round++;
         }
-    }
-
-    private void LoadTeams() {
-        var teamsLoader = new TeamsLoader(_view, _teamsFolder);
-        teamsLoader.Execute();
     }
 
     private Character[] RemoveCharacter(Character[] team, Character character) {

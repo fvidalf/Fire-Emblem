@@ -11,39 +11,47 @@ public class TeamsLoader {
     private readonly string _teamsFolder;
     private string[][] _teamsContent = new string[2][];
     public Character[][] TeamsCharacters = new Character[2][];
-    public bool TeamsAreValid;
-
+    
     public TeamsLoader(View view, string teamsFolder) {
         _view = view;
         _teamsFolder = teamsFolder;
     }
+    
+    public void Execute() {
+        var userOption = AskForTeam();
+        ReadTeamFile(userOption);
+        VerifyTeams();
+        TeamsCharacters = LoadTeams();
+    }
 
     private int AskForTeam() {
-        /*
-         * Asks the user to select a team from the available files in the teams folder
-         * returns the index of the selected team as an int
-         */
         _view.WriteLine("Elige un archivo para cargar los equipos");
+        ShowTeamFiles();
+
+        var userOption = GetUserOption();
+        return userOption;
+    }
+    
+    private void ShowTeamFiles() {
         var files = Directory.GetFiles(_teamsFolder);
         for (var i = 0; i < files.Length; i++) {
             _view.WriteLine($"{i}: {Path.GetFileName(files[i])}");
         }
+    }
 
+    private int GetUserOption() {
         string? userString;
         do {
             userString = _view.ReadLine();
         } while (!int.TryParse(userString, out var _));
-
-        // Return team number
+        
         return int.Parse(userString);
     }
 
+    // REFACTORING NEEDED
     private void ReadTeamFile(int option) {
-        /*
-         * Reads the selected file and stores the content in the _teamsContent string array
-         */
+
         var file = Directory.GetFiles(_teamsFolder)[option];
-        // Read file content
         var lines = File.ReadAllText(file).Trim().Split("\n");
 
         var currentTeam = 0;
@@ -88,49 +96,29 @@ public class TeamsLoader {
     }
 
     private void VerifyTeams() {
-        /*
-         * Verifies that the teams check the following conditions:
-         * 1. All units in a team have different names
-         * 2. All units have two or less skills
-         * 3. All skills in a unit are different
-         * 4. Teams are not empty and have 3 units at most
-         */
-        
-        TeamsAreValid = true;
-
         foreach (var team in _teamsContent) {
-
-            // Checking condition 4
-            var isTeamLengthValid = IsTeamLengthValid(team);
-            
-            // Checking condition 1, 2 and 3
-            var isTeamValidRelatedToUnits = IsTeamValidRelatedToUnits(team);
-            
-            if (!isTeamLengthValid || !isTeamValidRelatedToUnits) {
-                TeamsAreValid = false;
-                return;
-            }
+            CheckValidTeamLength(team);
+            CheckValidTeamUnits(team);
         }
     }
     
-    private bool IsTeamLengthValid(string[] team) {
-        return !(team.Length is 0 or > 3);
+    private void CheckValidTeamLength(string[] team) {
+        if (team.Length is 0 or > 3) {
+            throw new ArgumentException("Invalid team length");
+        }
     }
     
-    private bool IsTeamValidRelatedToUnits(string[] team) {
+    private void CheckValidTeamUnits(string[] team) {
         var unitNames = new List<string>();
 
         foreach (var unit in team) {
             var unitName = GetUnitName(unit);
 
-            if (IsUnitAlreadyInTeam(unitName, unitNames)) return false;
+            CheckUnitAlreadyInTeam(unitName, unitNames);
             unitNames.Add(unitName);
             
-            if (!AreThereSkills(unit)) continue;
-            if (!IsUnitValidRelatedToSkills(unit)) return false;
+            CheckUnitSkills(unit);
         }
-
-        return true;
     }
     
     private string GetUnitName(string unit) {
@@ -138,8 +126,10 @@ public class TeamsLoader {
         return firstWhitespace != -1 ? unit[..firstWhitespace] : unit[..];
     }
 
-    private bool IsUnitAlreadyInTeam(string unit, List<string> unitNames) {
-        return unitNames.Contains(unit);
+    private void CheckUnitAlreadyInTeam(string unit, List<string> unitNames) {
+        if (unitNames.Contains(unit)) {
+            throw new ArgumentException("Unit already in team");
+        }
     }
 
     private bool AreThereSkills(string unit) {
@@ -147,83 +137,104 @@ public class TeamsLoader {
         return firstWhitespace != -1;
     }
 
-    private bool IsUnitValidRelatedToSkills(string unit) {
+    private void CheckUnitSkills(string unit) {
+        if (AreThereSkills(unit)) {
+            CheckUnitSkillsAreValid(unit);
+        }
+    }
+    
+    private void CheckUnitSkillsAreValid(string unit) {
         var skillNames = new List<string>();
-
         var unitSkills = GetUnitSkillNames(unit);
-
+        
         foreach (var skill in unitSkills) {
-            if (skillNames.Contains(skill)) return false;
+            CheckSkillAlreadyInUnit(skill, skillNames);
             skillNames.Add(skill);
         }
-        
-        if (unitSkills.Length > 2) return false;
-        return true;
+
+        CheckValidSkillCount(unitSkills);
     }
     
     private string[] GetUnitSkillNames(string unit) {
         var firstWhitespace = unit.IndexOf(' ');
         return unit.Trim()[(firstWhitespace + 2)..^1].Split(',');
     }
+    
+    private void CheckSkillAlreadyInUnit(string skill, List<string> skillNames) {
+        if (skillNames.Contains(skill)) {
+            throw new ArgumentException("Skill already in unit");
+        }
+    }
+    
+    private void CheckValidSkillCount(string[] unitSkills) {
+        if (unitSkills.Length > 2) {
+            throw new ArgumentException("Unit has more than 2 skills");
+        }
+    }
 
+    // REFACTORING NEEDED
     private Character[][] LoadTeams() {
-
-        // Load characters from json file into a list
+        var charactersInfo = GetCharactersFromJson();
+        var teamCharacters = GetTeamCharacters(charactersInfo);
+        return teamCharacters;
+    }
+    
+    private List<CharacterInfo> GetCharactersFromJson() {
         var myJson = File.ReadAllText("characters.json");
-        var characters = JsonSerializer.Deserialize<List<CharacterInfo>>(myJson) ??
+        var charactersInfo = JsonSerializer.Deserialize<List<CharacterInfo>>(myJson) ??
                          throw new ArgumentNullException("JsonSerializer.Deserialize<List<CharacterInfo>>(myJson)");
+        return charactersInfo;
+    }
 
-        // Create an array of characters from the teams content
+    private Character[][] GetTeamCharacters(List<CharacterInfo> charactersInfo) {
+        var teamCharacters = InitializeTeams();
+        
+        for (var teamIndex = 0; teamIndex < 2; teamIndex++) {
+            for (var unitIndex = 0; unitIndex < _teamsContent[teamIndex].Length; unitIndex++) {
+                teamCharacters[teamIndex][unitIndex] = GetCharacterFromInfo(charactersInfo, teamIndex, unitIndex);
+            }
+        }
+        return teamCharacters;
+    }
+    
+    private Character GetCharacterFromInfo(List<CharacterInfo> charactersInfo, int teamIndex, int unitIndex) {
+        var unit = _teamsContent[teamIndex][unitIndex];
+        var unitName = GetUnitName(unit);
+        var unitSkills = GetSkills(unit);
+        var character = CreateCharacterFromInfo(charactersInfo, unitName, unitSkills);
+        return character;
+    }
+
+    private Character[][] InitializeTeams() {
         var teamCharacters = new Character[2][];
         teamCharacters[0] = new Character[_teamsContent[0].Length];
         teamCharacters[1] = new Character[_teamsContent[1].Length];
-
-        for (var i = 0; i < 2; i++) {
-            for (var j = 0; j < _teamsContent[i].Length; j++) {
-                var unit = _teamsContent[i][j];
-
-                var unitName = GetUnitName(unit);
-                var unitLoadedSkills = GetLoadedSkills(unit);
-
-                // Search for the character in the list
-                var characterInfo = characters.Find(character => character.Name.Trim() == unitName.Trim());
-                var character = new Character(
-                    characterInfo.Name,
-                    characterInfo.Weapon,
-                    characterInfo.Gender,
-                    characterInfo.DeathQuote,
-                    Convert.ToInt32(characterInfo.HP),
-                    Convert.ToInt32(characterInfo.Atk),
-                    Convert.ToInt32(characterInfo.Spd),
-                    Convert.ToInt32(characterInfo.Def),
-                    Convert.ToInt32(characterInfo.Res),
-                    _view
-                );
-                teamCharacters[i][j] = character; }
-        }
-
         return teamCharacters;
     }
 
-    private IBaseSkill[] GetLoadedSkills(string unit) {
+    private Character CreateCharacterFromInfo(List<CharacterInfo> charactersInfo, string unitName, IBaseSkill[] unitSkills) {
+        var characterInfo = charactersInfo.Find(character => character.Name.Trim() == unitName.Trim());
+        var character = new Character(
+            characterInfo.Name,
+            characterInfo.Weapon,
+            characterInfo.Gender,
+            characterInfo.DeathQuote,
+            Convert.ToInt32(characterInfo.HP),
+            Convert.ToInt32(characterInfo.Atk),
+            Convert.ToInt32(characterInfo.Spd),
+            Convert.ToInt32(characterInfo.Def),
+            Convert.ToInt32(characterInfo.Res),
+            _view
+        );
+        return character;
+    }
+
+    private IBaseSkill[] GetSkills(string unit) {
         if (AreThereSkills(unit)) {
             var unitSkillNames = GetUnitSkillNames(unit);
-            var loadedSkills = SkillLoader.GetLoadedSkills(unitSkillNames);
+            var loadedSkills = SkillAssigner.AssignSkills(unitSkillNames);
             return loadedSkills.ToArray();
         }
         return Array.Empty<IBaseSkill>();
-    } 
-
-    public void Execute() {
-        var userOption = AskForTeam();
-        ReadTeamFile(userOption);
-        VerifyTeams();
-        Console.WriteLine(TeamsAreValid);
-        if (!TeamsAreValid) {
-            _view.WriteLine("Archivo de equipos no válido");
-        }
-        else {
-            TeamsCharacters = LoadTeams();
-        }
     }
 }
