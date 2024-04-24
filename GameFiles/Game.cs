@@ -1,5 +1,6 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.Skills.SkillEffectFiles;
 using Fire_Emblem.TeamsLoaderFiles;
 
 namespace Fire_Emblem.GameFiles;
@@ -80,11 +81,53 @@ public class Game
 
     private void ApplyCharacterSkills() {
         var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
-        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
         var firstPlayerGameStatus = GetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
+        firstPlayerCharacter.ReceiveStatus(firstPlayerGameStatus);
+        firstPlayerCharacter.ApplySkills();
+        
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
         var secondPlayerGameStatus = GetGameStatus(_secondPlayerIndex, _firstPlayerIndex);
-        firstPlayerCharacter.ApplySkills(firstPlayerGameStatus);
-        secondPlayerCharacter.ApplySkills(secondPlayerGameStatus);
+        secondPlayerCharacter.ReceiveStatus(secondPlayerGameStatus);
+        secondPlayerCharacter.ApplySkills();
+        
+        var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
+        var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
+        // Here we would join both dictionaries and notify the view of the effects
+        // For now, we will just notify the effects of the first player
+        var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
+        NotifySkillEffects(skillEffects);
+    }
+    
+    private Dictionary<Character, List<SkillEffect>> JoinPlayerSkillEffects(Dictionary<Character, List<SkillEffect>> firstPlayerSkillEffects, Dictionary<Character, List<SkillEffect>> secondPlayerSkillEffects) {
+        var joinedSkillEffects = new Dictionary<Character, List<SkillEffect>>();
+        foreach (var character in firstPlayerSkillEffects.Keys) {
+            var firstPlayerEffects = firstPlayerSkillEffects[character];
+            var secondPlayerEffects = secondPlayerSkillEffects[character];
+            var joinedEffects = firstPlayerEffects.Concat(secondPlayerEffects).ToList();
+            var sortedEffects = GetSortedEffects(joinedEffects);
+            joinedSkillEffects[character] = sortedEffects;
+        }
+        return joinedSkillEffects;
+    }
+    
+    private List<SkillEffect> GetSortedEffects(List<SkillEffect> effects) {
+        // First
+        var effectsSortedByEffectType = effects.OrderBy(stat => stat.EffectType);
+        var effectsSortedByStat = effectsSortedByEffectType.ThenBy(stat => stat.Stats.Keys);
+        return effectsSortedByStat.ToList();
+    }
+    
+    private void NotifySkillEffects(Dictionary<Character, List<SkillEffect>> skillEffects) {
+        foreach (var character in skillEffects.Keys) {
+            foreach (var effect in skillEffects[character]) {
+                foreach (var stat in effect.Stats) {
+                    if (stat.Value != 0) {
+                        var diffSign = stat.Value > 0 ? "+" : "";
+                        _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat.Key]}{diffSign}{stat.Value}");
+                    }
+                }
+            }
+        }
     }
 
     private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {

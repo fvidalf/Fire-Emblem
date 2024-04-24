@@ -1,6 +1,8 @@
 ﻿using Fire_Emblem_View;
+using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
-using Fire_Emblem.Skills.FixedAmountSkills;
+using Fire_Emblem.Skills.SkillEffectFiles;
+using Fire_Emblem.Skills.SkillsOverSelf;
 
 namespace Fire_Emblem.CharacterFiles;
 
@@ -11,6 +13,7 @@ public class Character {
     public string Gender { get; set; }
     public string DeathQuote { get; set; }
     public IBaseSkill[] Skills { get; private set; }
+    private GameStatus _gameStatus;
 
     private int _baseHp;
     private int _baseAtk;
@@ -40,7 +43,8 @@ public class Character {
 
     public bool IsDead;
 
-    private Dictionary<Stat, int> _modifiedStats = new Dictionary<Stat, int>();
+    private List<SkillEffect> _selfModifiedStats = new List<SkillEffect>();
+    private List<SkillEffect> _rivalModifiedStats = new List<SkillEffect>();
 
     private View _view;
 
@@ -77,48 +81,83 @@ public class Character {
         _view.WriteLine($"{Name} ataca a {target.Name} con {damage} de daño");
     }
 
-    public void ApplySkills(GameStatus gameStatus) {
+    public void ReceiveStatus(GameStatus gameStatus) {
+        _gameStatus = gameStatus;
+    }
+    
+    public void ApplySkills() {
         foreach (var skill in Skills) {
-            if (!skill.IsActivated) ApplySkill(skill, gameStatus);
+            if (!skill.IsActivated) ApplySkill(skill, _gameStatus);
         }
-        NotifySkillEffects();
     }
 
     private void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
         skill.Apply(gameStatus);
-        // Thisll have to be refactored: GetModifiedStats should probably be in IBaseSkill
-        var statsModifiedBySkill = GetStatsModifiedBySkill((FixedAmountSkill)skill);
-        UpdateModifiedStats(statsModifiedBySkill);
+        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SkillOverSelf)skill);
+        UpdateModifiedStats(characterPairedToSkillEffect);
     }
 
-    private Dictionary<Stat, int> GetStatsModifiedBySkill(FixedAmountSkill skill) {
+    public Dictionary<Character, List<SkillEffect>> GetSkillEffects() {
+        var skillEffects = new Dictionary<Character, List<SkillEffect>>();
+        skillEffects[this] = _selfModifiedStats;
+        var rival = _gameStatus.RivalCharacter;
+        skillEffects[rival] = _rivalModifiedStats;
+        return skillEffects;
+    }
+
+    private Dictionary<Character, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
         return skill.GetModifiedStats();
     }
 
-    private void UpdateModifiedStats(Dictionary<Stat, int> stats) {
-        foreach (var stat in stats) {
-            if (_modifiedStats.ContainsKey(stat.Key)) {
-                _modifiedStats[stat.Key] += stat.Value;
+    private void UpdateModifiedStats(Dictionary<Character, SkillEffect> characterPairedToSkillEffect) {
+        foreach (var pair in characterPairedToSkillEffect) {
+            var character = pair.Key;
+            var skillEffect = pair.Value;
+            if (character == this) {
+                UpdateSelfModifiedStats(skillEffect);
             }
             else {
-                _modifiedStats[stat.Key] = stat.Value;
+                UpdateRivalModifiedStats(skillEffect);
             }
         }
     }
-    
-    private void NotifySkillEffects() {
-        // Sort the stats by key to ensure a consistent output
-        var sortedStats = GetSortedStats();
-        foreach (var stat in sortedStats) {
-            if (stat.Value != 0) {
-                var diffSign = stat.Value > 0 ? "+" : "";
-                _view.WriteLine($"{Name} obtiene {StatToString.Map[stat.Key]}{diffSign}{stat.Value}");
+
+    private void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
+        var found = false;
+        foreach (var oldSkillEffect in _selfModifiedStats) {
+            if (oldSkillEffect.EffectType == newSkillEffect.EffectType) {
+                found = true;
+                foreach (var stat in newSkillEffect.Stats) {
+                    if (oldSkillEffect.Stats is null || !oldSkillEffect.Stats.ContainsKey(stat.Key)) {
+                        oldSkillEffect.Stats[stat.Key] = stat.Value;
+                    }
+                    else {
+                        oldSkillEffect.Stats[stat.Key] += stat.Value;
+
+                    }
+                }
             }
         }
+        if (!found) _selfModifiedStats.Add(newSkillEffect);
     }
     
-    private List<KeyValuePair<Stat, int>> GetSortedStats() {
-        return _modifiedStats.OrderBy(stat => stat.Key).ToList();
+    private void UpdateRivalModifiedStats(SkillEffect newSkillEffect) {
+        var found = false;
+        foreach (var oldSkillEffect in _rivalModifiedStats) {
+            if (oldSkillEffect.EffectType == newSkillEffect.EffectType) {
+                found = true;
+                foreach (var stat in newSkillEffect.Stats) {
+                    if (oldSkillEffect.Stats is null || !oldSkillEffect.Stats.ContainsKey(stat.Key)) {
+                        oldSkillEffect.Stats[stat.Key] = stat.Value;
+                    }
+                    else {
+                        oldSkillEffect.Stats[stat.Key] += stat.Value;
+
+                    }
+                }
+            }
+        }
+        if (!found) _rivalModifiedStats.Add(newSkillEffect);
     }
     
     private float WeaponTriangleAdvantage(Character target) {

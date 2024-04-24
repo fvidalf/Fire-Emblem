@@ -1,5 +1,4 @@
-﻿using Fire_Emblem.Skills.FixedAmountSkills.FixedAmountBonusSkills;
-using Fire_Emblem.Skills.FixedAmountSkills.FixedAmountHybridSkills;
+﻿using Fire_Emblem.Skills.SkillsOverSelf.FlatBonusSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -23,10 +22,6 @@ public static class SkillAssigner {
         { "Resistance + 5", typeof(ResistanceSkill)},
         { "Atk/Def +5", typeof(AttackAndDefenseSkill)},
         { "Atk/Res +5", typeof(AttackAndResistanceSkill)},
-        { "Spd/Res +5", typeof(SpeedAndResistanceSkill)},
-        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSkill)},
-        { "Life and Death", typeof(LifeAndDeathSkill)},
-        { "Solid Ground", typeof(SolidGroundSkill)},
-        { "Still Water", typeof(StillWaterSkill)}
+        { "Spd/Res +5", typeof(SpeedAndResistanceSkill)}
     };
 }
