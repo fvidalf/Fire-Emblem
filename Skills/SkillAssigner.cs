@@ -1,4 +1,5 @@
 ﻿using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.BrazenSkills;
 using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.StarterBonusSkills;
 using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.FlatBonusSkills;
 
@@ -37,6 +38,14 @@ public static class SkillAssigner {
         { "Mirror Strike", typeof(MirrorStrikeSkill)},
         { "Steady Blow", typeof(SteadyBlowSkill)},
         { "Swift Strike", typeof(SwiftStrikeSkill)},
-        { "Bracing Blow", typeof(BracingBlowSkill)}
+        { "Bracing Blow", typeof(BracingBlowSkill)},
+        { "Tome Precision", typeof(TomePrecisionSkill)},
+        { "Perceptive", typeof(PerceptiveSkill)},
+        { "Brazen Atk/Spd", typeof(BrazenAttackAndSpeedSkill)},
+        { "Brazen Atk/Def", typeof(BrazenAttackAndDefenseSkill)},
+        { "Brazen Atk/Res", typeof(BrazenAttackAndResistanceSkill)},
+        { "Brazen Spd/Def", typeof(BrazenSpeedAndDefenseSkill)},
+        { "Brazen Spd/Res", typeof(BrazenSpeedAndResistanceSkill)},
+        { "Brazen Def/Res", typeof(BrazenDefenseAndResistanceSkill)}
     };
 }

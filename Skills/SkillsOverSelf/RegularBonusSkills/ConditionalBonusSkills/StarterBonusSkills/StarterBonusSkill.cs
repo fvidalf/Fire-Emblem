@@ -3,7 +3,6 @@ using Fire_Emblem.GameFiles;
 
 namespace Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.StarterBonusSkills;
 
-// Starter Bonus Skill: A re
 public abstract class StarterBonusSkill: ConditionalBonusSkill {
     
     public StarterBonusSkill(string name, Dictionary<Stat, int> statsToModify)
