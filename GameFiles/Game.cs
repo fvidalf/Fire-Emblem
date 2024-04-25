@@ -98,56 +98,72 @@ public class Game
         if (notify) NotifySkillEffects(skillEffects);
     }
     
-    private Dictionary<Character, List<SkillEffect>> JoinPlayerSkillEffects(Dictionary<Character, List<SkillEffect>> firstPlayerSkillEffects, Dictionary<Character, List<SkillEffect>> secondPlayerSkillEffects) {
-        var joinedSkillEffects = new Dictionary<Character, List<SkillEffect>>();
+    private Dictionary<Character, List<Tuple<EffectType, Stat, int>>> JoinPlayerSkillEffects(Dictionary<Character, SkillEffect> firstPlayerSkillEffects, Dictionary<Character, SkillEffect> secondPlayerSkillEffects) {
+        var joinedSkillEffects = new Dictionary<Character, List<Tuple<EffectType, Stat, int>>>();
         foreach (var character in firstPlayerSkillEffects.Keys) {
             var firstPlayerEffects = firstPlayerSkillEffects[character];
             var secondPlayerEffects = secondPlayerSkillEffects[character];
 
-            var joinedEffects = firstPlayerEffects.Concat(secondPlayerEffects).ToList();
-            var sortedEffects = GetSortedEffects(joinedEffects);
+            firstPlayerEffects.Join(secondPlayerEffects);
+            // Print simplified effects
+            var list = firstPlayerEffects.CollapseIntoList();
+            Console.WriteLine($"Efectos de {character.Name}");
+            foreach (var effect in list) {
+                Console.WriteLine($"{effect.Item1}, {StatToString.Map[effect.Item2]}, {effect.Item3}");
+            }
+            var sortedEffects = GetSortedEffects(firstPlayerEffects);
             joinedSkillEffects[character] = sortedEffects;
         }
         return joinedSkillEffects;
     }
     
-    private List<SkillEffect> GetSortedEffects(List<SkillEffect> effects) {
-        var effectsSortedByEffectType = effects.OrderBy(stat => stat.EffectType);
-        
-        var effectsSortedByStat = effectsSortedByEffectType.ThenBy(stat => stat.Stats.Keys);
+    private List<Tuple<EffectType, Stat, int>> GetSortedEffects(SkillEffect effects) {
+        var simpleEffects = effects.CollapseIntoList();
+        var effectsSortedByEffectType = simpleEffects.OrderBy(effect => effect.Item1);
+        var effectsSortedByStat = effectsSortedByEffectType.ThenBy(effect => effect.Item2);
+       
         return effectsSortedByStat.ToList();
     }
     
-    private void NotifySkillEffects(Dictionary<Character, List<SkillEffect>> skillEffects) {
-        foreach (var character in skillEffects.Keys) {
-            foreach (var effect in skillEffects[character]) {
-                switch (effect.EffectType) {
+    private void NotifySkillEffects(Dictionary<Character,  List<Tuple<EffectType, Stat, int>>> skillEffect) {
+        foreach (var character in skillEffect.Keys) {
+            foreach (var effect in skillEffect[character]) {
+                var effectType = effect.Item1;
+                var stat = effect.Item2;
+                var amount = effect.Item3;
+                switch (effectType) {
                     case EffectType.FirstAttackBonus:
-                        NotifyFirstAttackBonus(character, effect);
+                        NotifyFirstAttackBonus(character, stat, amount);
                         break;
                     case EffectType.RegularBonus:
-                        NotifyRegularBonus(character, effect);
+                        NotifyRegularBonus(character, stat, amount);
+                        break;
+                    case EffectType.FollowUpAttackBonus:
+                        break;
+                    case EffectType.RegularPenalty:
+                        NotifyRegularPenalty(character, stat, amount);
                         break;
                 }
             }
         }
     }
     
-    private void NotifyFirstAttackBonus(Character character, SkillEffect effect) {
-        foreach (var stat in effect.Stats) {
-            if (stat.Value != 0) {
-                var diffSign = stat.Value > 0 ? "+" : "";
-                _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat.Key]}{diffSign}{stat.Value} en su primer ataque");
-            } 
+    private void NotifyFirstAttackBonus(Character character, Stat stat, int amount) {
+        if (amount != 0) {
+            var diffSign = amount > 0 ? "+" : "";
+            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}{diffSign}{amount} en su primer ataque");
+        } 
+    }
+    
+    private void NotifyRegularBonus(Character character, Stat stat, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}+{amount}");
         }
     }
     
-    private void NotifyRegularBonus(Character character, SkillEffect effect) {
-        foreach (var stat in effect.Stats) {
-            if (stat.Value != 0) {
-                var diffSign = stat.Value > 0 ? "+" : "";
-                _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat.Key]}{diffSign}{stat.Value}");
-            }
+    private void NotifyRegularPenalty(Character character, Stat stat, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}{amount}");
         }
     }
 

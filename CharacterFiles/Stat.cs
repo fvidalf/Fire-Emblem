@@ -3,8 +3,8 @@
 public enum Stat {
     Hp,
     Atk,
-    Def,
     Spd,
+    Def,
     Res,
     FirstAttackAtk,
     FirstAttackSpd,

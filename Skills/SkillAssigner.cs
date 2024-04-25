@@ -1,9 +1,13 @@
-﻿using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.BonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.BrazenSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.StarterBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.FlatBonusSkills;
+﻿
+using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.BoostSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.BrazenSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.WeaponSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills.FlatBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -50,13 +54,19 @@ public static class SkillAssigner {
         { "Brazen Spd/Res", typeof(BrazenSpeedAndResistanceSkill)},
         { "Brazen Def/Res", typeof(BrazenDefenseAndResistanceSkill)},
         { "Chaos Style", typeof(ChaosStyleSkill)},
-        { "Fire Boost", typeof(FireBoostSkill)},
-        { "Wind Boost", typeof(WindBoostSkill)},
-        { "Earth Boost", typeof(EarthBoostSkill)}, 
-        { "Water Boost", typeof(WaterBoostSkill)},
+        { "Fire Boost", typeof(FireBoostBoostSkill)},
+        { "Wind Boost", typeof(WindBoostBoostSkill)},
+        { "Earth Boost", typeof(EarthBoostBoostSkill)}, 
+        { "Water Boost", typeof(WaterBoostBoostSkill)},
         { "Will to Win", typeof(WillToWinSkill)},
         { "Ignis", typeof(IgnisSkill)},
         { "Single-Minded", typeof(SingleMindedSkill)},
-        { "Life and Death", typeof(LifeAndDeathSkill)}
+        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSkill)},
+        { "Life and Death", typeof(LifeAndDeathSkill)},
+        { "Solid Ground", typeof(SolidGroundSkill)},
+        { "Sword Agility", typeof(SwordAgilitySkill)},
+        { "Sword Focus", typeof(SwordFocusSkill)},
+        { "Sword Power", typeof(SwordPowerSkill)},
+        { "Still Water", typeof(StillWaterSkill)}
     };
 }

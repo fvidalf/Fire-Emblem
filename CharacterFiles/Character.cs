@@ -50,8 +50,8 @@ public class Character {
 
     public bool IsDead;
 
-    private List<SkillEffect> _selfModifiedStats = new List<SkillEffect>();
-    private List<SkillEffect> _rivalModifiedStats = new List<SkillEffect>();
+    private SkillEffect _selfModifiedStats = new SkillEffect();
+    private SkillEffect _rivalModifiedStats = new SkillEffect();
 
     private View _view;
 
@@ -122,14 +122,16 @@ public class Character {
     }
 
     private void ResetSelfModifiedStats() {
-        _selfModifiedStats = new List<SkillEffect>();
+        _selfModifiedStats = new SkillEffect();
     }
     
     private void ResetRivalModifiedStats() {
-        _rivalModifiedStats = new List<SkillEffect>();
+        _rivalModifiedStats = new SkillEffect();
     }
     
     public void ApplySkills() {
+        ResetSelfModifiedStats();
+        ResetRivalModifiedStats();
         foreach (var skill in Skills) {
             if (!skill.IsActivated) ApplySkill(skill, _gameStatus);
         }
@@ -142,8 +144,8 @@ public class Character {
         UpdateModifiedStats(characterPairedToSkillEffect);
     }
 
-    public Dictionary<Character, List<SkillEffect>> GetSkillEffects() {
-        var skillEffects = new Dictionary<Character, List<SkillEffect>>();
+    public Dictionary<Character, SkillEffect> GetSkillEffects() {
+        var skillEffects = new Dictionary<Character, SkillEffect>();
         skillEffects[this] = _selfModifiedStats;
         var rival = _gameStatus.RivalCharacter;
         skillEffects[rival] = _rivalModifiedStats;
@@ -168,42 +170,11 @@ public class Character {
     }
 
     private void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
-        var found = false;
-        foreach (var oldSkillEffect in _selfModifiedStats) {
-            if (oldSkillEffect.EffectType == newSkillEffect.EffectType) {
-                found = true;
-                foreach (var stat in newSkillEffect.Stats) {
-                    if (oldSkillEffect.Stats is null || !oldSkillEffect.Stats.ContainsKey(stat.Key)) {
-                        oldSkillEffect.Stats[stat.Key] = stat.Value;
-                    }
-                    else {
-                        oldSkillEffect.Stats[stat.Key] += stat.Value;
-
-                    }
-                }
-            }
-        }
-
-        if (!found) _selfModifiedStats.Add(newSkillEffect);
+        _selfModifiedStats.Join(newSkillEffect);
     }
     
     private void UpdateRivalModifiedStats(SkillEffect newSkillEffect) {
-        var found = false;
-        foreach (var oldSkillEffect in _rivalModifiedStats) {
-            if (oldSkillEffect.EffectType == newSkillEffect.EffectType) {
-                found = true;
-                foreach (var stat in newSkillEffect.Stats) {
-                    if (oldSkillEffect.Stats is null || !oldSkillEffect.Stats.ContainsKey(stat.Key)) {
-                        oldSkillEffect.Stats[stat.Key] = stat.Value;
-                    }
-                    else {
-                        oldSkillEffect.Stats[stat.Key] += stat.Value;
-
-                    }
-                }
-            }
-        }
-        if (!found) _rivalModifiedStats.Add(newSkillEffect);
+        _rivalModifiedStats.Join(newSkillEffect);
     }
     
     private float WeaponTriangleAdvantage(Character target) {
