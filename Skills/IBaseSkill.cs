@@ -10,4 +10,6 @@ public interface IBaseSkill {
     SkillEffect SkillEffect { get; set; }
     
     Dictionary<Character, SkillEffect> GetModifiedStats();
+    
+    void Reset();
 }

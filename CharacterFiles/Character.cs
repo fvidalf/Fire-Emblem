@@ -15,11 +15,11 @@ public class Character {
     public IBaseSkill[] Skills { get; private set; }
     private GameStatus _gameStatus;
 
-    private int _baseHp;
-    private int _baseAtk;
-    private int _baseSpd;
-    private int _baseDef;
-    private int _baseRes;
+    public int BaseHp { get; private set; }
+    public int BaseAtk { get; private set; }
+    public int BaseSpd { get; private set; }
+    public int BaseDef { get; private set; }
+    public int BaseRes { get; private set; }
 
     private int _hp;
 
@@ -67,10 +67,15 @@ public class Character {
         DeathQuote = deathQuote;
         Skills = skills;
         Hp = hp;
+        BaseHp = hp;
         Atk = atk;
+        BaseAtk = atk;
         Spd = spd;
+        BaseSpd = spd;
         Def = def;
+        BaseDef = def;
         Res = res;
+        BaseRes = res;
         _view = view;
     }
 
@@ -83,6 +88,31 @@ public class Character {
 
     public void ReceiveStatus(GameStatus gameStatus) {
         _gameStatus = gameStatus;
+    }
+
+    public void ResetSkills() {
+        foreach (var skill in Skills) {
+            skill.IsActivated = false;
+            skill.Reset();
+        }
+        ResetAffectedStats();
+    }
+
+    private void ResetAffectedStats() {
+        ResetAtk();
+        ResetSpd();
+        ResetDef();
+        ResetRes();
+        ResetSelfModifiedStats();
+        ResetRivalModifiedStats();
+    }
+
+    private void ResetSelfModifiedStats() {
+        _selfModifiedStats = new List<SkillEffect>();
+    }
+    
+    private void ResetRivalModifiedStats() {
+        _rivalModifiedStats = new List<SkillEffect>();
     }
     
     public void ApplySkills() {
@@ -138,6 +168,7 @@ public class Character {
                 }
             }
         }
+
         if (!found) _selfModifiedStats.Add(newSkillEffect);
     }
     
@@ -184,18 +215,18 @@ public class Character {
     }
     
     private void ResetAtk() {
-        Atk = _baseAtk;
+        Atk = BaseAtk;
     }
     
     private void ResetSpd() {
-        Spd = _baseSpd;
+        Spd = BaseSpd;
     }
     
     private void ResetDef() {
-        Def = _baseDef;
+        Def = BaseDef;
     }
     
     private void ResetRes() {
-        Res = _baseRes;
+        Res = BaseRes;
     }
 }

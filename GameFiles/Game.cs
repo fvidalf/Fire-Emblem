@@ -48,7 +48,7 @@ public class Game
     private void StartGameLoop() {
         while (true) {
             CheckIfTeamsAreEmpty();
-            SetCharacters();
+            PrepareCharacters();
             HandleRoundStart();
             HandleCombat();
         }
@@ -92,8 +92,6 @@ public class Game
         
         var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
         var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
-        // Here we would join both dictionaries and notify the view of the effects
-        // For now, we will just notify the effects of the first player
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
         NotifySkillEffects(skillEffects);
     }
@@ -103,6 +101,7 @@ public class Game
         foreach (var character in firstPlayerSkillEffects.Keys) {
             var firstPlayerEffects = firstPlayerSkillEffects[character];
             var secondPlayerEffects = secondPlayerSkillEffects[character];
+
             var joinedEffects = firstPlayerEffects.Concat(secondPlayerEffects).ToList();
             var sortedEffects = GetSortedEffects(joinedEffects);
             joinedSkillEffects[character] = sortedEffects;
@@ -111,8 +110,8 @@ public class Game
     }
     
     private List<SkillEffect> GetSortedEffects(List<SkillEffect> effects) {
-        // First
         var effectsSortedByEffectType = effects.OrderBy(stat => stat.EffectType);
+        
         var effectsSortedByStat = effectsSortedByEffectType.ThenBy(stat => stat.Stats.Keys);
         return effectsSortedByStat.ToList();
     }
@@ -133,7 +132,8 @@ public class Game
     private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
         var activatingCharacter = GetCharacterByPlayerIndex(activatingPlayerIndex);
         var rivalCharacter = GetCharacterByPlayerIndex(rivalPlayerIndex);
-        return new GameStatus(activatingCharacter, rivalCharacter, _roundPhase);
+        var firstCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        return new GameStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
     }
     
     private void CheckIfTeamsAreEmpty() {
@@ -145,9 +145,22 @@ public class Game
         }
     }
 
+    private void PrepareCharacters() {
+        SetCharacters();
+        ResetCharacterSkills();
+    }
+
     private void SetCharacters() {
         SetCharacterForPlayer(_firstPlayerIndex);
         SetCharacterForPlayer(_secondPlayerIndex);
+    }
+    
+    private void ResetCharacterSkills() {
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
+        
+        firstPlayerCharacter.ResetSkills();
+        secondPlayerCharacter.ResetSkills();
     }
     
     private void SetCharacterForPlayer(int playerIndex) {
