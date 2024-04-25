@@ -20,6 +20,12 @@ public class Character {
     public int BaseSpd { get; private set; }
     public int BaseDef { get; private set; }
     public int BaseRes { get; private set; }
+    
+    public Dictionary<EffectType, int> HpModifiers;
+    public Dictionary<EffectType, int> AtkModifiers;
+    public Dictionary<EffectType, int> SpdModifiers;
+    public Dictionary<EffectType, int> DefModifiers;
+    public Dictionary<EffectType, int> ResModifiers;
 
     private int _hp;
 
@@ -41,6 +47,7 @@ public class Character {
     public int Def { get; set; }
     public int Res { get; set; }
     
+    public int FirstAttackHp { get; set; }
     public int FirstAttackAtk { get; set; }
     public int FirstAttackSpd { get; set; }
     public int FirstAttackDef { get; set; }
@@ -84,6 +91,27 @@ public class Character {
         Res = res;
         BaseRes = res;
         _view = view;
+
+        InitializeModifierMemory();
+        
+    }
+
+    private void InitializeModifierMemory() {
+        HpModifiers = new Dictionary<EffectType, int>() {
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+        };
+        AtkModifiers = new Dictionary<EffectType, int>() {
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+        };
+        SpdModifiers = new Dictionary<EffectType, int>() {
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+        };
+        DefModifiers = new Dictionary<EffectType, int>() {
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+        };
+        ResModifiers = new Dictionary<EffectType, int>() {
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+        };
     }
 
     public void Attack(Character target) {
@@ -138,9 +166,8 @@ public class Character {
     }
 
     private void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
-        Console.WriteLine($"{Name} aplica {skill.Name}");
         skill.Apply(gameStatus);
-        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SkillOverSelf)skill);
+        var characterPairedToSkillEffect = GetStatsModifiedBySkill((BaseSkill)skill);
         UpdateModifiedStats(characterPairedToSkillEffect);
     }
 
@@ -214,5 +241,33 @@ public class Character {
     
     private void ResetRes() {
         Res = BaseRes;
+    }
+
+    public void NeutralizeStats(List<Stat> statsToNeutralize) {
+        foreach (var stat in statsToNeutralize) {
+            // 
+            switch (stat) {
+                case Stat.HpPenalty:
+                    Hp += int.Abs(HpModifiers[EffectType.RegularPenalty]);
+                    FirstAttackHp += int.Abs(HpModifiers[EffectType.FirstAttackPenalty]);
+                    break;
+                case Stat.AtkPenalty:
+                    Atk += int.Abs(AtkModifiers[EffectType.RegularPenalty]);
+                    FirstAttackAtk += int.Abs(AtkModifiers[EffectType.FirstAttackPenalty]);
+                    break;
+                case Stat.SpdPenalty:
+                    Spd += int.Abs(SpdModifiers[EffectType.RegularPenalty]);
+                    FirstAttackSpd += int.Abs(SpdModifiers[EffectType.FirstAttackPenalty]);
+                    break;
+                case Stat.DefPenalty:
+                    Def += int.Abs(DefModifiers[EffectType.RegularPenalty]);
+                    FirstAttackDef += int.Abs(DefModifiers[EffectType.FirstAttackPenalty]);
+                    break;
+                case Stat.ResPenalty:
+                    Res += int.Abs(ResModifiers[EffectType.RegularPenalty]);
+                    FirstAttackRes += int.Abs(ResModifiers[EffectType.FirstAttackPenalty]);
+                    break;
+            }
+        }
     }
 }

@@ -9,5 +9,15 @@ public enum Stat {
     FirstAttackAtk,
     FirstAttackSpd,
     FirstAttackDef,
-    FirstAttackRes
+    FirstAttackRes,
+    HpBonus,
+    AtkBonus,
+    DefBonus,
+    ResBonus,
+    HpPenalty,
+    AtkPenalty,
+    SpdPenalty,
+    DefPenalty,
+    ResPenalty,
+    Null
 }

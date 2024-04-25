@@ -1,13 +1,15 @@
 ﻿
+using Fire_Emblem.Skills.SkillsOverSelf;
 using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.BoostSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.BrazenSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.StarterBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.ConditionalSkills.WeaponSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills.FlatBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSkills.FlatSkills.SacrificeSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.BoostSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.BrazenSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponAgilitySkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponFocusSkill;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponPowerSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSkills.FlatBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -64,9 +66,15 @@ public static class SkillAssigner {
         { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSkill)},
         { "Life and Death", typeof(LifeAndDeathSkill)},
         { "Solid Ground", typeof(SolidGroundSkill)},
+        { "Still Water", typeof(StillWaterSkill)},
         { "Sword Agility", typeof(SwordAgilitySkill)},
         { "Sword Focus", typeof(SwordFocusSkill)},
         { "Sword Power", typeof(SwordPowerSkill)},
-        { "Still Water", typeof(StillWaterSkill)}
+        { "Lance Power", typeof(LancePowerSkill)},
+        { "Lance Agility", typeof(LanceAgilitySkill)},
+        { "Axe Power", typeof(AxePowerSkill)},
+        { "Bow Agility", typeof(BowAgilitySkill)},
+        { "Bow Focus", typeof(BowFocusSkill)},
+        { "Agnea's Arrow", typeof(AgneasArrowSkill)}
     };
 }

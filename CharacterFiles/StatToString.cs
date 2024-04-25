@@ -21,6 +21,14 @@
             { Stat.FirstAttackSpd, "Spd" },
             { Stat.FirstAttackDef, "Def" },
             { Stat.FirstAttackRes, "Res" },
+            { Stat.HpBonus, "Hp"},
+            { Stat.AtkBonus, "Atk"},
+            { Stat.DefBonus, "Def"},
+            { Stat.ResBonus, "Res"},
+            { Stat.HpPenalty, "Hp"},
+            { Stat.SpdPenalty, "Spd"},
+            { Stat.DefPenalty, "Def"},
+            { Stat.ResPenalty, "Res"},
         };
     }
 }

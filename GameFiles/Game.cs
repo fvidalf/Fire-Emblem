@@ -105,13 +105,12 @@ public class Game
             var secondPlayerEffects = secondPlayerSkillEffects[character];
 
             firstPlayerEffects.Join(secondPlayerEffects);
-            // Print simplified effects
             var list = firstPlayerEffects.CollapseIntoList();
-            Console.WriteLine($"Efectos de {character.Name}");
-            foreach (var effect in list) {
-                Console.WriteLine($"{effect.Item1}, {StatToString.Map[effect.Item2]}, {effect.Item3}");
-            }
             var sortedEffects = GetSortedEffects(firstPlayerEffects);
+            Console.WriteLine("Imprimiendo efectos: ");
+            foreach (var effect in list) {
+                Console.WriteLine($"{effect.Item1} {effect.Item2} {effect.Item3}");
+            }
             joinedSkillEffects[character] = sortedEffects;
         }
         return joinedSkillEffects;
@@ -143,6 +142,12 @@ public class Game
                     case EffectType.RegularPenalty:
                         NotifyRegularPenalty(character, stat, amount);
                         break;
+                    case EffectType.PenaltyNeutralizer:
+                        NotifyPenaltyNeutralizer(character, stat);
+                        break;
+                    case EffectType.BonusNeutralizer:
+                        NotifyBonusNeutralizer(character, stat);
+                        break;
                 }
             }
         }
@@ -165,6 +170,14 @@ public class Game
         if (amount != 0) {
             _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}{amount}");
         }
+    }
+    
+    private void NotifyPenaltyNeutralizer(Character character, Stat stat) {
+        _view.WriteLine($"Los penalty de {StatToString.RegularizeMap[stat]} de {character.Name} fueron neutralizados");
+    }
+    
+    private void NotifyBonusNeutralizer(Character character, Stat stat) {
+        _view.WriteLine($"Los bonus de {StatToString.RegularizeMap[stat]} de {character.Name} fueron neutralizados");
     }
 
     private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {

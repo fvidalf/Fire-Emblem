@@ -45,17 +45,10 @@ public class SkillEffect
             foreach (var statEffect in statEffects) {
                 collapsedList.Add(new Tuple<EffectType, Stat, int>(effectType, statEffect.Stat, statEffect.Amount));
             }
-        }
-        return collapsedList;
-    }
-    
-    public void ConsoleWriteStats() {
-        foreach (var statEffectsByEffectType in StatEffectsByEffectType) {
-            var effectType = statEffectsByEffectType.Key;
-            var statEffects = statEffectsByEffectType.Value;
-            foreach (var statEffect in statEffects) {
-                Console.WriteLine($"{effectType}: {statEffect.Stat} +{statEffect.Amount}");
+            if (statEffects.Count == 0) {
+                collapsedList.Add(new Tuple<EffectType, Stat, int>(effectType, Stat.Null, 0));
             }
         }
+        return collapsedList;
     }
 }
