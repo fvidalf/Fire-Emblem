@@ -40,6 +40,13 @@ public class Character {
     public int Spd { get; set; }
     public int Def { get; set; }
     public int Res { get; set; }
+    
+    public int FirstAttackAtk { get; set; }
+    public int FirstAttackSpd { get; set; }
+    public int FirstAttackDef { get; set; }
+    public int FirstAttackRes { get; set; }
+    
+    public Character? MostRecentRival { get; private set; }
 
     public bool IsDead;
 
@@ -80,10 +87,17 @@ public class Character {
     }
 
     public void Attack(Character target) {
+        var thisTurnAtk = Atk;
+        if (FirstAttackAtk != 0) {
+            thisTurnAtk += FirstAttackAtk;
+            FirstAttackAtk = 0;
+        }
         var discount = IsPhysical() ? target.Def : target.Res;
-        var damage = Math.Max((Convert.ToInt32(Math.Floor(Atk * WeaponTriangleAdvantage(target))) - discount), 0);
+        var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * WeaponTriangleAdvantage(target))) - discount), 0);
         target.Hp -= damage;
         _view.WriteLine($"{Name} ataca a {target.Name} con {damage} de daño");
+        MostRecentRival = target;
+        target.MostRecentRival = this;
     }
 
     public void ReceiveStatus(GameStatus gameStatus) {
@@ -122,6 +136,7 @@ public class Character {
     }
 
     private void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
+        Console.WriteLine($"{Name} aplica {skill.Name}");
         skill.Apply(gameStatus);
         var characterPairedToSkillEffect = GetStatsModifiedBySkill((SkillOverSelf)skill);
         UpdateModifiedStats(characterPairedToSkillEffect);
@@ -206,7 +221,7 @@ public class Character {
         }
     }
     
-    private bool IsPhysical() {
+    public bool IsPhysical() {
         return Weapon is "Sword" or "Axe" or "Lance" or "Bow";
     }
     

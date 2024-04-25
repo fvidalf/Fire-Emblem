@@ -1,4 +1,6 @@
-﻿using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills;
+﻿using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.BonusSkills;
 using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.BrazenSkills;
 using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.ConditionalBonusSkills.StarterBonusSkills;
 using Fire_Emblem.Skills.SkillsOverSelf.RegularBonusSkills.FlatBonusSkills;
@@ -46,6 +48,15 @@ public static class SkillAssigner {
         { "Brazen Atk/Res", typeof(BrazenAttackAndResistanceSkill)},
         { "Brazen Spd/Def", typeof(BrazenSpeedAndDefenseSkill)},
         { "Brazen Spd/Res", typeof(BrazenSpeedAndResistanceSkill)},
-        { "Brazen Def/Res", typeof(BrazenDefenseAndResistanceSkill)}
+        { "Brazen Def/Res", typeof(BrazenDefenseAndResistanceSkill)},
+        { "Chaos Style", typeof(ChaosStyleSkill)},
+        { "Fire Boost", typeof(FireBoostSkill)},
+        { "Wind Boost", typeof(WindBoostSkill)},
+        { "Earth Boost", typeof(EarthBoostSkill)}, 
+        { "Water Boost", typeof(WaterBoostSkill)},
+        { "Will to Win", typeof(WillToWinSkill)},
+        { "Ignis", typeof(IgnisSkill)},
+        { "Single-Minded", typeof(SingleMindedSkill)},
+        { "Life and Death", typeof(LifeAndDeathSkill)}
     };
 }

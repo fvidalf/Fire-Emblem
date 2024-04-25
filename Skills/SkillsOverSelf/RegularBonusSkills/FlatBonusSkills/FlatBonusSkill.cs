@@ -15,21 +15,4 @@ public abstract class FlatBonusSkill: RegularBonusSkill {
         }
         SetModifiedStats();
     }
-    
-    private PropertyInfo GetCharacterStat(Character character, Stat stat) {
-        var statAsString = StatToString.Map[stat];
-        var characterStat = character.GetType().GetProperty(statAsString);
-        if (characterStat is null) throw new InvalidOperationException();
-        return characterStat;
-    }
-    
-    private void UpdateCharacterStat(Character character, KeyValuePair<Stat, int> stat) {
-        var characterStat = GetCharacterStat(character, stat.Key);
-        var characterStatValue = GetCharacterStatValue(characterStat, stat.Key);
-        
-        int newStatValue = (int) characterStatValue + stat.Value;
-        characterStat.SetValue(character, newStatValue);
-        
-        UpdateModifiedStats(stat);
-    }
 }

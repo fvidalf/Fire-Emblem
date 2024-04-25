@@ -65,21 +65,23 @@ public class Game
     }
 
     private void HandleCombat() {
-        ApplyCharacterSkills();
+        ApplyCharacterSkills(true);
         
         HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
         HandleRoundEnd();
         if (_doesRoundEnd) return;
-            
+        
+        ApplyCharacterSkills(false);
         HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
         HandleRoundEnd();
         if (_doesRoundEnd) return;
 
+        ApplyCharacterSkills(false);
         HandleFollowUpAttack();
         HandleRoundEnd();
     }
 
-    private void ApplyCharacterSkills() {
+    private void ApplyCharacterSkills(bool notify) {
         var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
         var firstPlayerGameStatus = GetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
         firstPlayerCharacter.ReceiveStatus(firstPlayerGameStatus);
@@ -93,7 +95,7 @@ public class Game
         var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
         var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
-        NotifySkillEffects(skillEffects);
+        if (notify) NotifySkillEffects(skillEffects);
     }
     
     private Dictionary<Character, List<SkillEffect>> JoinPlayerSkillEffects(Dictionary<Character, List<SkillEffect>> firstPlayerSkillEffects, Dictionary<Character, List<SkillEffect>> secondPlayerSkillEffects) {
@@ -119,12 +121,32 @@ public class Game
     private void NotifySkillEffects(Dictionary<Character, List<SkillEffect>> skillEffects) {
         foreach (var character in skillEffects.Keys) {
             foreach (var effect in skillEffects[character]) {
-                foreach (var stat in effect.Stats) {
-                    if (stat.Value != 0) {
-                        var diffSign = stat.Value > 0 ? "+" : "";
-                        _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat.Key]}{diffSign}{stat.Value}");
-                    }
+                switch (effect.EffectType) {
+                    case EffectType.FirstAttackBonus:
+                        NotifyFirstAttackBonus(character, effect);
+                        break;
+                    case EffectType.RegularBonus:
+                        NotifyRegularBonus(character, effect);
+                        break;
                 }
+            }
+        }
+    }
+    
+    private void NotifyFirstAttackBonus(Character character, SkillEffect effect) {
+        foreach (var stat in effect.Stats) {
+            if (stat.Value != 0) {
+                var diffSign = stat.Value > 0 ? "+" : "";
+                _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat.Key]}{diffSign}{stat.Value} en su primer ataque");
+            } 
+        }
+    }
+    
+    private void NotifyRegularBonus(Character character, SkillEffect effect) {
+        foreach (var stat in effect.Stats) {
+            if (stat.Value != 0) {
+                var diffSign = stat.Value > 0 ? "+" : "";
+                _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat.Key]}{diffSign}{stat.Value}");
             }
         }
     }

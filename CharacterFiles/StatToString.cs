@@ -9,6 +9,18 @@
             { Stat.Def, "Def" },
             { Stat.Spd, "Spd" },
             { Stat.Res, "Res" },
+            { Stat.FirstAttackAtk, "FirstAttackAtk" },
+            { Stat.FirstAttackSpd, "FirstAttackSpd" },
+            { Stat.FirstAttackDef, "FirstAttackDef" },
+            { Stat.FirstAttackRes, "FirstAttackRes" },
+        };
+        
+        public static readonly Dictionary<Stat, string> RegularizeMap = new Dictionary<Stat, string>
+        {
+            { Stat.FirstAttackAtk, "Atk" },
+            { Stat.FirstAttackSpd, "Spd" },
+            { Stat.FirstAttackDef, "Def" },
+            { Stat.FirstAttackRes, "Res" },
         };
     }
 }

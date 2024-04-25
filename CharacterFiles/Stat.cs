@@ -6,4 +6,8 @@ public enum Stat {
     Def,
     Spd,
     Res,
+    FirstAttackAtk,
+    FirstAttackSpd,
+    FirstAttackDef,
+    FirstAttackRes
 }
