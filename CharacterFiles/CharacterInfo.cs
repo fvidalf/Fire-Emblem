@@ -1,4 +1,4 @@
-﻿namespace Fire_Emblem;
+﻿namespace Fire_Emblem.CharacterFiles;
 
 public class CharacterInfo {
     // Root myDeserializedClass = JsonConvert.DeserializeObject<List<Root>>(myJsonResponse);

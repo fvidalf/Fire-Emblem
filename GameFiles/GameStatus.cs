@@ -1,7 +1,6 @@
 ﻿using Fire_Emblem.CharacterFiles;
-using Fire_Emblem.GameFiles;
 
-namespace Fire_Emblem;
+namespace Fire_Emblem.GameFiles;
 
 public class GameStatus {
     public Character ActivatingCharacter { get; private set; }

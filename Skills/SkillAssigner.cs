@@ -1,15 +1,16 @@
 ﻿
+using Fire_Emblem.Skills.SkillsOverRival.RegularRivalSkills.ConditionalRivalSkills;
 using Fire_Emblem.Skills.SkillsOverSelf;
-using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.BoostSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.BrazenSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.StarterBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponAgilitySkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponFocusSkill;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSkills.WeaponSkills.WeaponPowerSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSkills.FlatBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSkills.SacrificeSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackSelfSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BoostSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BrazenSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.BonusSkills;
+using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -27,13 +28,13 @@ public static class SkillAssigner {
     }
     
     private static readonly Dictionary<string, Type> Map = new Dictionary<string, Type> {
-        { "Attack +6", typeof(AttackSkill) },
-        { "Defense +5", typeof(DefenseSkill) },
-        { "Speed +5", typeof(SpeedSkill)},
-        { "Resistance +5", typeof(ResistanceSkill)},
-        { "Atk/Def +5", typeof(AttackAndDefenseSkill)},
-        { "Atk/Res +5", typeof(AttackAndResistanceSkill)},
-        { "Spd/Res +5", typeof(SpeedAndResistanceSkill)},
+        { "Attack +6", typeof(AttackSelfSkill) },
+        { "Defense +5", typeof(DefenseSelfSkill) },
+        { "Speed +5", typeof(SpeedSelfSkill)},
+        { "Resistance +5", typeof(ResistanceSelfSkill)},
+        { "Atk/Def +5", typeof(AttackAndDefenseSelfSkill)},
+        { "Atk/Res +5", typeof(AttackAndResistanceSelfSkill)},
+        { "Spd/Res +5", typeof(SpeedAndResistanceSelfSkill)},
         { "Wrath", typeof(WrathSkill)},
         { "Resolve", typeof(ResolveSkill)},
         { "Deadly Blade", typeof(DeadlyBladeSkill)},
@@ -63,18 +64,24 @@ public static class SkillAssigner {
         { "Will to Win", typeof(WillToWinSkill)},
         { "Ignis", typeof(IgnisSkill)},
         { "Single-Minded", typeof(SingleMindedSkill)},
-        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSkill)},
-        { "Life and Death", typeof(LifeAndDeathSkill)},
-        { "Solid Ground", typeof(SolidGroundSkill)},
-        { "Still Water", typeof(StillWaterSkill)},
-        { "Sword Agility", typeof(SwordAgilitySkill)},
-        { "Sword Focus", typeof(SwordFocusSkill)},
-        { "Sword Power", typeof(SwordPowerSkill)},
-        { "Lance Power", typeof(LancePowerSkill)},
-        { "Lance Agility", typeof(LanceAgilitySkill)},
-        { "Axe Power", typeof(AxePowerSkill)},
-        { "Bow Agility", typeof(BowAgilitySkill)},
-        { "Bow Focus", typeof(BowFocusSkill)},
-        { "Agnea's Arrow", typeof(AgneasArrowSkill)}
+        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSelfSkill)},
+        { "Life and Death", typeof(LifeAndDeathSelfSkill)},
+        { "Solid Ground", typeof(SolidGroundSelfSkill)},
+        { "Still Water", typeof(StillWaterSelfSkill)},
+        { "Sword Agility", typeof(SwordSelfAgilitySkill)},
+        { "Sword Focus", typeof(SwordSelfFocusSkill)},
+        { "Sword Power", typeof(SwordSelfPowerSkill)},
+        { "Lance Power", typeof(LanceSelfPowerSkill)},
+        { "Lance Agility", typeof(LanceSelfAgilitySkill)},
+        { "Axe Power", typeof(AxeSelfPowerSkill)},
+        { "Bow Agility", typeof(BowSelfAgilitySkill)},
+        { "Bow Focus", typeof(BowSelfFocusSkill)},
+        { "Agnea's Arrow", typeof(AgneasArrowSkill)},
+        { "Blinding Flash", typeof(BlindingFlashSkill)},
+        { "Charmer", typeof(CharmerSkill)},
+        { "Stunning Smile", typeof(StunningSmileSkill)},
+        { "Disarming Sigh", typeof(DisarmingSighSkill)},
+        { "Not *Quite*", typeof(NotQuiteSkill)},
+        { "HP +15", typeof(HpSkill)}
     };
 }
