@@ -1,5 +1,8 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
 using Fire_Emblem.Skills.SkillEffectFiles;
 using Fire_Emblem.TeamsLoaderFiles;
 
@@ -66,7 +69,6 @@ public class Game
 
     private void HandleCombat() {
         ApplyCharacterSkills(true);
-        
         HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
         HandleRoundEnd();
         if (_doesRoundEnd) return;
@@ -84,18 +86,67 @@ public class Game
     private void ApplyCharacterSkills(bool notify) {
         var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
         var firstPlayerGameStatus = GetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
-        firstPlayerCharacter.ReceiveStatus(firstPlayerGameStatus);
-        firstPlayerCharacter.ApplySkills();
+        firstPlayerCharacter.ReceiveGameStatus(firstPlayerGameStatus);
+        
+        // firstPlayerCharacter.ApplySkills();
         
         var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
         var secondPlayerGameStatus = GetGameStatus(_secondPlayerIndex, _firstPlayerIndex);
-        secondPlayerCharacter.ReceiveStatus(secondPlayerGameStatus);
-        secondPlayerCharacter.ApplySkills();
+        secondPlayerCharacter.ReceiveGameStatus(secondPlayerGameStatus);
+        
+        // secondPlayerCharacter.ApplySkills();
+        
+        var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter});
+        ApplySkillsJointly(joinedSkills);
+        
         
         var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
         var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
         if (notify) NotifySkillEffects(skillEffects);
+    }
+    
+    private Tuple<Character, SingleCharacterSkill>[] JoinSkills(Character[] characters) {
+        foreach (var character in characters) {
+            character.ResetModifiedStats();
+        }
+        var skillsPairedToCharacter = new List<Tuple<Character, SingleCharacterSkill>>();
+        foreach (var skill in characters[0].SingledSkills) {
+            skillsPairedToCharacter.Add(new Tuple<Character, SingleCharacterSkill>(characters[0], skill));
+        }
+
+        foreach (var skill in characters[1].SingledSkills) {
+            skillsPairedToCharacter.Add(new Tuple<Character, SingleCharacterSkill>(characters[1], skill));
+        }
+        
+        var orderedSkills = OrderSkills(skillsPairedToCharacter.ToArray());
+        return orderedSkills;
+    }
+    
+    private Tuple<Character, SingleCharacterSkill>[] OrderSkills(Tuple<Character, SingleCharacterSkill>[] skillsPairedToCharacter) {
+        var firstSkillsToApply = new List<Tuple<Character, SingleCharacterSkill>>();
+        var lastSkillsToApply = new List<Tuple<Character, SingleCharacterSkill>>();
+        
+        foreach (var pair in skillsPairedToCharacter) {
+            var character = pair.Item1;
+            var skill = pair.Item2;
+            if (skill is BonusNeutralizer or PenaltyNeutralizer) {
+                lastSkillsToApply.Add(new Tuple<Character, SingleCharacterSkill>(character, skill));
+            }
+            else {
+                firstSkillsToApply.Add(new Tuple<Character, SingleCharacterSkill>(character, skill));
+            }
+        }
+        firstSkillsToApply.AddRange(lastSkillsToApply);
+        return firstSkillsToApply.ToArray();
+    }
+
+    private void ApplySkillsJointly(Tuple<Character, SingleCharacterSkill>[] skillsPairedToCharacter) {
+        foreach (var pair in skillsPairedToCharacter) {
+            var character = pair.Item1;
+            var skill = pair.Item2;
+            if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
+        }
     }
     
     private Dictionary<Character, List<Tuple<EffectType, Stat, int>>> JoinPlayerSkillEffects(Dictionary<Character, SkillEffect> firstPlayerSkillEffects, Dictionary<Character, SkillEffect> secondPlayerSkillEffects) {
@@ -107,10 +158,6 @@ public class Game
             firstPlayerEffects.Join(secondPlayerEffects);
             var list = firstPlayerEffects.CollapseIntoList();
             var sortedEffects = GetSortedEffects(firstPlayerEffects);
-            Console.WriteLine("Imprimiendo efectos: ");
-            foreach (var effect in list) {
-                Console.WriteLine($"{effect.Item1} {effect.Item2} {effect.Item3}");
-            }
             joinedSkillEffects[character] = sortedEffects;
         }
         return joinedSkillEffects;
@@ -142,6 +189,9 @@ public class Game
                     case EffectType.RegularPenalty:
                         NotifyRegularPenalty(character, stat, amount);
                         break;
+                    case EffectType.FirstAttackPenalty:
+                        NotifyFirstAttackPenalty(character, stat, amount);
+                        break;
                     case EffectType.PenaltyNeutralizer:
                         NotifyPenaltyNeutralizer(character, stat);
                         break;
@@ -155,8 +205,7 @@ public class Game
     
     private void NotifyFirstAttackBonus(Character character, Stat stat, int amount) {
         if (amount != 0) {
-            var diffSign = amount > 0 ? "+" : "";
-            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}{diffSign}{amount} en su primer ataque");
+            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}+{amount} en su primer ataque");
         } 
     }
     
@@ -169,6 +218,12 @@ public class Game
     private void NotifyRegularPenalty(Character character, Stat stat, int amount) {
         if (amount != 0) {
             _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}{amount}");
+        }
+    }
+    
+    private void NotifyFirstAttackPenalty(Character character, Stat stat, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}{amount} en su primer ataque");
         }
     }
     

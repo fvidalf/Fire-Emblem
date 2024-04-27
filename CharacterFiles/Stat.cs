@@ -12,6 +12,7 @@ public enum Stat {
     FirstAttackRes,
     HpBonus,
     AtkBonus,
+    SpdBonus,
     DefBonus,
     ResBonus,
     HpPenalty,

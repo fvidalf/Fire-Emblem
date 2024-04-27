@@ -1,8 +1,11 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
+using Fire_Emblem.Skills.MultiCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
 using Fire_Emblem.Skills.SkillEffectFiles;
-using Fire_Emblem.Skills.SkillsOverSelf;
 
 namespace Fire_Emblem.CharacterFiles;
 
@@ -13,7 +16,8 @@ public class Character {
     public string Gender { get; set; }
     public string DeathQuote { get; set; }
     public IBaseSkill[] Skills { get; private set; }
-    private GameStatus _gameStatus;
+    public SingleCharacterSkill[] SingledSkills { get; private set; }
+    public GameStatus GameStatus { get; private set; }
 
     public int BaseHp { get; private set; }
     public int BaseAtk { get; private set; }
@@ -93,7 +97,8 @@ public class Character {
         _view = view;
 
         InitializeModifierMemory();
-        
+        PrepareSkills();
+
     }
 
     private void InitializeModifierMemory() {
@@ -114,26 +119,64 @@ public class Character {
         };
     }
 
+    private void PrepareSkills() {
+        SingledSkills = DecomposeSkills();
+        SingledSkills = OrderSkills(SingledSkills);
+    }
+
     public void Attack(Character target) {
+        var thisTurnAtk = GetThisTurnAtk();
+        var thisTurnDef = GetThisTurnDef(target);
+        var thisTurnRes = GetThisTurnRes(target);
+        ExecuteAttack(thisTurnAtk, thisTurnDef, thisTurnRes, target);
+        SetMostRecentRival(target);
+    }
+    
+    private int GetThisTurnAtk() {
         var thisTurnAtk = Atk;
         if (FirstAttackAtk != 0) {
             thisTurnAtk += FirstAttackAtk;
             FirstAttackAtk = 0;
         }
-        var discount = IsPhysical() ? target.Def : target.Res;
+        return thisTurnAtk;
+    }
+    
+    private int GetThisTurnDef(Character target) {
+        var thisTurnDef = target.Def;
+        if (target.FirstAttackDef != 0) {
+            thisTurnDef += target.FirstAttackDef;
+            target.FirstAttackDef = 0;
+        }
+        return thisTurnDef;
+    }
+    
+    private int GetThisTurnRes(Character target) {
+        var thisTurnRes = target.Res;
+        if (target.FirstAttackRes != 0) {
+            thisTurnRes += target.FirstAttackRes;
+            target.FirstAttackRes = 0;
+        }
+        return thisTurnRes;
+    }
+
+    private void ExecuteAttack(int thisTurnAtk, int thisTurnDef, int thisTurnRes, Character target) {
+        var discount = IsPhysical() ? thisTurnDef : thisTurnRes;
         var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * WeaponTriangleAdvantage(target))) - discount), 0);
         target.Hp -= damage;
         _view.WriteLine($"{Name} ataca a {target.Name} con {damage} de daño");
+    }
+
+    private void SetMostRecentRival(Character target) {
         MostRecentRival = target;
         target.MostRecentRival = this;
     }
-
-    public void ReceiveStatus(GameStatus gameStatus) {
-        _gameStatus = gameStatus;
+    
+    public void ReceiveGameStatus(GameStatus gameStatus) {
+        GameStatus = gameStatus;
     }
 
     public void ResetSkills() {
-        foreach (var skill in Skills) {
+        foreach (var skill in SingledSkills) {
             skill.IsActivated = false;
             skill.Reset();
         }
@@ -145,42 +188,72 @@ public class Character {
         ResetSpd();
         ResetDef();
         ResetRes();
-        ResetSelfModifiedStats();
-        ResetRivalModifiedStats();
+        ResetModifiedStats();
     }
 
-    private void ResetSelfModifiedStats() {
+    public void ResetModifiedStats() {
         _selfModifiedStats = new SkillEffect();
-    }
-    
-    private void ResetRivalModifiedStats() {
         _rivalModifiedStats = new SkillEffect();
     }
     
     public void ApplySkills() {
-        ResetSelfModifiedStats();
-        ResetRivalModifiedStats();
-        foreach (var skill in Skills) {
-            if (!skill.IsActivated) ApplySkill(skill, _gameStatus);
+        ResetModifiedStats();
+        foreach (var skill in SingledSkills) {
+            if (!skill.IsActivated) ApplySkill(skill, GameStatus);
         }
     }
+    
+    private SingleCharacterSkill[] DecomposeSkills() {
+        var decomposedSkills = new List<SingleCharacterSkill>();
+        foreach (var skill in Skills) {
+            if (skill is MultiCharacterSkill multiCharacterSkill) {
+                decomposedSkills.AddRange(multiCharacterSkill.Decompose());
+            }
+            else if (skill is SingleCharacterSkill singleCharacterSkill) {
+                decomposedSkills.Add(singleCharacterSkill);
+            }
+        }
+        return decomposedSkills.ToArray();
+    }
+    
+    private SingleCharacterSkill[] OrderSkills(SingleCharacterSkill[] skills) {
+        var firstSkillsToApply = new List<SingleCharacterSkill>();
+        var lastSkillsToApply = new List<SingleCharacterSkill>();
+        foreach (var skill in skills) {
+            if (skill is BonusNeutralizer or PenaltyNeutralizer) {
+                lastSkillsToApply.Add(skill);
+            }
+            else {
+                firstSkillsToApply.Add(skill);
+            }
+        }
+        firstSkillsToApply.AddRange(lastSkillsToApply);
+        return firstSkillsToApply.ToArray();
+    }
 
-    private void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
+    public void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
         skill.Apply(gameStatus);
-        var characterPairedToSkillEffect = GetStatsModifiedBySkill((BaseSkill)skill);
+        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
         UpdateModifiedStats(characterPairedToSkillEffect);
     }
 
     public Dictionary<Character, SkillEffect> GetSkillEffects() {
         var skillEffects = new Dictionary<Character, SkillEffect>();
         skillEffects[this] = _selfModifiedStats;
-        var rival = _gameStatus.RivalCharacter;
+        var rival = GameStatus.RivalCharacter;
         skillEffects[rival] = _rivalModifiedStats;
         return skillEffects;
     }
 
     private Dictionary<Character, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
-        return skill.GetModifiedStats();
+        switch (skill) {
+            case ISingleCharacterSkill singleCharacterSkill:
+                return singleCharacterSkill.GetModifiedStats();
+            case IMultiCharacterSkill multiCharacterSkill:
+                return multiCharacterSkill.GetModifiedStats();
+            default:
+                return new Dictionary<Character, SkillEffect>();
+        }
     }
 
     private void UpdateModifiedStats(Dictionary<Character, SkillEffect> characterPairedToSkillEffect) {
@@ -245,27 +318,68 @@ public class Character {
 
     public void NeutralizeStats(List<Stat> statsToNeutralize) {
         foreach (var stat in statsToNeutralize) {
-            // 
             switch (stat) {
                 case Stat.HpPenalty:
                     Hp += int.Abs(HpModifiers[EffectType.RegularPenalty]);
                     FirstAttackHp += int.Abs(HpModifiers[EffectType.FirstAttackPenalty]);
+                    HpModifiers[EffectType.RegularPenalty] = 0;
+                    HpModifiers[EffectType.FirstAttackPenalty] = 0;
                     break;
                 case Stat.AtkPenalty:
+                     Console.WriteLine($"Añadiendo Bonus de Atk de {Name}");
                     Atk += int.Abs(AtkModifiers[EffectType.RegularPenalty]);
                     FirstAttackAtk += int.Abs(AtkModifiers[EffectType.FirstAttackPenalty]);
+                    AtkModifiers[EffectType.RegularPenalty] = 0;
+                    AtkModifiers[EffectType.FirstAttackPenalty] = 0;
                     break;
                 case Stat.SpdPenalty:
                     Spd += int.Abs(SpdModifiers[EffectType.RegularPenalty]);
                     FirstAttackSpd += int.Abs(SpdModifiers[EffectType.FirstAttackPenalty]);
+                    SpdModifiers[EffectType.RegularPenalty] = 0;
+                    SpdModifiers[EffectType.FirstAttackPenalty] = 0;
                     break;
                 case Stat.DefPenalty:
                     Def += int.Abs(DefModifiers[EffectType.RegularPenalty]);
                     FirstAttackDef += int.Abs(DefModifiers[EffectType.FirstAttackPenalty]);
+                    DefModifiers[EffectType.RegularPenalty] = 0;
+                    DefModifiers[EffectType.FirstAttackPenalty] = 0;
                     break;
                 case Stat.ResPenalty:
                     Res += int.Abs(ResModifiers[EffectType.RegularPenalty]);
                     FirstAttackRes += int.Abs(ResModifiers[EffectType.FirstAttackPenalty]);
+                    ResModifiers[EffectType.RegularPenalty] = 0;
+                    ResModifiers[EffectType.FirstAttackPenalty] = 0;
+                    break;
+                case Stat.HpBonus:
+                    Hp -= int.Abs(HpModifiers[EffectType.RegularBonus]);
+                    FirstAttackHp -= int.Abs(HpModifiers[EffectType.FirstAttackBonus]);
+                    HpModifiers[EffectType.RegularBonus] = 0;
+                    HpModifiers[EffectType.FirstAttackBonus] = 0;
+                    break;
+                case Stat.AtkBonus:
+                     Console.WriteLine($"Eliminando Bonus de Atk de {Name}");
+                    Atk -= int.Abs(AtkModifiers[EffectType.RegularBonus]);
+                    FirstAttackAtk -= int.Abs(AtkModifiers[EffectType.FirstAttackBonus]);
+                    AtkModifiers[EffectType.RegularBonus] = 0;
+                    AtkModifiers[EffectType.FirstAttackBonus] = 0;
+                    break;
+                case Stat.SpdBonus:
+                    Spd -= int.Abs(SpdModifiers[EffectType.RegularBonus]);
+                    FirstAttackSpd -= int.Abs(SpdModifiers[EffectType.FirstAttackBonus]);
+                    SpdModifiers[EffectType.RegularBonus] = 0;
+                    SpdModifiers[EffectType.FirstAttackBonus] = 0;
+                    break;
+                case Stat.DefBonus:
+                    Def -= int.Abs(DefModifiers[EffectType.RegularBonus]);
+                    FirstAttackDef -= int.Abs(DefModifiers[EffectType.FirstAttackBonus]);
+                    DefModifiers[EffectType.RegularBonus] = 0;
+                    DefModifiers[EffectType.FirstAttackBonus] = 0;
+                    break;
+                case Stat.ResBonus:
+                    Res -= int.Abs(ResModifiers[EffectType.RegularBonus]);
+                    FirstAttackRes -= int.Abs(ResModifiers[EffectType.FirstAttackBonus]);
+                    ResModifiers[EffectType.RegularBonus] = 0;
+                    ResModifiers[EffectType.FirstAttackBonus] = 0;
                     break;
             }
         }

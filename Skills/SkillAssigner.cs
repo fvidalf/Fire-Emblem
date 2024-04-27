@@ -1,16 +1,20 @@
-﻿
-using Fire_Emblem.Skills.SkillsOverRival.RegularRivalSkills.ConditionalRivalSkills;
-using Fire_Emblem.Skills.SkillsOverSelf;
-using Fire_Emblem.Skills.SkillsOverSelf.FirstAttackSelfSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BoostSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BrazenSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.StarterBonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.BonusSkills;
-using Fire_Emblem.Skills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.SacrificeSkills;
+﻿using Fire_Emblem.Skills.MultiCharacterSkills;
+using Fire_Emblem.Skills.MultiCharacterSkills.DragonskinSkillFiles;
+using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival.FirstAttackRivalSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival.RegularRivalSkills.ConditionalRivalSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.FirstAttackSelfSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BoostSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BrazenSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.BonusSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -28,13 +32,13 @@ public static class SkillAssigner {
     }
     
     private static readonly Dictionary<string, Type> Map = new Dictionary<string, Type> {
-        { "Attack +6", typeof(AttackSelfSkill) },
-        { "Defense +5", typeof(DefenseSelfSkill) },
-        { "Speed +5", typeof(SpeedSelfSkill)},
-        { "Resistance +5", typeof(ResistanceSelfSkill)},
-        { "Atk/Def +5", typeof(AttackAndDefenseSelfSkill)},
-        { "Atk/Res +5", typeof(AttackAndResistanceSelfSkill)},
-        { "Spd/Res +5", typeof(SpeedAndResistanceSelfSkill)},
+        { "Attack +6", typeof(AttackSkill) },
+        { "Defense +5", typeof(DefenseSkill) },
+        { "Speed +5", typeof(SpeedSkill)},
+        { "Resistance +5", typeof(ResistanceSkill)},
+        { "Atk/Def +5", typeof(AttackAndDefenseSkill)},
+        { "Atk/Res +5", typeof(AttackAndResistanceSkill)},
+        { "Spd/Res +5", typeof(SpeedAndResistanceSkill)},
         { "Wrath", typeof(WrathSkill)},
         { "Resolve", typeof(ResolveSkill)},
         { "Deadly Blade", typeof(DeadlyBladeSkill)},
@@ -64,10 +68,10 @@ public static class SkillAssigner {
         { "Will to Win", typeof(WillToWinSkill)},
         { "Ignis", typeof(IgnisSkill)},
         { "Single-Minded", typeof(SingleMindedSkill)},
-        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSelfSkill)},
-        { "Life and Death", typeof(LifeAndDeathSelfSkill)},
-        { "Solid Ground", typeof(SolidGroundSelfSkill)},
-        { "Still Water", typeof(StillWaterSelfSkill)},
+        { "Fort. Def/Res", typeof(FortifyDefenseAndResistanceSkill)},
+        { "Life and Death", typeof(LifeAndDeathSkill)},
+        { "Solid Ground", typeof(SolidGroundSkill)},
+        { "Still Water", typeof(StillWaterSkill)},
         { "Sword Agility", typeof(SwordSelfAgilitySkill)},
         { "Sword Focus", typeof(SwordSelfFocusSkill)},
         { "Sword Power", typeof(SwordSelfPowerSkill)},
@@ -77,11 +81,21 @@ public static class SkillAssigner {
         { "Bow Agility", typeof(BowSelfAgilitySkill)},
         { "Bow Focus", typeof(BowSelfFocusSkill)},
         { "Agnea's Arrow", typeof(AgneasArrowSkill)},
+        { "Beorc's Blessing", typeof(BeorcsBlessingSkill)},
         { "Blinding Flash", typeof(BlindingFlashSkill)},
         { "Charmer", typeof(CharmerSkill)},
         { "Stunning Smile", typeof(StunningSmileSkill)},
         { "Disarming Sigh", typeof(DisarmingSighSkill)},
         { "Not *Quite*", typeof(NotQuiteSkill)},
-        { "HP +15", typeof(HpSkill)}
+        { "Luna", typeof(LunaSkill)},
+        { "Belief in Love", typeof(BeliefInLoveSkill)},
+        { "HP +15", typeof(HpSkill)},
+        { "Lull Atk/Spd", typeof(LullAttackAndSpeedSkill)},
+        { "Lull Atk/Def", typeof(LullAttackAndDefenceSkill)},
+        { "Lull Atk/Res", typeof(LullAttackAndResistanceSkill)},
+        { "Lull Spd/Def", typeof(LullSpeedAndDefenceSkill)},
+        { "Lull Spd/Res", typeof(LullSpeedAndResistanceSkill)},
+        { "Lull Def/Res", typeof(LullDefenceAndResistanceSkill)},
+        { "Dragonskin", typeof(DragonskinSkill)}
     };
 }
