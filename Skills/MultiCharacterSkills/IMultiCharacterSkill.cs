@@ -6,5 +6,4 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 
 public interface IMultiCharacterSkill: IBaseSkill {
     new void Apply(GameStatus gameStatus);
-    Dictionary<Character, SkillEffect> GetModifiedStats();
 }

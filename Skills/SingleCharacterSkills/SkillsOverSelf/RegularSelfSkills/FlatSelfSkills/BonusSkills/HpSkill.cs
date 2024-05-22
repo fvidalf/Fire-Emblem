@@ -1,4 +1,5 @@
 ﻿using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.BonusSkills;
@@ -13,7 +14,7 @@ public class HpSkill: FlatSelfSkill {
                 }}
             }) {}
 
-    protected override void UpdateCharacterStat(Character character, EffectType effectType, StatEffect statEffect) {
+    protected override void UpdateStat(Character character, EffectType effectType, StatEffect statEffect) {
         var characterStat = GetCharacterStat(Character, statEffect.Stat);
         var characterStatValue = GetCharacterStatValue(characterStat, statEffect.Stat);
 

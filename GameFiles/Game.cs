@@ -1,5 +1,6 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
 using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
@@ -61,72 +62,85 @@ public class Game
         WriteRoundStartMessage();
         ResetRoundParameters();
     }
-
+    
+    private void WriteRoundStartMessage() {
+        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        _view.WriteLine($"Round {_round}: {firstPlayerCharacter.Name} (Player {_firstPlayerIndex + 1}) comienza");
+        WriteWeaponTriangleAdvantage();
+    }
+    
     private void ResetRoundParameters() {
         _roundPhase = 0;
         _doesRoundEnd = false;
     }
-
+    
     private void HandleCombat() {
-        ApplyCharacterSkills(true);
-        HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
-        HandleRoundEnd();
+        ExecuteCommonRound(_firstPlayerIndex, _secondPlayerIndex);
         if (_doesRoundEnd) return;
-        
-        ApplyCharacterSkills(false);
-        HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
-        HandleRoundEnd();
+        ExecuteCommonRound(_secondPlayerIndex, _firstPlayerIndex);
         if (_doesRoundEnd) return;
+        ExecuteFollowUpRound();
+    }
 
-        ApplyCharacterSkills(false);
+    private void ExecuteCommonRound(int attackingPlayerIndex, int defendingPlayerIndex) {
+        HandleCharacterSkills();
+        HandleRegularAttack(attackingPlayerIndex, defendingPlayerIndex);
+        HandleRoundEnd();
+    }
+
+    private void ExecuteFollowUpRound() {
+        HandleCharacterSkills();
         HandleFollowUpAttack();
         HandleRoundEnd();
     }
 
-    private void ApplyCharacterSkills(bool notify) {
+    private void HandleCharacterSkills() {
         var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
-        var firstPlayerGameStatus = GetGameStatus(_firstPlayerIndex, _secondPlayerIndex);
-        firstPlayerCharacter.ReceiveGameStatus(firstPlayerGameStatus);
-        
-        // firstPlayerCharacter.ApplySkills();
-        
         var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
-        var secondPlayerGameStatus = GetGameStatus(_secondPlayerIndex, _firstPlayerIndex);
-        secondPlayerCharacter.ReceiveGameStatus(secondPlayerGameStatus);
+        SetCharacterGameStatus(firstPlayerCharacter, _firstPlayerIndex, _secondPlayerIndex);
+        SetCharacterGameStatus(secondPlayerCharacter, _secondPlayerIndex, _firstPlayerIndex);
         
-        // secondPlayerCharacter.ApplySkills();
-        
+        ApplyCharacterSkills(firstPlayerCharacter, secondPlayerCharacter);
+        HandleSkillEffectsNotification(firstPlayerCharacter, secondPlayerCharacter);
+    }
+    
+    private Character GetCharacterByPlayerIndex(int playerIndex) {
+        return _charactersByPlayerIndex[playerIndex];
+    }
+
+    private void SetCharacterGameStatus(Character character, int characterIndex, int rivalIndex) {
+        var gameStatus = GetGameStatus(characterIndex, rivalIndex);
+        character.ReceiveGameStatus(gameStatus);
+    }
+    
+    private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
+        var activatingCharacter = GetCharacterByPlayerIndex(activatingPlayerIndex);
+        var rivalCharacter = GetCharacterByPlayerIndex(rivalPlayerIndex);
+        var firstCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
+        return new GameStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
+    }
+
+    private void ApplyCharacterSkills(Character firstPlayerCharacter, Character secondPlayerCharacter) {
+        firstPlayerCharacter.ResetModifiedStats();
+        secondPlayerCharacter.ResetModifiedStats();
         var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter});
-        ApplySkillsJointly(joinedSkills);
-        
-        
-        var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
-        var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
-        var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
-        if (notify) NotifySkillEffects(skillEffects);
+        var orderedSkills = OrderSkills(joinedSkills);
+        ApplySkillsJointly(orderedSkills);
     }
     
     private Tuple<Character, SingleCharacterSkill>[] JoinSkills(Character[] characters) {
-        foreach (var character in characters) {
-            character.ResetModifiedStats();
-        }
         var skillsPairedToCharacter = new List<Tuple<Character, SingleCharacterSkill>>();
-        foreach (var skill in characters[0].SingledSkills) {
-            skillsPairedToCharacter.Add(new Tuple<Character, SingleCharacterSkill>(characters[0], skill));
+        foreach (var character in characters) {
+            foreach (var skill in character.SingleSkills) {
+                skillsPairedToCharacter.Add(new Tuple<Character, SingleCharacterSkill>(character, skill));
+            }
         }
-
-        foreach (var skill in characters[1].SingledSkills) {
-            skillsPairedToCharacter.Add(new Tuple<Character, SingleCharacterSkill>(characters[1], skill));
-        }
-        
-        var orderedSkills = OrderSkills(skillsPairedToCharacter.ToArray());
-        return orderedSkills;
+        return skillsPairedToCharacter.ToArray();
     }
     
     private Tuple<Character, SingleCharacterSkill>[] OrderSkills(Tuple<Character, SingleCharacterSkill>[] skillsPairedToCharacter) {
         var firstSkillsToApply = new List<Tuple<Character, SingleCharacterSkill>>();
         var lastSkillsToApply = new List<Tuple<Character, SingleCharacterSkill>>();
-        
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
@@ -147,6 +161,13 @@ public class Game
             var skill = pair.Item2;
             if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
         }
+    }
+    
+    private void HandleSkillEffectsNotification(Character firstPlayerCharacter, Character secondPlayerCharacter) {
+        var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
+        var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
+        var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
+        NotifySkillEffects(skillEffects);
     }
     
     private Dictionary<Character, List<Tuple<EffectType, Stat, int>>> JoinPlayerSkillEffects(Dictionary<Character, SkillEffect> firstPlayerSkillEffects, Dictionary<Character, SkillEffect> secondPlayerSkillEffects) {
@@ -178,19 +199,11 @@ public class Game
                 var stat = effect.Item2;
                 var amount = effect.Item3;
                 switch (effectType) {
-                    case EffectType.FirstAttackBonus:
-                        NotifyFirstAttackBonus(character, stat, amount);
+                    case EffectType.FirstAttackBonus or EffectType.FirstAttackPenalty:
+                        NotifyFirstAttackSkill(character, stat, amount);
                         break;
-                    case EffectType.RegularBonus:
-                        NotifyRegularBonus(character, stat, amount);
-                        break;
-                    case EffectType.FollowUpAttackBonus:
-                        break;
-                    case EffectType.RegularPenalty:
-                        NotifyRegularPenalty(character, stat, amount);
-                        break;
-                    case EffectType.FirstAttackPenalty:
-                        NotifyFirstAttackPenalty(character, stat, amount);
+                    case EffectType.RegularBonus or EffectType.RegularPenalty:
+                        NotifyRegularSkill(character, stat, amount);
                         break;
                     case EffectType.PenaltyNeutralizer:
                         NotifyPenaltyNeutralizer(character, stat);
@@ -203,27 +216,17 @@ public class Game
         }
     }
     
-    private void NotifyFirstAttackBonus(Character character, Stat stat, int amount) {
+    private void NotifyFirstAttackSkill(Character character, Stat stat, int amount) {
         if (amount != 0) {
-            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}+{amount} en su primer ataque");
+            var diffSign = amount > 0 ? "+" : "";
+            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}{diffSign}{amount} en su primer ataque");
         } 
     }
     
-    private void NotifyRegularBonus(Character character, Stat stat, int amount) {
+    private void NotifyRegularSkill(Character character, Stat stat, int amount) {
         if (amount != 0) {
-            _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}+{amount}");
-        }
-    }
-    
-    private void NotifyRegularPenalty(Character character, Stat stat, int amount) {
-        if (amount != 0) {
-            _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}{amount}");
-        }
-    }
-    
-    private void NotifyFirstAttackPenalty(Character character, Stat stat, int amount) {
-        if (amount != 0) {
-            _view.WriteLine($"{character.Name} obtiene {StatToString.RegularizeMap[stat]}{amount} en su primer ataque");
+            var diffSign = amount > 0 ? "+" : "";
+            _view.WriteLine($"{character.Name} obtiene {StatToString.Map[stat]}{diffSign}{amount}");
         }
     }
     
@@ -233,13 +236,6 @@ public class Game
     
     private void NotifyBonusNeutralizer(Character character, Stat stat) {
         _view.WriteLine($"Los bonus de {StatToString.RegularizeMap[stat]} de {character.Name} fueron neutralizados");
-    }
-
-    private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
-        var activatingCharacter = GetCharacterByPlayerIndex(activatingPlayerIndex);
-        var rivalCharacter = GetCharacterByPlayerIndex(rivalPlayerIndex);
-        var firstCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
-        return new GameStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
     }
     
     private void CheckIfTeamsAreEmpty() {
@@ -274,10 +270,11 @@ public class Game
         _charactersByPlayerIndex[playerIndex] = character;
     }
     
-    private void WriteRoundStartMessage() {
+    private void WriteWeaponTriangleAdvantage() {
         var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
-        _view.WriteLine($"Round {_round}: {firstPlayerCharacter.Name} (Player {_firstPlayerIndex + 1}) comienza");
-        WriteWta();
+        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
+        var advantageMessage = WeaponTriangleAdvantage.GetAdvantageMessage(firstPlayerCharacter, secondPlayerCharacter);
+        _view.WriteLine(advantageMessage);
     }
 
     private void HandleRegularAttack(int attackingPlayerIndex, int defendingPlayerIndex) {
@@ -305,10 +302,6 @@ public class Game
     private void AdvanceRoundPhase() {
         _roundPhase++; 
     }
-    
-    private Character GetCharacterByPlayerIndex(int playerIndex) {
-        return _charactersByPlayerIndex[playerIndex];
-    }
 
     private void RemoveCurrentPlayerCharacter(int playerIndex) {
         var characterToRemove = _charactersByPlayerIndex[playerIndex];
@@ -332,27 +325,6 @@ public class Game
             HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
         } else {
             HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
-        }
-    }
-    
-    private void WriteWta() {
-        var firstPlayerCharacter = GetCharacterByPlayerIndex(_firstPlayerIndex);
-        var secondPlayerCharacter = GetCharacterByPlayerIndex(_secondPlayerIndex);
-        
-        switch (firstPlayerCharacter.Weapon) {
-            case "Sword" when secondPlayerCharacter.Weapon == "Axe":
-            case "Axe" when secondPlayerCharacter.Weapon == "Lance":
-            case "Lance" when secondPlayerCharacter.Weapon == "Sword":
-                _view.WriteLine($"{firstPlayerCharacter.Name} ({firstPlayerCharacter.Weapon}) tiene ventaja con respecto a {secondPlayerCharacter.Name} ({secondPlayerCharacter.Weapon})");
-                break;
-            case "Axe" when secondPlayerCharacter.Weapon == "Sword":
-            case "Lance" when secondPlayerCharacter.Weapon == "Axe":
-            case "Sword" when secondPlayerCharacter.Weapon == "Lance":
-                _view.WriteLine($"{secondPlayerCharacter.Name} ({secondPlayerCharacter.Weapon}) tiene ventaja con respecto a {firstPlayerCharacter.Name} ({firstPlayerCharacter.Weapon})");
-                break;
-            default:
-                _view.WriteLine("Ninguna unidad tiene ventaja con respecto a la otra");
-                break;
         }
     }
 

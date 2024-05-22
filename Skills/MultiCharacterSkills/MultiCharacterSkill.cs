@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Reflection.Metadata;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
 using Fire_Emblem.Skills.SkillEffectFiles;
@@ -48,17 +49,11 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
         return modifiedStats;
     }
     
-    protected int GetCharacterStatValue(PropertyInfo characterStat, Stat stat) {
-        var characterStatValue = characterStat.GetValue(Character);
-        if (characterStatValue is null) throw new InvalidOperationException();
-        return (int) characterStatValue;
-    }
-    
     public virtual void Reset() {
         IsActivated = false;
     }
 
-    public List<SingleCharacterSkill> Decompose() {
+    public List<SingleCharacterSkill> DecomposeIntoList() {
         return Skills.ToList();
     }
 }

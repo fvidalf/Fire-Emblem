@@ -7,6 +7,4 @@ namespace Fire_Emblem.Skills.SingleCharacterSkills;
 public interface ISingleCharacterSkill: IBaseSkill {
     new void Apply(GameStatus gameStatus);
     SkillEffect SkillEffect { get; set; }
-    
-    Dictionary<Character, SkillEffect> GetModifiedStats();
 }

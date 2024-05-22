@@ -1,5 +1,7 @@
 ﻿using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
+using Fire_Emblem.Skills.SingleCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
 using Fire_Emblem.Skills.SkillEffectFiles;
 

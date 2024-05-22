@@ -1,4 +1,5 @@
 ﻿using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills;
@@ -19,7 +20,7 @@ public class WrathSkill: ConditionalSelfSkill {
         return GameStatus.RoundPhase == 0;
     }
 
-    protected override void UpdateCharacterStat(Character character, EffectType effectType, StatEffect statEffect) {
+    protected override void UpdateStat(Character character, EffectType effectType, StatEffect statEffect) {
         var diffInHp = Character.BaseHp - Character.Hp;
         var numberOfIncreases = Math.Min(diffInHp, 30);
         UpdateByVariableAmount(statEffect, numberOfIncreases);

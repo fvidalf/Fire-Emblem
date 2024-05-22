@@ -15,7 +15,7 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
             foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
                 var effectType = statEffects.Key;
                 foreach (var statEffect in statEffects.Value) {
-                    UpdateCharacterStat(Character, effectType, statEffect);
+                    UpdateStat(Character, effectType, statEffect);
                 }
             }
         }

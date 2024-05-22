@@ -1,4 +1,5 @@
 ﻿using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
@@ -14,13 +15,13 @@ public class LunaSkill: FirstAttackSkill {
         var characterDefValue = GetCharacterStatValue(characterDef, Stat.Def);
         var decreaseInDef = (double) - 0.5d * characterDefValue;
         var newDefEffect = new StatEffect(Stat.FirstAttackDef, (int) decreaseInDef);
-        UpdateCharacterStat(Character, EffectType.FirstAttackPenalty, newDefEffect);
+        UpdateStat(Character, EffectType.FirstAttackPenalty, newDefEffect);
         
         var characterRes = GetCharacterStat(Character, Stat.Res);
         var characterResValue = GetCharacterStatValue(characterRes, Stat.Res);
         var decreaseInRes = (double) - 0.5d * characterResValue;
         var newResEffect = new StatEffect(Stat.FirstAttackRes, (int) decreaseInRes);
-        UpdateCharacterStat(Character, EffectType.FirstAttackPenalty, newResEffect);
+        UpdateStat(Character, EffectType.FirstAttackPenalty, newResEffect);
     }
 
     public override void DetermineTarget(GameStatus gameStatus) {

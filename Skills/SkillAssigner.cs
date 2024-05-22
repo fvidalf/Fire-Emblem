@@ -1,5 +1,4 @@
-﻿using Fire_Emblem.Skills.MultiCharacterSkills;
-using Fire_Emblem.Skills.MultiCharacterSkills.DragonskinSkillFiles;
+﻿using Fire_Emblem.Skills.MultiCharacterSkills.DragonskinSkillFiles;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
 using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival.FirstAttackRivalSkills;

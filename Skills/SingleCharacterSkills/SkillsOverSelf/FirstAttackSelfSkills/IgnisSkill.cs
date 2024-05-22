@@ -1,4 +1,5 @@
 ﻿using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
@@ -15,7 +16,7 @@ public class IgnisSkill: FirstAttackSkill {
         
         var increaseInStat = (double) 0.5d * characterStatValue;
         var newStatEffect = new StatEffect(Stat.FirstAttackAtk, (int) increaseInStat);
-        UpdateCharacterStat(Character, EffectType.FirstAttackBonus, newStatEffect);
+        UpdateStat(Character, EffectType.FirstAttackBonus, newStatEffect);
     }
 
     public override void DetermineTarget(GameStatus gameStatus) {

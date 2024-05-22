@@ -1,4 +1,4 @@
-﻿namespace Fire_Emblem.CharacterFiles;
+﻿namespace Fire_Emblem.CharacterFiles.StatFiles;
 
 public enum Stat {
     Hp,

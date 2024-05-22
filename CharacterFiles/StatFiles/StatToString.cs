@@ -1,4 +1,4 @@
-﻿namespace Fire_Emblem.CharacterFiles
+﻿namespace Fire_Emblem.CharacterFiles.StatFiles
 {
     public static class StatToString
     {
