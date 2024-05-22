@@ -12,7 +12,7 @@ namespace Fire_Emblem.GameFiles;
 public class Game
 {
     private View _view;
-    private string _teamsFolder;
+    private TeamsLoader _teamsLoader; 
     private Character[][]? _teams;
     private int _firstPlayerIndex;
     private int _secondPlayerIndex;
@@ -24,7 +24,7 @@ public class Game
     public Game(View view, string teamsFolder)
     {
         _view = view;
-        _teamsFolder = teamsFolder;
+        _teamsLoader = new TeamsLoader(view, teamsFolder);
         _firstPlayerIndex = 0;
         _secondPlayerIndex = 1;
         _round = 1;
@@ -44,9 +44,8 @@ public class Game
     }
 
     private void LoadTeams() {
-        var teamsLoader = new TeamsLoader(_view, _teamsFolder);
-        teamsLoader.Execute();
-        _teams = teamsLoader.TeamsCharacters;
+        _teamsLoader.Execute();
+        _teams = _teamsLoader.TeamsCharacters;
     }
 
     private void StartGameLoop() {
