@@ -60,9 +60,7 @@ public class Character {
 
     private SkillEffect _selfModifiedStats = new SkillEffect();
     private SkillEffect _rivalModifiedStats = new SkillEffect();
-
-    private View _view;
-
+    
     public Character(
         string name,
         string weapon,
@@ -91,7 +89,6 @@ public class Character {
         BaseDef = def;
         Res = res;
         BaseRes = res;
-        _view = view;
 
         PrepareSkills();
         StatModifiers = new StatModifiers();
@@ -132,55 +129,9 @@ public class Character {
         }
         return orderedSkills.ToArray();
     }
-
-    public void Attack(Character target) {
-        var thisTurnAtk = GetThisTurnAtk();
-        var thisTurnDef = GetThisTurnDef(target);
-        var thisTurnRes = GetThisTurnRes(target);
-        ExecuteAttack(thisTurnAtk, thisTurnDef, thisTurnRes, target);
-        SetMostRecentRival(target);
-    }
-    
-    private int GetThisTurnAtk() {
-        var thisTurnAtk = Atk;
-        if (FirstAttackAtk != 0) {
-            thisTurnAtk += FirstAttackAtk;
-            FirstAttackAtk = 0;
-        }
-        return thisTurnAtk;
-    }
-    
-    private int GetThisTurnDef(Character target) {
-        var thisTurnDef = target.Def;
-        if (target.FirstAttackDef != 0) {
-            thisTurnDef += target.FirstAttackDef;
-            target.FirstAttackDef = 0;
-        }
-        return thisTurnDef;
-    }
-    
-    private int GetThisTurnRes(Character target) {
-        var thisTurnRes = target.Res;
-        if (target.FirstAttackRes != 0) {
-            thisTurnRes += target.FirstAttackRes;
-            target.FirstAttackRes = 0;
-        }
-        return thisTurnRes;
-    }
-
-    private void ExecuteAttack(int thisTurnAtk, int thisTurnDef, int thisTurnRes, Character target) {
-        var discount = IsPhysical() ? thisTurnDef : thisTurnRes;
-        var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(target))) - discount), 0);
-        target.Hp -= damage;
-        _view.WriteLine($"{Name} ataca a {target.Name} con {damage} de daño");
-    }
     
     public bool IsPhysical() {
         return Weapon is "Sword" or "Axe" or "Lance" or "Bow";
-    }
-    
-    private double GetWeaponTriangleAdvantage(Character target) {
-        return WeaponTriangleAdvantage.GetAdvantage(this, target);
     }
 
     public void SetMostRecentRival(Character target) {
@@ -188,7 +139,7 @@ public class Character {
         target.MostRecentRival = this;
     }
     
-    public void ReceiveGameStatus(GameStatus gameStatus) {
+    public void SetGameStatus(GameStatus gameStatus) {
         GameStatus = gameStatus;
     }
 
@@ -233,34 +184,11 @@ public class Character {
         _rivalModifiedStats = new SkillEffect();
     }
     
-    public void ApplySkill(IBaseSkill skill, GameStatus gameStatus) {
-        skill.Apply(gameStatus);
-        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
-        UpdateModifiedStats(characterPairedToSkillEffect);
-    }
-    
-    private Dictionary<Character, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
-        return skill.GetModifiedStats();
-    }
-    
-    private void UpdateModifiedStats(Dictionary<Character, SkillEffect> characterPairedToSkillEffect) {
-        foreach (var pair in characterPairedToSkillEffect) {
-            var character = pair.Key;
-            var skillEffect = pair.Value;
-            if (character == this) {
-                UpdateSelfModifiedStats(skillEffect);
-            }
-            else {
-                UpdateRivalModifiedStats(skillEffect);
-            }
-        }
-    }
-    
-    private void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
+    public void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
         _selfModifiedStats.Join(newSkillEffect);
     }
     
-    private void UpdateRivalModifiedStats(SkillEffect newSkillEffect) {
+    public void UpdateRivalModifiedStats(SkillEffect newSkillEffect) {
         _rivalModifiedStats.Join(newSkillEffect);
     }
 

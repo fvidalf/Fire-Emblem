@@ -1,4 +1,8 @@
 ﻿using Fire_Emblem_View;
+using Fire_Emblem.GameFiles;
+using Fire_Emblem.Skills;
+using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
 
@@ -54,5 +58,28 @@ public class CharacterHandler {
     
     private static double GetWeaponTriangleAdvantage(Character attacker, Character target) {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
+    }
+    
+    public void ApplySkill(Character applier, IBaseSkill skill, GameStatus gameStatus) {
+        skill.Apply(gameStatus);
+        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
+        UpdateModifiedStats(applier, characterPairedToSkillEffect);
+    }
+    
+    private Dictionary<Character, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
+        return skill.GetModifiedStats();
+    }
+    
+    private void UpdateModifiedStats(Character applier, Dictionary<Character, SkillEffect> characterPairedToSkillEffect) {
+        foreach (var pair in characterPairedToSkillEffect) {
+            var character = pair.Key;
+            var skillEffect = pair.Value;
+            if (character == applier) {
+                applier.UpdateSelfModifiedStats(skillEffect);
+            }
+            else {
+                applier.UpdateRivalModifiedStats(skillEffect);
+            }
+        }
     }
 }

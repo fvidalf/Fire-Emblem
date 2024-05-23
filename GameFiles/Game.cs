@@ -110,7 +110,7 @@ public class Game
 
     private void SetCharacterGameStatus(Character character, int characterIndex, int rivalIndex) {
         var gameStatus = GetGameStatus(characterIndex, rivalIndex);
-        character.ReceiveGameStatus(gameStatus);
+        character.SetGameStatus(gameStatus);
     }
     
     private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
@@ -159,7 +159,8 @@ public class Game
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
-            if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
+            //if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
+            if (!skill.IsActivated) _characterHandler.ApplySkill(character, skill, character.GameStatus);
         }
     }
     
