@@ -183,7 +183,7 @@ public class Character {
         return WeaponTriangleAdvantage.GetAdvantage(this, target);
     }
 
-    private void SetMostRecentRival(Character target) {
+    public void SetMostRecentRival(Character target) {
         MostRecentRival = target;
         target.MostRecentRival = this;
     }

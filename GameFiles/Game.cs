@@ -13,6 +13,7 @@ public class Game
 {
     private View _view;
     private TeamsLoader _teamsLoader; 
+    private CharacterHandler _characterHandler;
     private Character[][]? _teams;
     private int _firstPlayerIndex;
     private int _secondPlayerIndex;
@@ -50,6 +51,7 @@ public class Game
     private void StartGameLoop() {
         while (true) {
             CheckIfTeamsAreEmpty();
+            PrepareHandlers();
             PrepareCharacters();
             HandleRoundStart();
             HandleCombat();
@@ -244,6 +246,10 @@ public class Game
             throw new TeamIsEmptyException("Player 1 ganó");
         }
     }
+    
+    private void PrepareHandlers() {
+        _characterHandler = new CharacterHandler(_view);
+    }
 
     private void PrepareCharacters() {
         SetCharacters();
@@ -279,7 +285,7 @@ public class Game
         var attackingCharacter = GetCharacterByPlayerIndex(attackingPlayerIndex);
         var defendingCharacter = GetCharacterByPlayerIndex(defendingPlayerIndex);
         
-        attackingCharacter.Attack(defendingCharacter);
+        _characterHandler.Attack(attackingCharacter, defendingCharacter);
         if (defendingCharacter.IsDead) {
             RemoveCurrentPlayerCharacter(defendingPlayerIndex);
             _doesRoundEnd = true;
