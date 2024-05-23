@@ -3,7 +3,7 @@
 public static class TeamVerifier {
     
     public static void VerifyTeams(TeamsContent teamsContent) {
-         foreach (var team in teamsContent.GetTeamsContent()) {
+         foreach (var team in teamsContent.GetTeams()) {
              CheckValidTeamLength(team);
              CheckValidTeamUnits(team);
          }

@@ -1,16 +1,13 @@
-﻿using Fire_Emblem.Skills;
-
-namespace Fire_Emblem.TeamsLoaderFiles;
+﻿namespace Fire_Emblem.Skills;
 
 public static class SkillLoader {
     
-    public static IBaseSkill[] GetSkills(string unit) {
-        if (AreThereSkills(unit)) {
-            var unitSkillNames = GetUnitSkillNames(unit);
-            var loadedSkills = SkillAssigner.AssignSkills(unitSkillNames);
-            return loadedSkills.ToArray();
+    public static IBaseSkill[] GetSkills(string[] unitSkillNames) {
+        var skills = new List<IBaseSkill>();
+        if (unitSkillNames.Length > 0) {
+            skills = SkillAssigner.AssignSkills(unitSkillNames);
         }
-        return Array.Empty<IBaseSkill>();
+        return skills.ToArray();
     }
     
     private static string[] GetUnitSkillNames(string unit) {
