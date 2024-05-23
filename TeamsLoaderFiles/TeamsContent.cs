@@ -28,7 +28,7 @@ public class TeamsContent {
         return unitName;
     }
     
-    public string[] GetUnitSkillsNames(int teamIndex, int unitIndex) {
+    public string[] GetUnitSkillNames(int teamIndex, int unitIndex) {
         var unit = _teamsContent[teamIndex][unitIndex];
         var unitSkills = GetUnitSkillNamesFromUnit(unit);
         return unitSkills;

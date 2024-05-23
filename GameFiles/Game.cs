@@ -44,8 +44,7 @@ public class Game
     }
 
     private void LoadTeams() {
-        _teamsLoader.Execute();
-        _teams = _teamsLoader.TeamsCharacters;
+        _teams = _teamsLoader.GetTeams();
     }
 
     private void StartGameLoop() {

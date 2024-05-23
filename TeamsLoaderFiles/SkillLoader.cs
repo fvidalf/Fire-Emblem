@@ -4,15 +4,22 @@ namespace Fire_Emblem.TeamsLoaderFiles;
 
 public static class SkillLoader {
     
-    public static IBaseSkill[] GetSkills(string[] unitSkillNames) {
-        if (AreThereSkills(unitSkillNames)) {
+    public static IBaseSkill[] GetSkills(string unit) {
+        if (AreThereSkills(unit)) {
+            var unitSkillNames = GetUnitSkillNames(unit);
             var loadedSkills = SkillAssigner.AssignSkills(unitSkillNames);
             return loadedSkills.ToArray();
         }
         return Array.Empty<IBaseSkill>();
     }
     
-    private static bool AreThereSkills(string[] unitSkillNames) {
-        return unitSkillNames.Length > 1;
+    private static string[] GetUnitSkillNames(string unit) {
+        var firstWhitespace = unit.IndexOf(' ');
+        return unit.Trim()[(firstWhitespace + 2)..^1].Split(',');
+    }
+    
+    private static bool AreThereSkills(string unit) {
+        var firstWhitespace = unit.IndexOf(' ');
+        return firstWhitespace != -1;
     }
 }

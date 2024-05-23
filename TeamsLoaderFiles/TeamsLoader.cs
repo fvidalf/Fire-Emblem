@@ -10,7 +10,6 @@ public class TeamsLoader {
     private View _view;
     private readonly string _teamsFolder;
     private TeamsContent _teamsContent;
-    public Character[][] TeamsCharacters = new Character[2][];
 
     public TeamsLoader(View view, string teamsFolder) {
         _view = view;
@@ -18,11 +17,11 @@ public class TeamsLoader {
         _teamsContent = new TeamsContent();
     }
     
-    public void Execute() {
+    public Character[][] GetTeams() {
         var userOption = AskForTeam();
         ReadTeamFile(userOption);
         TeamVerifier.VerifyTeams(_teamsContent);
-        TeamsCharacters = LoadTeams();
+        return LoadTeams();
     }
 
     private int AskForTeam() {
@@ -65,23 +64,7 @@ public class TeamsLoader {
         var lines = fileContent.Trim().Split("\n");
         return lines;
     }
-    
-    private string[] GetUnitSkillNames(string unit) {
-        var firstWhitespace = unit.IndexOf(' ');
-        return unit.Trim()[(firstWhitespace + 2)..^1].Split(',');
-    }
-    
-    private string GetUnitName(string unit) {
-        var firstWhitespace = unit.IndexOf(' ');
-        return firstWhitespace != -1 ? unit[..firstWhitespace] : unit[..];
-    }
-    
-    private bool AreThereSkills(string unit) {
-        var firstWhitespace = unit.IndexOf(' ');
-        return firstWhitespace != -1;
-    }
 
-    // REFACTORING NEEDED
     private Character[][] LoadTeams() {
         var charactersInfo = GetCharactersFromJson();
         var teamCharacters = GetTeamCharacters(charactersInfo);
@@ -109,9 +92,8 @@ public class TeamsLoader {
     private Character GetCharacterFromInfo(List<CharacterInfo> charactersInfo, int teamIndex, int unitIndex) {
         var unitName = _teamsContent.GetUnitName(teamIndex, unitIndex);
         var unit = _teamsContent.GetTeamsContent()[teamIndex][unitIndex];
-        var unitSkills = GetSkills(unit);
-        // var unitSkills = _teamsContent.GetUnitSkillsNames(teamIndex, unitIndex);
-        var character = CreateCharacterFromInfo(charactersInfo, unitName, unitSkills);
+        var unitSkills = SkillLoader.GetSkills(unit);
+        var character = CharacterLoader.CreateCharacterFromInfo(charactersInfo, unitName, unitSkills, _view);
         return character;
     }
 
@@ -120,32 +102,5 @@ public class TeamsLoader {
         teamCharacters[0] = new Character[_teamsContent.GetNumberOfUnitsOfTeam(0)];
         teamCharacters[1] = new Character[_teamsContent.GetNumberOfUnitsOfTeam(1)];
         return teamCharacters;
-    }
-
-    private Character CreateCharacterFromInfo(List<CharacterInfo> charactersInfo, string unitName, IBaseSkill[] unitSkills) {
-        var characterInfo = charactersInfo.Find(character => character.Name.Trim() == unitName.Trim());
-        var character = new Character(
-            characterInfo.Name,
-            characterInfo.Weapon,
-            characterInfo.Gender,
-            characterInfo.DeathQuote,
-            unitSkills,
-            Convert.ToInt32(characterInfo.HP),
-            Convert.ToInt32(characterInfo.Atk),
-            Convert.ToInt32(characterInfo.Spd),
-            Convert.ToInt32(characterInfo.Def),
-            Convert.ToInt32(characterInfo.Res),
-            _view
-        );
-        return character;
-    }
-
-    private IBaseSkill[] GetSkills(string unit) {
-        if (AreThereSkills(unit)) {
-            var unitSkillNames = GetUnitSkillNames(unit);
-            var loadedSkills = SkillAssigner.AssignSkills(unitSkillNames);
-            return loadedSkills.ToArray();
-        }
-        return Array.Empty<IBaseSkill>();
     }
 }
