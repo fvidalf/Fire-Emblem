@@ -1,25 +1,25 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 using System.Text.Json;
-using Fire_Emblem.Skills;
 
 namespace Fire_Emblem.TeamsLoaderFiles;
 
 public class TeamsLoader {
 
     private View _view;
-    private readonly string _teamsFolder;
+    private readonly TeamFilesReader _teamFilesReader;
     private TeamsContent _teamsContent;
 
     public TeamsLoader(View view, string teamsFolder) {
         _view = view;
-        _teamsFolder = teamsFolder;
+        _teamFilesReader = new TeamFilesReader(teamsFolder);
         _teamsContent = new TeamsContent();
     }
     
     public Character[][] GetTeams() {
         var userOption = AskForTeam();
-        ReadTeamFile(userOption);
+        var lines = _teamFilesReader.ReadTeamFile(userOption);
+        FillTeamsContent(lines);
         TeamVerifier.VerifyTeams(_teamsContent);
         return LoadTeams();
     }
@@ -33,9 +33,9 @@ public class TeamsLoader {
     }
     
     private void ShowTeamFiles() {
-        var files = Directory.GetFiles(_teamsFolder);
-        for (var i = 0; i < files.Length; i++) {
-            _view.WriteLine($"{i}: {Path.GetFileName(files[i])}");
+        var fileNames = _teamFilesReader.GetAllFileNames();
+        for (var i = 0; i < fileNames.Length; i++) {
+            _view.WriteLine($"{i}: {fileNames[i]}");
         }
     }
 
@@ -48,21 +48,8 @@ public class TeamsLoader {
         return int.Parse(userString);
     }
     
-    private void ReadTeamFile(int option) {
-        var file = GetFile(option);
-        var lines = GetFileLines(file);
+    private void FillTeamsContent(string[] lines) {
         _teamsContent.FillFromLines(lines);
-    }
-
-    private string GetFile(int option) {
-        var files = Directory.GetFiles(_teamsFolder);
-        return files[option];
-    }
-
-    private string[] GetFileLines(string file) {
-        var fileContent = File.ReadAllText(file);
-        var lines = fileContent.Trim().Split("\n");
-        return lines;
     }
 
     private Character[][] LoadTeams() {

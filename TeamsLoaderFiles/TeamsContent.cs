@@ -3,7 +3,9 @@
 public class TeamsContent {
     private string[][] _teamsContent = new string[2][];
 
-    public TeamsContent() {}
+    public TeamsContent() {
+        // FillFromLines(lines);
+    }
     
     public void FillFromLines(string[] lines) {
         InitializeTeamsContent(lines);
@@ -12,10 +14,6 @@ public class TeamsContent {
     
     public string[][] GetTeamsContent() {
         return _teamsContent;
-    }
-    
-    public int GetNumberOfTeams() {
-        return _teamsContent.Length;
     }
     
     public int GetNumberOfUnitsOfTeam(int teamIndex) {
