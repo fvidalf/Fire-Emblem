@@ -14,9 +14,7 @@ public class Game
     public int FirstPlayerIndex;
     public int SecondPlayerIndex;
     private int _round;
-    private int _roundPhase;
     private Dictionary<int, CharacterModel> _charactersByPlayerIndex = new Dictionary<int, CharacterModel>();
-    private bool _doesRoundEnd;
     
     public Game(View view, string teamsFolder)
     {
@@ -25,8 +23,6 @@ public class Game
         FirstPlayerIndex = 0;
         SecondPlayerIndex = 1;
         _round = 1;
-        _roundPhase = 0;
-        _doesRoundEnd = false;
     }
 
     public void Play() {
@@ -51,13 +47,11 @@ public class Game
             PrepareCharacters();
             HandleRoundStart();
             _combatHandler.HandleCombat();
-            PrintTeams();
         }
     }
 
     private void HandleRoundStart() {
         WriteRoundStartMessage();
-        ResetRoundParameters();
     }
     
     private void WriteRoundStartMessage() {
@@ -65,12 +59,6 @@ public class Game
         _view.WriteLine($"Round {_round}: {firstPlayerCharacter.Name} (Player {FirstPlayerIndex + 1}) comienza");
         WriteWeaponTriangleAdvantage();
     }
-    
-    private void ResetRoundParameters() {
-        _roundPhase = 0;
-        _doesRoundEnd = false;
-    }
-    
     
     public CharacterModel GetCharacterByPlayerIndex(int playerIndex) {
         return _charactersByPlayerIndex[playerIndex];
@@ -112,7 +100,7 @@ public class Game
         secondPlayerCharacter.ResetSkills();
     }
     
-    private void SetCharacterForPlayer(int playerIndex) {
+    public void SetCharacterForPlayer(int playerIndex) {
         var character = AskForCharacter(playerIndex);
         _charactersByPlayerIndex[playerIndex] = character;
     }
@@ -160,15 +148,5 @@ public class Game
             userString = _view.ReadLine();
         } while (!int.TryParse(userString, out var _));
         return int.Parse(userString);
-    }
-    
-    private void PrintTeams() {
-        foreach (var team in _teams) {
-            Console.WriteLine("team start");
-            foreach (var characterModel in team) {
-                Console.WriteLine(characterModel.Name);
-            }
-            Console.WriteLine("team end");
-        }
     }
 }
