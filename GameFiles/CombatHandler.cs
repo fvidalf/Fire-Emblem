@@ -14,14 +14,16 @@ public class CombatHandler {
     private int _firstPlayerIndex;
     private int _secondPlayerIndex;
     private int _roundPhase;
+    private Teams _teams;
     private readonly View _view;
     private Game _game;
     private CharacterHandler _characterHandler;
     
-    public CombatHandler(CharacterHandler characterHandler, Game game, View view) {
+    public CombatHandler(CharacterHandler characterHandler, Teams teams, Game game, View view) {
         _doesRoundEnd = false;
         _roundPhase = 0;
         _characterHandler = characterHandler;
+        _teams = teams;
         _game = game;
         _view = view;
     }
@@ -59,8 +61,8 @@ public class CombatHandler {
     }
 
     private void HandleCharacterSkills() {
-        var firstPlayerCharacter = _game.GetCharacterByPlayerIndex(_firstPlayerIndex);
-        var secondPlayerCharacter = _game.GetCharacterByPlayerIndex(_secondPlayerIndex);
+        var firstPlayerCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
+        var secondPlayerCharacter = _teams.GetPlayerCurrentCharacter(_secondPlayerIndex);
         SetCharacterGameStatus(firstPlayerCharacter, _firstPlayerIndex, _secondPlayerIndex);
         SetCharacterGameStatus(secondPlayerCharacter, _secondPlayerIndex, _firstPlayerIndex);
         
@@ -74,9 +76,9 @@ public class CombatHandler {
     }
     
     private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
-        var activatingCharacter = _game.GetCharacterByPlayerIndex(activatingPlayerIndex);
-        var rivalCharacter = _game.GetCharacterByPlayerIndex(rivalPlayerIndex);
-        var firstCharacter = _game.GetCharacterByPlayerIndex(_firstPlayerIndex);
+        var activatingCharacter = _teams.GetPlayerCurrentCharacter(activatingPlayerIndex);
+        var rivalCharacter = _teams.GetPlayerCurrentCharacter(rivalPlayerIndex);
+        var firstCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
         return new GameStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
     }
 
@@ -199,8 +201,8 @@ public class CombatHandler {
     }
     
     private void HandleRegularAttack(int attackingPlayerIndex, int defendingPlayerIndex) {
-        var attackingCharacter = _game.GetCharacterByPlayerIndex(attackingPlayerIndex);
-        var defendingCharacter = _game.GetCharacterByPlayerIndex(defendingPlayerIndex);
+        var attackingCharacter = _teams.GetPlayerCurrentCharacter(attackingPlayerIndex);
+        var defendingCharacter = _teams.GetPlayerCurrentCharacter(defendingPlayerIndex);
         
         _characterHandler.Attack(attackingCharacter, defendingCharacter);
         if (defendingCharacter.IsDead) {
@@ -210,8 +212,8 @@ public class CombatHandler {
     }
 
     private void HandleRoundEnd() {
-        var firstPlayerCharacter = _game.GetCharacterByPlayerIndex(_firstPlayerIndex);
-        var secondPlayerCharacter = _game.GetCharacterByPlayerIndex(_secondPlayerIndex);
+        var firstPlayerCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
+        var secondPlayerCharacter = _teams.GetPlayerCurrentCharacter(_secondPlayerIndex);
         if (_roundPhase == 2 || _doesRoundEnd) {
             ReportHp(firstPlayerCharacter, secondPlayerCharacter);
             ChangeFirstPlayer();
@@ -225,7 +227,7 @@ public class CombatHandler {
     }
     
     private void RemoveCurrentPlayerCharacter(int playerIndex) {
-        _game.RemoveCurrentPlayerCharacter(playerIndex);
+        _teams.RemoveCurrentPlayerCharacter(playerIndex);
     }
     
     private void ChangeFirstPlayer() {
@@ -244,8 +246,8 @@ public class CombatHandler {
     }
     
     private int DetermineFollowUpPlayer(int atkPlayerIndex, int defPlayerIndex) {
-        var attackingCharacter = _game.GetCharacterByPlayerIndex(atkPlayerIndex);
-        var defendingCharacter = _game.GetCharacterByPlayerIndex(defPlayerIndex);
+        var attackingCharacter = _teams.GetPlayerCurrentCharacter(atkPlayerIndex);
+        var defendingCharacter = _teams.GetPlayerCurrentCharacter(defPlayerIndex);
         
         if (attackingCharacter.Spd - defendingCharacter.Spd >= 5) {
             return atkPlayerIndex;
