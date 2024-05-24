@@ -13,7 +13,7 @@ public class BlindingFlashSkill: ConditionalRivalSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var IsFirstToAttack = GameStatus.ActivatingCharacter == GameStatus.FirstCharacter;
+        var IsFirstToAttack = GameStatus.ActivatingCharacterModel == GameStatus.FirstCharacterModel;
         return IsFirstToAttack;
     }
 }

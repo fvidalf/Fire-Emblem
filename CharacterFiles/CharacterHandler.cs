@@ -14,7 +14,7 @@ public class CharacterHandler {
         _view = view;
     }
     
-    public void Attack(Character attacker, Character target) {
+    public void Attack(CharacterModel attacker, CharacterModel target) {
         var thisTurnAtk = GetThisTurnAtk(attacker);
         var thisTurnDef = GetThisTurnDef(target);
         var thisTurnRes = GetThisTurnRes(target);
@@ -22,7 +22,7 @@ public class CharacterHandler {
         attacker.SetMostRecentRival(target);
     }
     
-    private static int GetThisTurnAtk(Character attacker) {
+    private static int GetThisTurnAtk(CharacterModel attacker) {
         var thisTurnAtk = attacker.Atk;
         if (attacker.FirstAttackAtk != 0) {
             thisTurnAtk += attacker.FirstAttackAtk;
@@ -31,7 +31,7 @@ public class CharacterHandler {
         return thisTurnAtk;
     }
     
-    private static int GetThisTurnDef(Character target) {
+    private static int GetThisTurnDef(CharacterModel target) {
         var thisTurnDef = target.Def;
         if (target.FirstAttackDef != 0) {
             thisTurnDef += target.FirstAttackDef;
@@ -40,7 +40,7 @@ public class CharacterHandler {
         return thisTurnDef;
     }
     
-    private static int GetThisTurnRes(Character target) {
+    private static int GetThisTurnRes(CharacterModel target) {
         var thisTurnRes = target.Res;
         if (target.FirstAttackRes != 0) {
             thisTurnRes += target.FirstAttackRes;
@@ -49,28 +49,28 @@ public class CharacterHandler {
         return thisTurnRes;
     }
 
-    private static void ExecuteAttack(Character attacker, int thisTurnAtk, int thisTurnDef, int thisTurnRes, Character target) {
+    private static void ExecuteAttack(CharacterModel attacker, int thisTurnAtk, int thisTurnDef, int thisTurnRes, CharacterModel target) {
         var discount = attacker.IsPhysical() ? thisTurnDef : thisTurnRes;
         var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(attacker, target))) - discount), 0);
         target.Hp -= damage;
         _view.WriteLine($"{attacker.Name} ataca a {target.Name} con {damage} de daño");
     }
     
-    private static double GetWeaponTriangleAdvantage(Character attacker, Character target) {
+    private static double GetWeaponTriangleAdvantage(CharacterModel attacker, CharacterModel target) {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
     
-    public void ApplySkill(Character applier, IBaseSkill skill, GameStatus gameStatus) {
+    public void ApplySkill(CharacterModel applier, IBaseSkill skill, GameStatus gameStatus) {
         skill.Apply(gameStatus);
         var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
         UpdateModifiedStats(applier, characterPairedToSkillEffect);
     }
     
-    private Dictionary<Character, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
+    private Dictionary<CharacterModel, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
         return skill.GetModifiedStats();
     }
     
-    private void UpdateModifiedStats(Character applier, Dictionary<Character, SkillEffect> characterPairedToSkillEffect) {
+    private void UpdateModifiedStats(CharacterModel applier, Dictionary<CharacterModel, SkillEffect> characterPairedToSkillEffect) {
         foreach (var pair in characterPairedToSkillEffect) {
             var character = pair.Key;
             var skillEffect = pair.Value;

@@ -8,7 +8,7 @@ public abstract class BoostSkill: ConditionalSelfSkill {
         : base(name, statsToModify) {}
 
     protected override bool IsConditionMet() {
-        var isHpGreaterThanRivalsBy3 = Character.Hp >= GameStatus.RivalCharacter.Hp + 3;
+        var isHpGreaterThanRivalsBy3 = Character.Hp >= GameStatus.RivalCharacterModel.Hp + 3;
         return isHpGreaterThanRivalsBy3;
     }
 }

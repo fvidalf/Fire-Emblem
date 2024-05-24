@@ -21,12 +21,12 @@ public class DragonskinNeutralize: Neutralizer {
     }
 
     protected override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacter;
+        Character = gameStatus.RivalCharacterModel;
     }
     
     private bool IsConditionMet() {
-        var isRivalFirstToAttack = GameStatus.RivalCharacter == GameStatus.FirstCharacter;
-        var isRivalHpAtOrAbove75 = GameStatus.RivalCharacter.Hp >= GameStatus.RivalCharacter.BaseHp * 0.75;
+        var isRivalFirstToAttack = GameStatus.RivalCharacterModel == GameStatus.FirstCharacterModel;
+        var isRivalHpAtOrAbove75 = GameStatus.RivalCharacterModel.Hp >= GameStatus.RivalCharacterModel.BaseHp * 0.75;
         return isRivalFirstToAttack || isRivalHpAtOrAbove75;
     }
 }

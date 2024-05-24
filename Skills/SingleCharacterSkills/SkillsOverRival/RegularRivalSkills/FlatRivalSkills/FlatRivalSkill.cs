@@ -10,6 +10,6 @@ public abstract class FlatRivalSkill: FlatSkill, ITargetedSkill {
         : base(name, statsToModify) {}
 
     public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacter;
+        Character = gameStatus.RivalCharacterModel;
     }
 }

@@ -14,7 +14,7 @@ public class HpSkill: FlatSelfSkill {
                 }}
             }) {}
 
-    protected override void UpdateStat(Character character, EffectType effectType, StatEffect statEffect) {
+    protected override void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
         var characterStat = GetCharacterStat(Character, statEffect.Stat);
         var characterStatValue = GetCharacterStatValue(characterStat, statEffect.Stat);
 

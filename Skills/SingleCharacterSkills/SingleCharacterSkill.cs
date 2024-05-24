@@ -10,7 +10,7 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
     
     public string Name { get; set; }
     public bool IsActivated { get; set; }
-    public Character? Character;
+    public CharacterModel? Character;
     public SkillEffect SkillEffect { get; set; }
     protected GameStatus GameStatus;
     
@@ -24,8 +24,8 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
         GameStatus = gameStatus;
     }
     
-    public Dictionary<Character, SkillEffect> GetModifiedStats() {
-        return new Dictionary<Character, SkillEffect> { {Character, SkillEffect} };
+    public Dictionary<CharacterModel, SkillEffect> GetModifiedStats() {
+        return new Dictionary<CharacterModel, SkillEffect> { {Character, SkillEffect} };
     }
     
     public virtual void Reset() {
@@ -33,25 +33,25 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
         IsActivated = false;
     }
     
-    protected virtual void UpdateStat(Character character, EffectType effectType, StatEffect statEffect) {
-        var characterStat = GetCharacterStat(character, statEffect.Stat);
+    protected virtual void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
+        var characterStat = GetCharacterStat(characterModel, statEffect.Stat);
         
-        UpdateCharacterStat(characterStat, character, statEffect);
-        UpdateCharacterModifiers(character, effectType, statEffect);
+        UpdateCharacterStat(characterStat, characterModel, statEffect);
+        UpdateCharacterModifiers(characterModel, effectType, statEffect);
         UpdateModifiedStats(effectType, statEffect);
     }
     
-    protected PropertyInfo GetCharacterStat(Character character, Stat stat) {
+    protected PropertyInfo GetCharacterStat(CharacterModel characterModel, Stat stat) {
         var statAsString = StatToString.Map[stat];
-        var characterStat = character.GetType().GetProperty(statAsString);
+        var characterStat = characterModel.GetType().GetProperty(statAsString);
         return characterStat;
     }
 
-    private void UpdateCharacterStat(PropertyInfo characterStat, Character character, StatEffect statEffect) {
+    private void UpdateCharacterStat(PropertyInfo characterStat, CharacterModel characterModel, StatEffect statEffect) {
         var characterStatValue = GetCharacterStatValue(characterStat, statEffect.Stat);
 
         int newStatValue = (int)characterStatValue + statEffect.Amount;
-        characterStat.SetValue(character, newStatValue);
+        characterStat.SetValue(characterModel, newStatValue);
     }
     
     protected int GetCharacterStatValue(PropertyInfo characterStat, Stat stat) {
@@ -59,8 +59,8 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
         return (int) characterStatValue;
     }
     
-    protected void UpdateCharacterModifiers(Character character, EffectType effectType, StatEffect statEffect) {
-        character.StatModifiers.UpdateModifiers(effectType, statEffect);
+    protected void UpdateCharacterModifiers(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
+        characterModel.StatModifiers.UpdateModifiers(effectType, statEffect);
     }
     
     protected void UpdateModifiedStats(EffectType effectType, StatEffect statEffect) {

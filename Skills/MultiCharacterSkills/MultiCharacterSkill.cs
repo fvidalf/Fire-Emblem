@@ -13,7 +13,7 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
     public string Name { get; set; }
     public bool IsActivated { get; set; }
     protected SingleCharacterSkill[] Skills;
-    protected Character? Character;
+    protected CharacterModel? Character;
     protected GameStatus GameStatus;
     
     protected MultiCharacterSkill(string name, SingleCharacterSkill[] skills) {
@@ -24,21 +24,21 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
     
     public virtual void Apply(GameStatus gameStatus) {
         GameStatus = gameStatus;
-        Console.WriteLine($"Applying {Name} by {GameStatus.ActivatingCharacter.Name}");
+        Console.WriteLine($"Applying {Name} by {GameStatus.ActivatingCharacterModel.Name}");
         foreach (var skill in Skills) {
             skill.Apply(gameStatus);
         }
     }
     
-    public Dictionary<Character, SkillEffect> GetModifiedStats() {
-        var modifiedStats = new Dictionary<Character, SkillEffect>();
+    public Dictionary<CharacterModel, SkillEffect> GetModifiedStats() {
+        var modifiedStats = new Dictionary<CharacterModel, SkillEffect>();
         foreach (var skill in Skills) {
             modifiedStats = JoinByCharacter(modifiedStats, skill.GetModifiedStats());
         }
         return modifiedStats;
     }
     
-    private Dictionary<Character, SkillEffect> JoinByCharacter( Dictionary<Character, SkillEffect> modifiedStats, Dictionary<Character, SkillEffect> newStats) {
+    private Dictionary<CharacterModel, SkillEffect> JoinByCharacter( Dictionary<CharacterModel, SkillEffect> modifiedStats, Dictionary<CharacterModel, SkillEffect> newStats) {
         foreach (var (oldCharacter, oldSkillEffect) in modifiedStats) {
             foreach (var (newCharacter, newSkillEffect) in newStats) {
                 if (oldCharacter == newCharacter) {

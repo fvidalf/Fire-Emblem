@@ -14,7 +14,7 @@ public class BeliefInLoveSkill: ConditionalRivalSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalFirstToAttack = Character == GameStatus.FirstCharacter;
+        var isRivalFirstToAttack = Character == GameStatus.FirstCharacterModel;
         var isRivalFullHp = Character.Hp == Character.BaseHp;
         Console.WriteLine(isRivalFirstToAttack && isRivalFullHp);
         return isRivalFirstToAttack || isRivalFullHp;

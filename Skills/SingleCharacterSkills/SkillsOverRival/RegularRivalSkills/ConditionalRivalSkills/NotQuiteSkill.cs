@@ -13,7 +13,7 @@ public class NotQuiteSkill: ConditionalRivalSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalFirstToAttack = Character == GameStatus.FirstCharacter;
+        var isRivalFirstToAttack = Character == GameStatus.FirstCharacterModel;
         return isRivalFirstToAttack;
     }
 }

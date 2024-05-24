@@ -16,7 +16,7 @@ public abstract class PenaltyNeutralizer: SingleCharacterSkill {
     
     public override void Apply(GameStatus gameStatus) {
         base.Apply(gameStatus);
-        Character = gameStatus.ActivatingCharacter;
+        Character = gameStatus.ActivatingCharacterModel;
         SetResponseForNeutralizing();
         NeutralizeStats();
         IsActivated = true;

@@ -14,7 +14,7 @@ public class CharmerSkill: ConditionalRivalSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalMostRecentOpponent = GameStatus.ActivatingCharacter.MostRecentRival == Character;
+        var isRivalMostRecentOpponent = GameStatus.ActivatingCharacterModel.MostRecentRival == Character;
         return isRivalMostRecentOpponent;
     }
 }

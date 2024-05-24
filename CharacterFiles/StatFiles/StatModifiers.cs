@@ -52,109 +52,109 @@ public class StatModifiers {
         }
     }
     
-    public void NeutralizeStats(Character character, List<Stat> statsToNeutralize) {
+    public void NeutralizeStats(CharacterModel characterModel, List<Stat> statsToNeutralize) {
         foreach (var stat in statsToNeutralize) {
             switch (stat) {
                 case Stat.HpPenalty:
-                    NeutralizeHpPenalty(character);
+                    NeutralizeHpPenalty(characterModel);
                     break;
                 case Stat.AtkPenalty:
-                    NeutralizeAtkPenalty(character);
+                    NeutralizeAtkPenalty(characterModel);
                     break;
                 case Stat.SpdPenalty:
-                    NeutralizeSpdPenalty(character);
+                    NeutralizeSpdPenalty(characterModel);
                     break;
                 case Stat.DefPenalty:
-                    NeutralizeDefPenalty(character);
+                    NeutralizeDefPenalty(characterModel);
                     break;
                 case Stat.ResPenalty:
-                    NeutralizeResPenalty(character);
+                    NeutralizeResPenalty(characterModel);
                     break;
                 case Stat.HpBonus:
-                    NeutralizeHpBonus(character);
+                    NeutralizeHpBonus(characterModel);
                     break;
                 case Stat.AtkBonus:
-                    NeutralizeAtkBonus(character);
+                    NeutralizeAtkBonus(characterModel);
                     break;
                 case Stat.SpdBonus:
-                    NeutralizeSpdBonus(character);
+                    NeutralizeSpdBonus(characterModel);
                     break;
                 case Stat.DefBonus:
-                    NeutralizeDefBonus(character);
+                    NeutralizeDefBonus(characterModel);
                     break;
                 case Stat.ResBonus:
-                    NeutralizeResBonus(character);
+                    NeutralizeResBonus(characterModel);
                     break;
             }
         }
     }
 
-    private void NeutralizeHpPenalty(Character character) {
-        character.Hp += int.Abs(HpModifiers[EffectType.RegularPenalty]);
-        character.FirstAttackHp += int.Abs(HpModifiers[EffectType.FirstAttackPenalty]);
+    private void NeutralizeHpPenalty(CharacterModel characterModel) {
+        characterModel.Hp += int.Abs(HpModifiers[EffectType.RegularPenalty]);
+        characterModel.FirstAttackHp += int.Abs(HpModifiers[EffectType.FirstAttackPenalty]);
         HpModifiers[EffectType.RegularPenalty] = 0;
         HpModifiers[EffectType.FirstAttackPenalty] = 0;
     }
     
-    private void NeutralizeAtkPenalty(Character character) {
-        character.Atk += int.Abs(AtkModifiers[EffectType.RegularPenalty]);
-        character.FirstAttackAtk += int.Abs(AtkModifiers[EffectType.FirstAttackPenalty]);
+    private void NeutralizeAtkPenalty(CharacterModel characterModel) {
+        characterModel.Atk += int.Abs(AtkModifiers[EffectType.RegularPenalty]);
+        characterModel.FirstAttackAtk += int.Abs(AtkModifiers[EffectType.FirstAttackPenalty]);
         AtkModifiers[EffectType.RegularPenalty] = 0;
         AtkModifiers[EffectType.FirstAttackPenalty] = 0;
     }
     
-    private void NeutralizeSpdPenalty(Character character) {
-        character.Spd += int.Abs(SpdModifiers[EffectType.RegularPenalty]);
-        character.FirstAttackSpd += int.Abs(SpdModifiers[EffectType.FirstAttackPenalty]);
+    private void NeutralizeSpdPenalty(CharacterModel characterModel) {
+        characterModel.Spd += int.Abs(SpdModifiers[EffectType.RegularPenalty]);
+        characterModel.FirstAttackSpd += int.Abs(SpdModifiers[EffectType.FirstAttackPenalty]);
         SpdModifiers[EffectType.RegularPenalty] = 0;
         SpdModifiers[EffectType.FirstAttackPenalty] = 0;
     }
     
-    private void NeutralizeDefPenalty(Character character) {
-        character.Def += int.Abs(DefModifiers[EffectType.RegularPenalty]);
-        character.FirstAttackDef += int.Abs(DefModifiers[EffectType.FirstAttackPenalty]);
+    private void NeutralizeDefPenalty(CharacterModel characterModel) {
+        characterModel.Def += int.Abs(DefModifiers[EffectType.RegularPenalty]);
+        characterModel.FirstAttackDef += int.Abs(DefModifiers[EffectType.FirstAttackPenalty]);
         DefModifiers[EffectType.RegularPenalty] = 0;
         DefModifiers[EffectType.FirstAttackPenalty] = 0;
     }
     
-    private void NeutralizeResPenalty(Character character) {
-        character.Res += int.Abs(ResModifiers[EffectType.RegularPenalty]);
-        character.FirstAttackRes += int.Abs(ResModifiers[EffectType.FirstAttackPenalty]);
+    private void NeutralizeResPenalty(CharacterModel characterModel) {
+        characterModel.Res += int.Abs(ResModifiers[EffectType.RegularPenalty]);
+        characterModel.FirstAttackRes += int.Abs(ResModifiers[EffectType.FirstAttackPenalty]);
         ResModifiers[EffectType.RegularPenalty] = 0;
         ResModifiers[EffectType.FirstAttackPenalty] = 0;
     }
     
-    private void NeutralizeHpBonus(Character character) {
-        character.Hp -= int.Abs(HpModifiers[EffectType.RegularBonus]);
-        character.FirstAttackHp -= int.Abs(HpModifiers[EffectType.FirstAttackBonus]);
+    private void NeutralizeHpBonus(CharacterModel characterModel) {
+        characterModel.Hp -= int.Abs(HpModifiers[EffectType.RegularBonus]);
+        characterModel.FirstAttackHp -= int.Abs(HpModifiers[EffectType.FirstAttackBonus]);
         HpModifiers[EffectType.RegularBonus] = 0;
         HpModifiers[EffectType.FirstAttackBonus] = 0;
     }
     
-    private void NeutralizeAtkBonus(Character character) {
-        character.Atk -= int.Abs(AtkModifiers[EffectType.RegularBonus]);
-        character.FirstAttackAtk -= int.Abs(AtkModifiers[EffectType.FirstAttackBonus]);
+    private void NeutralizeAtkBonus(CharacterModel characterModel) {
+        characterModel.Atk -= int.Abs(AtkModifiers[EffectType.RegularBonus]);
+        characterModel.FirstAttackAtk -= int.Abs(AtkModifiers[EffectType.FirstAttackBonus]);
         AtkModifiers[EffectType.RegularBonus] = 0;
         AtkModifiers[EffectType.FirstAttackBonus] = 0;
     }
     
-    private void NeutralizeSpdBonus(Character character) {
-        character.Spd -= int.Abs(SpdModifiers[EffectType.RegularBonus]);
-        character.FirstAttackSpd -= int.Abs(SpdModifiers[EffectType.FirstAttackBonus]);
+    private void NeutralizeSpdBonus(CharacterModel characterModel) {
+        characterModel.Spd -= int.Abs(SpdModifiers[EffectType.RegularBonus]);
+        characterModel.FirstAttackSpd -= int.Abs(SpdModifiers[EffectType.FirstAttackBonus]);
         SpdModifiers[EffectType.RegularBonus] = 0;
         SpdModifiers[EffectType.FirstAttackBonus] = 0;
     }
     
-    private void NeutralizeDefBonus(Character character) {
-        character.Def -= int.Abs(DefModifiers[EffectType.RegularBonus]);
-        character.FirstAttackDef -= int.Abs(DefModifiers[EffectType.FirstAttackBonus]);
+    private void NeutralizeDefBonus(CharacterModel characterModel) {
+        characterModel.Def -= int.Abs(DefModifiers[EffectType.RegularBonus]);
+        characterModel.FirstAttackDef -= int.Abs(DefModifiers[EffectType.FirstAttackBonus]);
         DefModifiers[EffectType.RegularBonus] = 0;
         DefModifiers[EffectType.FirstAttackBonus] = 0;
     }
     
-    private void NeutralizeResBonus(Character character) {
-        character.Res -= int.Abs(ResModifiers[EffectType.RegularBonus]);
-        character.FirstAttackRes -= int.Abs(ResModifiers[EffectType.FirstAttackBonus]);
+    private void NeutralizeResBonus(CharacterModel characterModel) {
+        characterModel.Res -= int.Abs(ResModifiers[EffectType.RegularBonus]);
+        characterModel.FirstAttackRes -= int.Abs(ResModifiers[EffectType.FirstAttackBonus]);
         ResModifiers[EffectType.RegularBonus] = 0;
         ResModifiers[EffectType.FirstAttackBonus] = 0;
     }

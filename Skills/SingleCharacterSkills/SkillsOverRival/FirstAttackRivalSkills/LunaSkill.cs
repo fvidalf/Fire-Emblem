@@ -25,6 +25,6 @@ public class LunaSkill: FirstAttackSkill {
     }
 
     public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacter;
+        Character = gameStatus.RivalCharacterModel;
     }
 }

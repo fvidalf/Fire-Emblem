@@ -16,8 +16,8 @@ public class ChaosStyleSkill: StarterSkill {
             }) {}
 
     protected override bool IsSpecificConditionMet() {
-        var scenarioOne = Character.IsPhysical() && !GameStatus.RivalCharacter.IsPhysical();
-        var scenarioTwo = !Character.IsPhysical() && GameStatus.RivalCharacter.IsPhysical();
+        var scenarioOne = Character.IsPhysical() && !GameStatus.RivalCharacterModel.IsPhysical();
+        var scenarioTwo = !Character.IsPhysical() && GameStatus.RivalCharacterModel.IsPhysical();
         return scenarioOne || scenarioTwo;
     }
 }

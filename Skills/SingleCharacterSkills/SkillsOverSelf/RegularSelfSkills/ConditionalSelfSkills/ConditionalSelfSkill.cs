@@ -11,6 +11,6 @@ public abstract class ConditionalSelfSkill: ConditionalSkill, ITargetedSkill {
         : base(name, statsToModify) {}
     
     public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.ActivatingCharacter;
+        Character = gameStatus.ActivatingCharacterModel;
     }
 }

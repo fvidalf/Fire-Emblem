@@ -20,6 +20,6 @@ public class IgnisSkill: FirstAttackSkill {
     }
 
     public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.ActivatingCharacter;
+        Character = gameStatus.ActivatingCharacterModel;
     }
 }

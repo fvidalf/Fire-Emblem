@@ -11,5 +11,5 @@ public interface IBaseSkill {
     
     void Reset();
     
-    Dictionary<Character, SkillEffect> GetModifiedStats();
+    Dictionary<CharacterModel, SkillEffect> GetModifiedStats();
 }

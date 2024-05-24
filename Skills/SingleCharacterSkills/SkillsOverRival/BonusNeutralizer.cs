@@ -17,6 +17,6 @@ public abstract class BonusNeutralizer: Neutralizer {
     }
     
     protected override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacter;
+        Character = gameStatus.RivalCharacterModel;
     }
 }

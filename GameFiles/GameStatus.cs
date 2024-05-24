@@ -3,15 +3,15 @@
 namespace Fire_Emblem.GameFiles;
 
 public class GameStatus {
-    public Character ActivatingCharacter { get; private set; }
-    public Character RivalCharacter { get; private set; }
-    public Character FirstCharacter { get; private set; }
+    public CharacterModel ActivatingCharacterModel { get; private set; }
+    public CharacterModel RivalCharacterModel { get; private set; }
+    public CharacterModel FirstCharacterModel { get; private set; }
     public int RoundPhase { get; private set; }
     
-    public GameStatus(Character activatingCharacter, Character rivalCharacter, Character firstCharacter, int roundPhase) {
-        ActivatingCharacter = activatingCharacter;
-        RivalCharacter = rivalCharacter;
-        FirstCharacter = firstCharacter;
+    public GameStatus(CharacterModel activatingCharacterModel, CharacterModel rivalCharacterModel, CharacterModel firstCharacterModel, int roundPhase) {
+        ActivatingCharacterModel = activatingCharacterModel;
+        RivalCharacterModel = rivalCharacterModel;
+        FirstCharacterModel = firstCharacterModel;
         RoundPhase = roundPhase;
     }
 }

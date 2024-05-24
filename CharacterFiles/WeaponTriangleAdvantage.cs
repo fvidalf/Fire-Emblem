@@ -2,7 +2,7 @@
 
 public static class WeaponTriangleAdvantage {
 
-    public static double GetAdvantage(Character self, Character target) {
+    public static double GetAdvantage(CharacterModel self, CharacterModel target) {
         switch (self.Weapon) {
             case "Sword" when target.Weapon == "Axe":
             case "Axe" when target.Weapon == "Lance":
@@ -17,7 +17,7 @@ public static class WeaponTriangleAdvantage {
         }
     }
     
-    public static string GetAdvantageMessage(Character self, Character target) {
+    public static string GetAdvantageMessage(CharacterModel self, CharacterModel target) {
         switch (self.Weapon) {
             case "Sword" when target.Weapon == "Axe":
             case "Axe" when target.Weapon == "Lance":

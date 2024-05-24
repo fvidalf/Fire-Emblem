@@ -11,6 +11,6 @@ public abstract class ConditionalRivalSkill: ConditionalSkill, ITargetedSkill {
         : base(name, statsToModify) {}
     
     public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacter;
+        Character = gameStatus.RivalCharacterModel;
     }
 }

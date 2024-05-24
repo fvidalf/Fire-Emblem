@@ -6,9 +6,9 @@ namespace Fire_Emblem.TeamsLoaderFiles;
 
 public static class CharacterLoader {
     
-    public static Character CreateCharacterFromInfo(List<CharacterInfo> charactersInfo, string unitName, IBaseSkill[] unitSkills, View view) {
+    public static CharacterModel CreateCharacterFromInfo(List<CharacterInfo> charactersInfo, string unitName, IBaseSkill[] unitSkills, View view) {
         var characterInfo = charactersInfo.Find(character => character.Name.Trim() == unitName.Trim());
-        var character = new Character(
+        var character = new CharacterModel(
             characterInfo.Name,
             characterInfo.Weapon,
             characterInfo.Gender,

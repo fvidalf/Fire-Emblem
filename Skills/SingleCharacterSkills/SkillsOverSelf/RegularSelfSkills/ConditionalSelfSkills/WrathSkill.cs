@@ -20,7 +20,7 @@ public class WrathSkill: ConditionalSelfSkill {
         return GameStatus.RoundPhase == 0;
     }
 
-    protected override void UpdateStat(Character character, EffectType effectType, StatEffect statEffect) {
+    protected override void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
         var diffInHp = Character.BaseHp - Character.Hp;
         var numberOfIncreases = Math.Min(diffInHp, 30);
         UpdateByVariableAmount(statEffect, numberOfIncreases);

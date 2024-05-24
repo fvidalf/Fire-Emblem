@@ -15,7 +15,7 @@ public class TeamsLoader {
         _teamFilesReader = new TeamFilesReader(teamsFolder);
     }
     
-    public Character[][] GetTeams() {
+    public CharacterModel[][] GetTeams() {
         var userOption = AskForTeam();
         var lines = _teamFilesReader.ReadTeamFile(userOption);
         var teamsContent = new TeamsContent(lines);
@@ -47,7 +47,7 @@ public class TeamsLoader {
         return int.Parse(userString);
     }
 
-    private Character[][] LoadTeams(TeamsContent teamsContent) {
+    private CharacterModel[][] LoadTeams(TeamsContent teamsContent) {
         var charactersInfo = GetCharactersFromJson();
         var teamCharacters = GetTeamCharacters(teamsContent, charactersInfo);
         return teamCharacters;
@@ -60,12 +60,12 @@ public class TeamsLoader {
         return charactersInfo;
     }
 
-    private Character[][] GetTeamCharacters(TeamsContent teamsContent, List<CharacterInfo> charactersInfo) {
-        var teamCharacters = new Character[2][];
+    private CharacterModel[][] GetTeamCharacters(TeamsContent teamsContent, List<CharacterInfo> charactersInfo) {
+        var teamCharacters = new CharacterModel[2][];
         
         for (var teamIndex = 0; teamIndex < 2; teamIndex++) {
             var numberOfUnits = teamsContent.GetNumberOfUnitsOfTeam(teamIndex);
-            teamCharacters[teamIndex] = new Character[numberOfUnits];
+            teamCharacters[teamIndex] = new CharacterModel[numberOfUnits];
             for (var unitIndex = 0; unitIndex < numberOfUnits; unitIndex++) {
                 teamCharacters[teamIndex][unitIndex] = GetCharacterFromInfo(teamsContent, charactersInfo, teamIndex, unitIndex);
             }
@@ -73,7 +73,7 @@ public class TeamsLoader {
         return teamCharacters;
     }
     
-    private Character GetCharacterFromInfo(TeamsContent teamsContent, List<CharacterInfo> charactersInfo, int teamIndex, int unitIndex) {
+    private CharacterModel GetCharacterFromInfo(TeamsContent teamsContent, List<CharacterInfo> charactersInfo, int teamIndex, int unitIndex) {
         var unitName = teamsContent.GetUnitName(teamIndex, unitIndex);
         var unitSkillNames = teamsContent.GetUnitSkillNames(teamIndex, unitIndex);
         var unitSkills = SkillLoader.GetSkills(unitSkillNames);
