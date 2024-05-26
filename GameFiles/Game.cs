@@ -5,23 +5,16 @@ using Fire_Emblem.TeamsLoaderFiles;
 namespace Fire_Emblem.GameFiles;
 
 public class Game
-{
-    private CharacterHandler _characterHandler;
-    private SkillHandler _skillHandler;
-    private CombatHandler _combatHandler;
+{ 
     private Teams _newTeams;
     private View _view;
-    public int FirstPlayerIndex;
-    public int SecondPlayerIndex;
-    private int _round;
+    private GameStatus _gameStatus;
     
     public Game(View view, string teamsFolder)
     {
         _view = view;
         _newTeams = new Teams(view, teamsFolder);
-        FirstPlayerIndex = 0;
-        SecondPlayerIndex = 1;
-        _round = 1;
+        _gameStatus = new GameStatus();
     }
 
     public void Play() {
@@ -40,12 +33,12 @@ public class Game
     }
 
     private void StartGameLoop() {
-        PrepareHandlers();
         while (true) {
             CheckIfTeamsAreEmpty();
             PrepareCharacters();
             HandleRoundStart();
-            _combatHandler.HandleCombat();
+            HandleCombat();
+            AdvanceRound();
         }
     }
 
@@ -54,13 +47,19 @@ public class Game
     }
     
     private void WriteRoundStartMessage() {
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(FirstPlayerIndex);
-        _view.WriteLine($"Round {_round}: {firstPlayerCharacter.Name} (Player {FirstPlayerIndex + 1}) comienza");
+        var firstPlayerIndex = _gameStatus.FirstPlayerIndex;
+        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(firstPlayerIndex);
+        _view.WriteLine($"Round {_gameStatus.Round}: {firstPlayerCharacter.Name} (Player {firstPlayerIndex + 1}) comienza");
         WriteWeaponTriangleAdvantage();
     }
+
+    public void HandleCombat() {
+        var combatHandler = new CombatHandler(_newTeams, _gameStatus, _view);
+        combatHandler.HandleCombat();
+    }
     
-    public void AdvanceRound() {
-        _round++;
+    private void AdvanceRound() {
+        _gameStatus.AdvanceRound();
     }
     
     private void CheckIfTeamsAreEmpty() {
@@ -73,12 +72,6 @@ public class Game
             throw new TeamIsEmptyException("Player 1 ganó");
         }
     }
-    
-    private void PrepareHandlers() {
-        _characterHandler = new CharacterHandler(_view);
-        _skillHandler = new SkillHandler(_view, _characterHandler);
-        _combatHandler = new CombatHandler(_characterHandler, _skillHandler, _newTeams, this, _view);
-    }
 
     private void PrepareCharacters() {
         SetCharacters();
@@ -86,33 +79,28 @@ public class Game
     }
 
     private void SetCharacters() {
-        SetCharacterForPlayer(FirstPlayerIndex);
-        SetCharacterForPlayer(SecondPlayerIndex);
+        SetCharacterForPlayer(_gameStatus.FirstPlayerIndex);
+        SetCharacterForPlayer(_gameStatus.SecondPlayerIndex);
     }
     
     private void ResetCharacterSkills() {
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(FirstPlayerIndex);
-        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(SecondPlayerIndex);
+        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.FirstPlayerIndex);
+        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.SecondPlayerIndex);
         
         firstPlayerCharacter.ResetSkills();
         secondPlayerCharacter.ResetSkills();
     }
-    
-    public void SetCharacterForPlayer(int playerIndex) {    
+
+    private void SetCharacterForPlayer(int playerIndex) {    
         var character = AskForCharacter(playerIndex);
         _newTeams.SetCharacterForPlayer(playerIndex, character); 
     }
     
     private void WriteWeaponTriangleAdvantage() {
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(FirstPlayerIndex);
-        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(SecondPlayerIndex);
+        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.FirstPlayerIndex);
+        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.SecondPlayerIndex);
         var advantageMessage = WeaponTriangleAdvantage.GetAdvantageMessage(firstPlayerCharacter, secondPlayerCharacter);
         _view.WriteLine(advantageMessage);
-    }
-    
-    public void ChangeFirstPlayer() {
-        FirstPlayerIndex = FirstPlayerIndex == 0 ? 1 : 0;
-        SecondPlayerIndex = SecondPlayerIndex == 0 ? 1 : 0;
     }
 
     private CharacterModel AskForCharacter(int playerIndex) {
@@ -127,7 +115,6 @@ public class Game
     private void ShowCharacterOptions(int playerIndex) {
         var team = _newTeams.GetTeam(playerIndex);
         for (var unitIndex = 0; unitIndex < team.Length; unitIndex++) {
-            var unit = team[unitIndex];
             _view.WriteLine($"{unitIndex}: {team[unitIndex].Name}");
         }
     }

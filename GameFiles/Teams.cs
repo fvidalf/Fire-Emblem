@@ -7,7 +7,7 @@ namespace Fire_Emblem.GameFiles;
 public class Teams {
     private CharacterModel[][] _teams;
     private TeamsLoader _teamsLoader;
-    private Dictionary<int, CharacterModel> _currentCharacterByPlayer = new Dictionary<int, CharacterModel>();
+    private Dictionary<int, CharacterModel> _currentCharacterByPlayer = new();
     
     public Teams(View view, string teamsFolder) {
         _teamsLoader = new TeamsLoader(view, teamsFolder);
@@ -45,5 +45,4 @@ public class Teams {
     public bool IsTeamEmpty(int playerIndex) {
         return _teams[playerIndex].Length == 0;
     }
-    
 }
