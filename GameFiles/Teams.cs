@@ -7,7 +7,6 @@ namespace Fire_Emblem.GameFiles;
 public class Teams {
     private CharacterModel[][] _teams;
     private TeamsLoader _teamsLoader;
-    private Dictionary<int, CharacterModel> _currentCharacterByPlayer = new();
     
     public Teams(View view, string teamsFolder) {
         _teamsLoader = new TeamsLoader(view, teamsFolder);
@@ -16,22 +15,23 @@ public class Teams {
     public void LoadTeams() {
         _teams = _teamsLoader.GetTeams();
     }
-    
-    public CharacterModel GetPlayerCurrentCharacter(int playerIndex) {
-        return _currentCharacterByPlayer[playerIndex];
-    }
-    
-    public void RemoveCurrentPlayerCharacter(int playerIndex) {
-        var characterToRemove = GetPlayerCurrentCharacter(playerIndex);
-        var team = _teams[playerIndex];
+
+    public void RemoveCharacter(CharacterModel character) {
+        var teamIndexToRemoveFrom = FindTeamIndexWithCharacter(character);
+        var teamToRemoveFrom = _teams[teamIndexToRemoveFrom];
         
-        var tempTeam = team.ToList();
-        tempTeam.Remove(characterToRemove);
-        _teams[playerIndex] = tempTeam.ToArray();
+        var tempTeam = teamToRemoveFrom.ToList();
+        tempTeam.Remove(character);
+        _teams[teamIndexToRemoveFrom] = tempTeam.ToArray();
     }
     
-    public void SetCharacterForPlayer(int playerIndex, CharacterModel characterModel) {
-        _currentCharacterByPlayer[playerIndex] = characterModel;
+    private int FindTeamIndexWithCharacter(CharacterModel character) {
+        for (var i = 0; i < _teams.Length; i++) {
+            if (_teams[i].Contains(character)) {
+                return i;
+            }
+        }
+        return -1;
     }
     
     public CharacterModel GetCharacterFromTeam(int playerIndex, int characterIndex) {

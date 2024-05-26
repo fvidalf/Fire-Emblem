@@ -5,42 +5,40 @@ namespace Fire_Emblem.GameFiles;
 public class CombatHandler {
 
     private bool _doesRoundEnd;
-    private int _firstPlayerIndex;
-    private int _secondPlayerIndex;
+    private CharacterModel _firstPlayerCharacter;
+    private CharacterModel _secondPlayerCharacter;
     private int _roundPhase;
     private CharacterHandler _characterHandler;
     private SkillHandler _skillHandler;
-    private Teams _teams;
     private GameStatus _gameStatus;
     private readonly View _view;
     
-    public CombatHandler(Teams teams, GameStatus gameStatus, View view) {
+    public CombatHandler(GameStatus gameStatus, View view) {
         _doesRoundEnd = false;
         _roundPhase = 0;
         _characterHandler = new CharacterHandler(view);
         _skillHandler = new SkillHandler(view, _characterHandler);
-        _teams = teams;
         _gameStatus = gameStatus;
+        UpdateCharacters();
         _view = view;
+    }
+
+    private void UpdateCharacters() {
+        _firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        _secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
     }
     
     public void HandleCombat() {
-        _firstPlayerIndex = _gameStatus.FirstPlayerIndex;
-        _secondPlayerIndex = _gameStatus.SecondPlayerIndex;
-        ExecuteCommonRound(_firstPlayerIndex, _secondPlayerIndex);
+        ExecuteCommonRound(_firstPlayerCharacter, _secondPlayerCharacter);
         if (_doesRoundEnd) return;
-        _firstPlayerIndex = _gameStatus.FirstPlayerIndex;
-        _secondPlayerIndex = _gameStatus.SecondPlayerIndex;
-        ExecuteCommonRound(_secondPlayerIndex, _firstPlayerIndex);
+        ExecuteCommonRound(_secondPlayerCharacter, _firstPlayerCharacter);
         if (_doesRoundEnd) return;
-        _firstPlayerIndex = _gameStatus.FirstPlayerIndex;
-        _secondPlayerIndex = _gameStatus.SecondPlayerIndex;
         ExecuteFollowUpRound();
     }
 
-    private void ExecuteCommonRound(int attackingPlayerIndex, int defendingPlayerIndex) {
+    private void ExecuteCommonRound(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
         HandleCharacterSkills();
-        HandleRegularAttack(attackingPlayerIndex, defendingPlayerIndex);
+        HandleRegularAttack(firstPlayerCharacter, secondPlayerCharacter);
         HandleRoundEnd();
     }
 
@@ -51,44 +49,35 @@ public class CombatHandler {
     }
 
     private void HandleCharacterSkills() {
-        var firstPlayerCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
-        var secondPlayerCharacter = _teams.GetPlayerCurrentCharacter(_secondPlayerIndex);
-        SetCharacterRoundStatus(firstPlayerCharacter, _firstPlayerIndex, _secondPlayerIndex);
-        SetCharacterRoundStatus(secondPlayerCharacter, _secondPlayerIndex, _firstPlayerIndex);
+        SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
+        SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
         
-        _skillHandler.ApplyCharacterSkills(firstPlayerCharacter, secondPlayerCharacter);
-        _skillHandler.HandleSkillEffectsNotification(firstPlayerCharacter, secondPlayerCharacter);
+        _skillHandler.ApplyCharacterSkills(_firstPlayerCharacter, _secondPlayerCharacter);
+        _skillHandler.HandleSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
     }
 
-    private void SetCharacterRoundStatus(CharacterModel characterModel, int characterIndex, int rivalIndex) {
-        var roundStatus = GetRoundStatus(characterIndex, rivalIndex);
-        characterModel.SetRoundStatus(roundStatus);
+    private void SetCharacterRoundStatus(CharacterModel activatingCharacter, CharacterModel rivalCharacter) {
+        var roundStatus = GetRoundStatus(activatingCharacter, rivalCharacter);
+        activatingCharacter.SetRoundStatus(roundStatus);
     }
     
-    private RoundStatus GetRoundStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
-        var activatingCharacter = _teams.GetPlayerCurrentCharacter(activatingPlayerIndex);
-        var rivalCharacter = _teams.GetPlayerCurrentCharacter(rivalPlayerIndex);
-        var firstCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
-        return new RoundStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
+    private RoundStatus GetRoundStatus(CharacterModel activatingCharacter, CharacterModel rivalCharacter) {
+        return new RoundStatus(activatingCharacter, rivalCharacter, _firstPlayerCharacter, _roundPhase);
     }
     
-    private void HandleRegularAttack(int attackingPlayerIndex, int defendingPlayerIndex) {
-        var attackingCharacter = _teams.GetPlayerCurrentCharacter(attackingPlayerIndex);
-        var defendingCharacter = _teams.GetPlayerCurrentCharacter(defendingPlayerIndex);
-        
+    private void HandleRegularAttack(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
         _characterHandler.Attack(attackingCharacter, defendingCharacter);
         if (defendingCharacter.IsDead) {
-            RemoveCurrentPlayerCharacter(defendingPlayerIndex);
+            _gameStatus.RemoveCharacter(defendingCharacter);
             _doesRoundEnd = true;
         } 
     }
 
     private void HandleRoundEnd() {
-        var firstPlayerCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
-        var secondPlayerCharacter = _teams.GetPlayerCurrentCharacter(_secondPlayerIndex);
         if (_roundPhase == 2 || _doesRoundEnd) {
-            ReportHp(firstPlayerCharacter, secondPlayerCharacter);
+            ReportHp(_firstPlayerCharacter, _secondPlayerCharacter);
             SwapPlayers();
+            UpdateCharacters();
         } else {
             AdvanceRoundPhase();
         }
@@ -98,36 +87,30 @@ public class CombatHandler {
         _roundPhase++; 
     }
     
-    private void RemoveCurrentPlayerCharacter(int playerIndex) {
-        _teams.RemoveCurrentPlayerCharacter(playerIndex);
-    }
-    
     private void SwapPlayers() {
         _gameStatus.SwapPlayers();
     }
 
     private void HandleFollowUpAttack() {
-        var followUpPlayerIndex = DetermineFollowUpPlayer(_firstPlayerIndex, _secondPlayerIndex);
-        if (followUpPlayerIndex == -1) return;
+        var followUpCharacter = DetermineFollowUpCharacter(_firstPlayerCharacter, _secondPlayerCharacter);
+        if (followUpCharacter == null) return;
         
-        if (followUpPlayerIndex == _firstPlayerIndex) {
-            HandleRegularAttack(_firstPlayerIndex, _secondPlayerIndex);
+        if (followUpCharacter == _firstPlayerCharacter) {
+            HandleRegularAttack(_firstPlayerCharacter, _secondPlayerCharacter);
         } else {
-            HandleRegularAttack(_secondPlayerIndex, _firstPlayerIndex);
+            HandleRegularAttack(_secondPlayerCharacter, _firstPlayerCharacter);
         }
     }
     
-    private int DetermineFollowUpPlayer(int atkPlayerIndex, int defPlayerIndex) {
-        var attackingCharacter = _teams.GetPlayerCurrentCharacter(atkPlayerIndex);
-        var defendingCharacter = _teams.GetPlayerCurrentCharacter(defPlayerIndex);
+    private CharacterModel? DetermineFollowUpCharacter(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
         
         if (attackingCharacter.Spd - defendingCharacter.Spd >= 5) {
-            return atkPlayerIndex;
+            return attackingCharacter;
         } else if (defendingCharacter.Spd - attackingCharacter.Spd >= 5) {
-            return defPlayerIndex;
+            return defendingCharacter;
         } else {
             _view.WriteLine("Ninguna unidad puede hacer un follow up");
-            return -1;
+            return null;
         }
     }
 

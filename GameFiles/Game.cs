@@ -6,15 +6,15 @@ namespace Fire_Emblem.GameFiles;
 
 public class Game
 { 
-    private Teams _newTeams;
+    private Teams _teams;
     private View _view;
     private GameStatus _gameStatus;
     
     public Game(View view, string teamsFolder)
     {
         _view = view;
-        _newTeams = new Teams(view, teamsFolder);
         _gameStatus = new GameStatus();
+        _teams = new Teams(view, teamsFolder);
     }
 
     public void Play() {
@@ -29,7 +29,8 @@ public class Game
     }
 
     private void LoadTeams() {
-        _newTeams.LoadTeams();
+        _teams.LoadTeams();
+        _gameStatus.SetTeams(_teams);
     }
 
     private void StartGameLoop() {
@@ -48,13 +49,13 @@ public class Game
     
     private void WriteRoundStartMessage() {
         var firstPlayerIndex = _gameStatus.FirstPlayerIndex;
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(firstPlayerIndex);
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
         _view.WriteLine($"Round {_gameStatus.Round}: {firstPlayerCharacter.Name} (Player {firstPlayerIndex + 1}) comienza");
         WriteWeaponTriangleAdvantage();
     }
 
     public void HandleCombat() {
-        var combatHandler = new CombatHandler(_newTeams, _gameStatus, _view);
+        var combatHandler = new CombatHandler(_gameStatus, _view);
         combatHandler.HandleCombat();
     }
     
@@ -64,11 +65,11 @@ public class Game
     
     private void CheckIfTeamsAreEmpty() {
 
-        if (_newTeams.IsTeamEmpty(0)) {
+        if (_teams.IsTeamEmpty(0)) {
             throw new TeamIsEmptyException("Player 2 ganó");
         }
         
-        if (_newTeams.IsTeamEmpty(1)) {
+        if (_teams.IsTeamEmpty(1)) {
             throw new TeamIsEmptyException("Player 1 ganó");
         }
     }
@@ -84,8 +85,8 @@ public class Game
     }
     
     private void ResetCharacterSkills() {
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.FirstPlayerIndex);
-        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.SecondPlayerIndex);
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
         
         firstPlayerCharacter.ResetSkills();
         secondPlayerCharacter.ResetSkills();
@@ -93,12 +94,12 @@ public class Game
 
     private void SetCharacterForPlayer(int playerIndex) {    
         var character = AskForCharacter(playerIndex);
-        _newTeams.SetCharacterForPlayer(playerIndex, character); 
+        _gameStatus.SetCharacterForPlayer(playerIndex, character); 
     }
     
     private void WriteWeaponTriangleAdvantage() {
-        var firstPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.FirstPlayerIndex);
-        var secondPlayerCharacter = _newTeams.GetPlayerCurrentCharacter(_gameStatus.SecondPlayerIndex);
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
         var advantageMessage = WeaponTriangleAdvantage.GetAdvantageMessage(firstPlayerCharacter, secondPlayerCharacter);
         _view.WriteLine(advantageMessage);
     }
@@ -108,12 +109,12 @@ public class Game
         ShowCharacterOptions(playerIndex);
 
         var userOption = GetUserOption();
-        var character = _newTeams.GetCharacterFromTeam(playerIndex, userOption);
+        var character = _teams.GetCharacterFromTeam(playerIndex, userOption);
         return character;
     }
 
     private void ShowCharacterOptions(int playerIndex) {
-        var team = _newTeams.GetTeam(playerIndex);
+        var team = _teams.GetTeam(playerIndex);
         for (var unitIndex = 0; unitIndex < team.Length; unitIndex++) {
             _view.WriteLine($"{unitIndex}: {team[unitIndex].Name}");
         }
