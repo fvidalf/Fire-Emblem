@@ -18,8 +18,8 @@ public class DragonskinBonus: ConditionalSelfSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalFirstToAttack = GameStatus.RivalCharacterModel == GameStatus.FirstCharacterModel;
-        var isRivalHpAtOrAbove75 = GameStatus.RivalCharacterModel.Hp >= GameStatus.RivalCharacterModel.BaseHp * 0.75;
+        var isRivalFirstToAttack = RoundStatus.RivalCharacterModel == RoundStatus.FirstCharacterModel;
+        var isRivalHpAtOrAbove75 = RoundStatus.RivalCharacterModel.Hp >= RoundStatus.RivalCharacterModel.BaseHp * 0.75;
         return isRivalFirstToAttack || isRivalHpAtOrAbove75;
     }
 }

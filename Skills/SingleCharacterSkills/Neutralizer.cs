@@ -13,10 +13,10 @@ public abstract class Neutralizer: SingleCharacterSkill {
         StatsToNeutralize = statsToNeutralize;
     }
     
-    public override void Apply(GameStatus gameStatus) {
-        base.Apply(gameStatus);
-        DetermineTarget(gameStatus);
-        ConcreteApply(gameStatus);
+    public override void Apply(RoundStatus roundStatus) {
+        base.Apply(roundStatus);
+        DetermineTarget(roundStatus);
+        ConcreteApply(roundStatus);
         IsActivated = true;
     }
     
@@ -32,7 +32,7 @@ public abstract class Neutralizer: SingleCharacterSkill {
         Character.NeutralizeStats(StatsToNeutralize);
     }
 
-    protected abstract void DetermineTarget(GameStatus gameStatus);
+    protected abstract void DetermineTarget(RoundStatus roundStatus);
     
-    protected abstract void ConcreteApply(GameStatus gameStatus);
+    protected abstract void ConcreteApply(RoundStatus roundStatus);
 }

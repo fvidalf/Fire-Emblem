@@ -17,7 +17,7 @@ public class ResolveSkill: ConditionalSelfSkill {
             }) {}
 
     protected override bool IsConditionMet() {
-        var isGameStart = GameStatus.RoundPhase == 0;
+        var isGameStart = RoundStatus.RoundPhase == 0;
         var isHpAtOrBelow75 = Character.Hp <= Character.BaseHp * 0.75;
         return isGameStart && isHpAtOrBelow75;
     }

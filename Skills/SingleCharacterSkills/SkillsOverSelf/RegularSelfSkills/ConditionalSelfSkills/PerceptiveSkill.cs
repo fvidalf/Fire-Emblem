@@ -16,8 +16,8 @@ public class PerceptiveSkill: ConditionalSelfSkill {
             }) {}
 
     protected override bool IsConditionMet() {
-        var isFirstCharacterToAttack = Character == GameStatus.FirstCharacterModel;
-        return GameStatus.RoundPhase == 0 && isFirstCharacterToAttack;
+        var isFirstCharacterToAttack = Character == RoundStatus.FirstCharacterModel;
+        return RoundStatus.RoundPhase == 0 && isFirstCharacterToAttack;
     }
 
     protected override void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {

@@ -19,7 +19,7 @@ public class IgnisSkill: FirstAttackSkill {
         UpdateStat(Character, EffectType.FirstAttackBonus, newStatEffect);
     }
 
-    public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.ActivatingCharacterModel;
+    public override void DetermineTarget(RoundStatus roundStatus) {
+        Character = roundStatus.ActivatingCharacterModel;
     }
 }

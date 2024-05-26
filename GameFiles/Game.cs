@@ -6,10 +6,11 @@ namespace Fire_Emblem.GameFiles;
 
 public class Game
 {
-    private View _view;
-    private CombatHandler _combatHandler;
     private CharacterHandler _characterHandler;
+    private SkillHandler _skillHandler;
+    private CombatHandler _combatHandler;
     private Teams _newTeams;
+    private View _view;
     public int FirstPlayerIndex;
     public int SecondPlayerIndex;
     private int _round;
@@ -75,7 +76,8 @@ public class Game
     
     private void PrepareHandlers() {
         _characterHandler = new CharacterHandler(_view);
-        _combatHandler = new CombatHandler(_characterHandler, _newTeams, this, _view);
+        _skillHandler = new SkillHandler(_view, _characterHandler);
+        _combatHandler = new CombatHandler(_characterHandler, _skillHandler, _newTeams, this, _view);
     }
 
     private void PrepareCharacters() {

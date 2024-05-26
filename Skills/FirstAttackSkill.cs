@@ -12,14 +12,14 @@ public abstract class FirstAttackSkill : SingleCharacterSkill, ITargetedSkill {
         : base(name) {
     }
 
-    public override void Apply(GameStatus gameStatus) {
-        DetermineTarget(gameStatus);
-        base.Apply(gameStatus);
+    public override void Apply(RoundStatus roundStatus) {
+        DetermineTarget(roundStatus);
+        base.Apply(roundStatus);
         ConcreteApply();
         IsActivated = true;
     }
 
     protected abstract void ConcreteApply();
 
-    public abstract void DetermineTarget(GameStatus gamestatus);
+    public abstract void DetermineTarget(RoundStatus gamestatus);
 }

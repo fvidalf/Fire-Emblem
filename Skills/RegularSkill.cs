@@ -14,11 +14,11 @@ public abstract class RegularSkill: SingleCharacterSkill {
         StatsToModify = statsToModify;
     }
     
-    public override void Apply(GameStatus gameStatus) {
-        base.Apply(gameStatus);
-        ConcreteApply(gameStatus);
+    public override void Apply(RoundStatus roundStatus) {
+        base.Apply(roundStatus);
+        ConcreteApply(roundStatus);
         IsActivated = true;
     }
     
-    protected abstract void ConcreteApply(GameStatus gameStatus);
+    protected abstract void ConcreteApply(RoundStatus roundStatus);
 }

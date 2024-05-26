@@ -13,20 +13,20 @@ public class DragonskinNeutralize: Neutralizer {
         : base("Dragonskin Neutralize",
             new List<Stat> {Stat.AtkBonus, Stat.SpdBonus, Stat.ResBonus, Stat.DefBonus}) {}
 
-    protected override void ConcreteApply(GameStatus gameStatus) {
+    protected override void ConcreteApply(RoundStatus roundStatus) {
         if (IsConditionMet()) {
             SetResponseForNeutralizing(EffectType.BonusNeutralizer);
             NeutralizeStats();
         }
     }
 
-    protected override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacterModel;
+    protected override void DetermineTarget(RoundStatus roundStatus) {
+        Character = roundStatus.RivalCharacterModel;
     }
     
     private bool IsConditionMet() {
-        var isRivalFirstToAttack = GameStatus.RivalCharacterModel == GameStatus.FirstCharacterModel;
-        var isRivalHpAtOrAbove75 = GameStatus.RivalCharacterModel.Hp >= GameStatus.RivalCharacterModel.BaseHp * 0.75;
+        var isRivalFirstToAttack = RoundStatus.RivalCharacterModel == RoundStatus.FirstCharacterModel;
+        var isRivalHpAtOrAbove75 = RoundStatus.RivalCharacterModel.Hp >= RoundStatus.RivalCharacterModel.BaseHp * 0.75;
         return isRivalFirstToAttack || isRivalHpAtOrAbove75;
     }
 }

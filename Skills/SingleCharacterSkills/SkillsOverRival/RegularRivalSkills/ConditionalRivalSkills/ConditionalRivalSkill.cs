@@ -10,7 +10,7 @@ public abstract class ConditionalRivalSkill: ConditionalSkill, ITargetedSkill {
     protected ConditionalRivalSkill(string name, Dictionary<EffectType, List<StatEffect>> statsToModify)
         : base(name, statsToModify) {}
     
-    public override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacterModel;
+    public override void DetermineTarget(RoundStatus roundStatus) {
+        Character = roundStatus.RivalCharacterModel;
     }
 }

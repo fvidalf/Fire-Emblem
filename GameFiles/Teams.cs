@@ -7,7 +7,7 @@ namespace Fire_Emblem.GameFiles;
 public class Teams {
     private CharacterModel[][] _teams;
     private TeamsLoader _teamsLoader;
-    private Dictionary<int, CharacterModel> _charactersByPlayerIndex = new Dictionary<int, CharacterModel>();
+    private Dictionary<int, CharacterModel> _currentCharacterByPlayer = new Dictionary<int, CharacterModel>();
     
     public Teams(View view, string teamsFolder) {
         _teamsLoader = new TeamsLoader(view, teamsFolder);
@@ -18,7 +18,7 @@ public class Teams {
     }
     
     public CharacterModel GetPlayerCurrentCharacter(int playerIndex) {
-        return _charactersByPlayerIndex[playerIndex];
+        return _currentCharacterByPlayer[playerIndex];
     }
     
     public void RemoveCurrentPlayerCharacter(int playerIndex) {
@@ -31,7 +31,7 @@ public class Teams {
     }
     
     public void SetCharacterForPlayer(int playerIndex, CharacterModel characterModel) {
-        _charactersByPlayerIndex[playerIndex] = characterModel;
+        _currentCharacterByPlayer[playerIndex] = characterModel;
     }
     
     public CharacterModel GetCharacterFromTeam(int playerIndex, int characterIndex) {

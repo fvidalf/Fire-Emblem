@@ -16,7 +16,7 @@ public class SingleMindedSkill: ConditionalSelfSkill {
             }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalMostRecentOpponent = Character.MostRecentRival == GameStatus.RivalCharacterModel;
+        var isRivalMostRecentOpponent = Character.MostRecentRival == RoundStatus.RivalCharacterModel;
         return isRivalMostRecentOpponent;
     }
 }

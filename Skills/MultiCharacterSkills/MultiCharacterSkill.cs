@@ -14,7 +14,7 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
     public bool IsActivated { get; set; }
     protected SingleCharacterSkill[] Skills;
     protected CharacterModel? Character;
-    protected GameStatus GameStatus;
+    protected RoundStatus RoundStatus;
     
     protected MultiCharacterSkill(string name, SingleCharacterSkill[] skills) {
         Name = name;
@@ -22,11 +22,11 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
         Skills = skills;
     }
     
-    public virtual void Apply(GameStatus gameStatus) {
-        GameStatus = gameStatus;
-        Console.WriteLine($"Applying {Name} by {GameStatus.ActivatingCharacterModel.Name}");
+    public virtual void Apply(RoundStatus roundStatus) {
+        RoundStatus = roundStatus;
+        Console.WriteLine($"Applying {Name} by {RoundStatus.ActivatingCharacterModel.Name}");
         foreach (var skill in Skills) {
-            skill.Apply(gameStatus);
+            skill.Apply(roundStatus);
         }
     }
     

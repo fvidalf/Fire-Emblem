@@ -9,8 +9,8 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
     protected ConditionalSkill(string name, Dictionary<EffectType, List<StatEffect>> statsToModify)
         : base(name, statsToModify) {}
     
-    protected override void ConcreteApply(GameStatus gameStatus) {
-        DetermineTarget(gameStatus);
+    protected override void ConcreteApply(RoundStatus roundStatus) {
+        DetermineTarget(roundStatus);
         if (IsConditionMet()) {
             foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
                 var effectType = statEffects.Key;
@@ -21,7 +21,7 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
         }
     }
 
-    public abstract void DetermineTarget(GameStatus gameStatus);
+    public abstract void DetermineTarget(RoundStatus roundStatus);
     
     protected abstract bool IsConditionMet();
 }

@@ -14,15 +14,17 @@ public class CombatHandler {
     private int _firstPlayerIndex;
     private int _secondPlayerIndex;
     private int _roundPhase;
-    private Teams _teams;
-    private readonly View _view;
-    private Game _game;
     private CharacterHandler _characterHandler;
+    private SkillHandler _skillHandler;
+    private Teams _teams;
+    private Game _game;
+    private readonly View _view;
     
-    public CombatHandler(CharacterHandler characterHandler, Teams teams, Game game, View view) {
+    public CombatHandler(CharacterHandler characterHandler, SkillHandler skillHandler, Teams teams, Game game, View view) {
         _doesRoundEnd = false;
         _roundPhase = 0;
         _characterHandler = characterHandler;
+        _skillHandler = skillHandler;
         _teams = teams;
         _game = game;
         _view = view;
@@ -63,23 +65,23 @@ public class CombatHandler {
     private void HandleCharacterSkills() {
         var firstPlayerCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
         var secondPlayerCharacter = _teams.GetPlayerCurrentCharacter(_secondPlayerIndex);
-        SetCharacterGameStatus(firstPlayerCharacter, _firstPlayerIndex, _secondPlayerIndex);
-        SetCharacterGameStatus(secondPlayerCharacter, _secondPlayerIndex, _firstPlayerIndex);
+        SetCharacterRoundStatus(firstPlayerCharacter, _firstPlayerIndex, _secondPlayerIndex);
+        SetCharacterRoundStatus(secondPlayerCharacter, _secondPlayerIndex, _firstPlayerIndex);
         
-        ApplyCharacterSkills(firstPlayerCharacter, secondPlayerCharacter);
-        HandleSkillEffectsNotification(firstPlayerCharacter, secondPlayerCharacter);
+        _skillHandler.ApplyCharacterSkills(firstPlayerCharacter, secondPlayerCharacter);
+        _skillHandler.HandleSkillEffectsNotification(firstPlayerCharacter, secondPlayerCharacter);
     }
 
-    private void SetCharacterGameStatus(CharacterModel characterModel, int characterIndex, int rivalIndex) {
-        var gameStatus = GetGameStatus(characterIndex, rivalIndex);
-        characterModel.SetGameStatus(gameStatus);
+    private void SetCharacterRoundStatus(CharacterModel characterModel, int characterIndex, int rivalIndex) {
+        var roundStatus = GetRoundStatus(characterIndex, rivalIndex);
+        characterModel.SetRoundStatus(roundStatus);
     }
     
-    private GameStatus GetGameStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
+    private RoundStatus GetRoundStatus(int activatingPlayerIndex, int rivalPlayerIndex) {
         var activatingCharacter = _teams.GetPlayerCurrentCharacter(activatingPlayerIndex);
         var rivalCharacter = _teams.GetPlayerCurrentCharacter(rivalPlayerIndex);
         var firstCharacter = _teams.GetPlayerCurrentCharacter(_firstPlayerIndex);
-        return new GameStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
+        return new RoundStatus(activatingCharacter, rivalCharacter, firstCharacter, _roundPhase);
     }
 
     private void ApplyCharacterSkills(CharacterModel firstPlayerCharacterModel, CharacterModel secondPlayerCharacterModel) {
@@ -122,7 +124,7 @@ public class CombatHandler {
             var character = pair.Item1;
             var skill = pair.Item2;
             //if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
-            if (!skill.IsActivated) _characterHandler.ApplySkill(character, skill, character.GameStatus);
+            if (!skill.IsActivated) _characterHandler.ApplySkill(character, skill, character.RoundStatus);
         }
     }
     

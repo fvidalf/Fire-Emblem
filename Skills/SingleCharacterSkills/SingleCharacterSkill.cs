@@ -12,7 +12,7 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
     public bool IsActivated { get; set; }
     public CharacterModel? Character;
     public SkillEffect SkillEffect { get; set; }
-    protected GameStatus GameStatus;
+    protected RoundStatus RoundStatus;
     
     protected SingleCharacterSkill(string name) {
         Name = name;
@@ -20,8 +20,8 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
         SkillEffect = new SkillEffect();
     }
     
-    public virtual void Apply(GameStatus gameStatus) {
-        GameStatus = gameStatus;
+    public virtual void Apply(RoundStatus roundStatus) {
+        RoundStatus = roundStatus;
     }
     
     public Dictionary<CharacterModel, SkillEffect> GetModifiedStats() {

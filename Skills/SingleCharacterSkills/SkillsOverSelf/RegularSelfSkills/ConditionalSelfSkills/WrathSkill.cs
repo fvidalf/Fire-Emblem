@@ -17,7 +17,7 @@ public class WrathSkill: ConditionalSelfSkill {
             }) {}
 
     protected override bool IsConditionMet() {
-        return GameStatus.RoundPhase == 0;
+        return RoundStatus.RoundPhase == 0;
     }
 
     protected override void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {

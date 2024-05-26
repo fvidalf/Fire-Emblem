@@ -5,5 +5,5 @@ using Fire_Emblem.Skills.SkillEffectFiles;
 namespace Fire_Emblem.Skills.MultiCharacterSkills;
 
 public interface IMultiCharacterSkill: IBaseSkill {
-    new void Apply(GameStatus gameStatus);
+    new void Apply(RoundStatus roundStatus);
 }

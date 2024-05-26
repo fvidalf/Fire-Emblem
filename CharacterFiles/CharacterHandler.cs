@@ -60,8 +60,8 @@ public class CharacterHandler {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
     
-    public void ApplySkill(CharacterModel applier, IBaseSkill skill, GameStatus gameStatus) {
-        skill.Apply(gameStatus);
+    public void ApplySkill(CharacterModel applier, IBaseSkill skill, RoundStatus roundStatus) {
+        skill.Apply(roundStatus);
         var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
         UpdateModifiedStats(applier, characterPairedToSkillEffect);
     }

@@ -9,7 +9,7 @@ public abstract class StarterSkill: ConditionalSelfSkill {
 
     protected override bool IsConditionMet() {
         var isSpecificConditionMet = IsSpecificConditionMet();
-        return Character == GameStatus.FirstCharacterModel && isSpecificConditionMet;
+        return Character == RoundStatus.FirstCharacterModel && isSpecificConditionMet;
     }
 
     protected virtual bool IsSpecificConditionMet() {

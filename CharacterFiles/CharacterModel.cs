@@ -18,7 +18,7 @@ public class CharacterModel {
     public string DeathQuote { get; set; }
     public IBaseSkill[] Skills { get; private set; }
     public SingleCharacterSkill[] SingleSkills { get; private set; }
-    public GameStatus GameStatus { get; private set; }
+    public RoundStatus RoundStatus { get; private set; }
 
     public int BaseHp { get; private set; }
     public int BaseAtk { get; private set; }
@@ -139,8 +139,8 @@ public class CharacterModel {
         target.MostRecentRival = this;
     }
     
-    public void SetGameStatus(GameStatus gameStatus) {
-        GameStatus = gameStatus;
+    public void SetRoundStatus(RoundStatus roundStatus) {
+        RoundStatus = roundStatus;
     }
 
     public void ResetSkills() {
@@ -194,7 +194,7 @@ public class CharacterModel {
 
     public Dictionary<CharacterModel, SkillEffect> GetSkillEffects() {
         var skillEffects = new Dictionary<CharacterModel, SkillEffect>();
-        var rival = GameStatus.RivalCharacterModel;
+        var rival = RoundStatus.RivalCharacterModel;
         skillEffects[this] = _selfModifiedStats;
         skillEffects[rival] = _rivalModifiedStats;
         return skillEffects;

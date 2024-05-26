@@ -1,17 +1,19 @@
-﻿using Fire_Emblem.CharacterFiles;
-
-namespace Fire_Emblem.GameFiles;
+﻿namespace Fire_Emblem.GameFiles;
 
 public class GameStatus {
-    public CharacterModel ActivatingCharacterModel { get; private set; }
-    public CharacterModel RivalCharacterModel { get; private set; }
-    public CharacterModel FirstCharacterModel { get; private set; }
-    public int RoundPhase { get; private set; }
+    public int FirstPlayerIndex;
+    public int SecondPlayerIndex;
+    public int Round;
+    public RoundStatus RoundStatus;
     
-    public GameStatus(CharacterModel activatingCharacterModel, CharacterModel rivalCharacterModel, CharacterModel firstCharacterModel, int roundPhase) {
-        ActivatingCharacterModel = activatingCharacterModel;
-        RivalCharacterModel = rivalCharacterModel;
-        FirstCharacterModel = firstCharacterModel;
-        RoundPhase = roundPhase;
+    public GameStatus() {
+        FirstPlayerIndex = 0;
+        SecondPlayerIndex = 1;
+        Round = 0; 
     }
+    
+    public void SetRoundStatus(RoundStatus roundStatus) {
+        RoundStatus = roundStatus;
+    }
+    
 }

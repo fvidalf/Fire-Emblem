@@ -11,12 +11,12 @@ public abstract class BonusNeutralizer: Neutralizer {
         : base(name, statsToNeutralize) {
     }
 
-    protected override void ConcreteApply(GameStatus gameStatus) {
+    protected override void ConcreteApply(RoundStatus roundStatus) {
         SetResponseForNeutralizing(EffectType.BonusNeutralizer);
         NeutralizeStats();
     }
     
-    protected override void DetermineTarget(GameStatus gameStatus) {
-        Character = gameStatus.RivalCharacterModel;
+    protected override void DetermineTarget(RoundStatus roundStatus) {
+        Character = roundStatus.RivalCharacterModel;
     }
 }
