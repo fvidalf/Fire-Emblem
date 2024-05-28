@@ -23,7 +23,7 @@ public class Game
             StartGameLoop();
         } catch (InvalidTeamException e) {
             _view.WriteLine(e.Message);
-        } catch (TeamIsEmptyException e) {
+        } catch (PlayerHasWonException e) {
             _view.WriteLine(e.Message);
         }
     }
@@ -35,7 +35,7 @@ public class Game
 
     private void StartGameLoop() {
         while (true) {
-            CheckIfTeamsAreEmpty();
+            CheckIfPlayerHasWon();
             PrepareCharacters();
             HandleRoundStart();
             HandleCombat();
@@ -63,14 +63,12 @@ public class Game
         _gameStatus.AdvanceRound();
     }
     
-    private void CheckIfTeamsAreEmpty() {
-
-        if (_teams.IsTeamEmpty(0)) {
-            throw new TeamIsEmptyException("Player 2 ganó");
+    private void CheckIfPlayerHasWon() {
+        if (_gameStatus.HasPlayerWon(Player.Player1)) {
+            throw new PlayerHasWonException("Player 1 ganó");
         }
-        
-        if (_teams.IsTeamEmpty(1)) {
-            throw new TeamIsEmptyException("Player 1 ganó");
+        if (_gameStatus.HasPlayerWon(Player.Player2)) {
+            throw new PlayerHasWonException("Player 2 ganó");
         }
     }
 

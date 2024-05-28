@@ -18,7 +18,6 @@ public class SkillHandler {
         _view = view;
     }
     
-    
     public void ApplyCharacterSkills(CharacterModel firstPlayerCharacterModel, CharacterModel secondPlayerCharacterModel) {
         firstPlayerCharacterModel.ResetModifiedStats();
         secondPlayerCharacterModel.ResetModifiedStats();

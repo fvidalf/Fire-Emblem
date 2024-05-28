@@ -49,4 +49,9 @@ public class GameStatus {
     public void RemoveCharacter(CharacterModel character) {
         _teams.RemoveCharacter(character);
     }
+
+    public bool HasPlayerWon(Player player) {
+        var playerIndex = ((int)player + 1) % 2;
+        return _teams.IsTeamEmpty(playerIndex);
+    }
 }
