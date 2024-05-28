@@ -2,8 +2,8 @@
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.GameFiles;
@@ -57,7 +57,6 @@ public class SkillHandler {
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
-            //if (!skill.IsActivated) character.ApplySkill(skill, character.GameStatus);
             if (!skill.IsActivated) _characterHandler.ApplySkill(character, skill, character.RoundStatus);
         }
     }
@@ -103,6 +102,9 @@ public class SkillHandler {
                     case EffectType.RegularBonus or EffectType.RegularPenalty:
                         NotifyRegularSkill(character, stat, amount);
                         break;
+                    case EffectType.FollowUpBonus or EffectType.FollowUpPenalty:
+                        NotifyFollowUpAttackSkill(character, stat, amount);
+                        break;
                     case EffectType.PenaltyNeutralizer:
                         NotifyPenaltyNeutralizer(character, stat);
                         break;
@@ -125,6 +127,13 @@ public class SkillHandler {
         if (amount != 0) {
             var diffSign = amount > 0 ? "+" : "";
             _view.WriteLine($"{characterModel.Name} obtiene {StatToString.Map[stat]}{diffSign}{amount}");
+        }
+    }
+    
+    private void NotifyFollowUpAttackSkill(CharacterModel characterModel, Stat stat, int amount) {
+        if (amount != 0) {
+            var diffSign = amount > 0 ? "+" : "";
+            _view.WriteLine($"{characterModel.Name} obtiene {StatToString.RegularizeMap[stat]}{diffSign}{amount} en su Follow-Up");
         }
     }
     

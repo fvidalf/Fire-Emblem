@@ -4,8 +4,8 @@ using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -54,6 +54,10 @@ public class CharacterModel {
     public int FirstAttackDef { get; set; }
     public int FirstAttackRes { get; set; }
     
+    public int FollowUpAtk { get; set; }
+    public int FollowUpDef { get; set; }
+    public int FollowUpRes { get; set; }
+
     public CharacterModel? MostRecentRival { get; private set; }
 
     public bool IsDead;
@@ -89,10 +93,9 @@ public class CharacterModel {
         BaseDef = def;
         Res = res;
         BaseRes = res;
-
-        PrepareSkills();
         StatModifiers = new StatModifiers();
 
+        PrepareSkills();
     }
 
     private void PrepareSkills() {

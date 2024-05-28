@@ -1,4 +1,5 @@
-﻿using Fire_Emblem_View;
+﻿using System.Diagnostics;
+using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 namespace Fire_Emblem.GameFiles;
 
@@ -52,6 +53,11 @@ public class CombatHandler {
         SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
         SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
         
+        Console.WriteLine("Atk1 antes de aplicar skills: " + _firstPlayerCharacter.Atk);
+        Console.WriteLine("FirstAttackAtk1 antes de aplicar skills: " + _firstPlayerCharacter.FirstAttackAtk);
+        Console.WriteLine("Atk2 antes de aplicar skills: " + _secondPlayerCharacter.Atk);
+        Console.WriteLine("FirstAttackAtk2 antes de aplicar skills: " + _secondPlayerCharacter.FirstAttackAtk);
+        
         _skillHandler.ApplyCharacterSkills(_firstPlayerCharacter, _secondPlayerCharacter);
         _skillHandler.HandleSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
     }
@@ -66,7 +72,10 @@ public class CombatHandler {
     }
     
     private void HandleRegularAttack(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
-        _characterHandler.Attack(attackingCharacter, defendingCharacter);
+        Console.WriteLine("Atk1 antes de atacar: " + _firstPlayerCharacter.Atk);
+        Console.WriteLine("FirstAttackAtk1 antes de atacar: " + _firstPlayerCharacter.FirstAttackAtk);
+        
+        _characterHandler.Attack(attackingCharacter, defendingCharacter, _roundPhase);
         if (defendingCharacter.IsDead) {
             _gameStatus.RemoveCharacter(defendingCharacter);
             _doesRoundEnd = true;

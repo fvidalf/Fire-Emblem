@@ -1,19 +1,19 @@
-﻿using Fire_Emblem.Skills.MultiCharacterSkills.DragonskinSkillFiles;
+﻿using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival.FirstAttackRivalSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival.RegularRivalSkills.ConditionalRivalSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.FirstAttackSelfSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BoostSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.BrazenSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.StarterBonusSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.BonusSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf.RegularSelfSkills.FlatSelfSkills.SacrificeSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.FirstAttackSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.FollowUpSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalRivalSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BoostSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BrazenSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.FlatSkills.FlatSelfSkills.BonusSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.FlatSkills.FlatSelfSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -95,6 +95,12 @@ public static class SkillAssigner {
         { "Lull Spd/Def", typeof(LullSpeedAndDefenceSkill)},
         { "Lull Spd/Res", typeof(LullSpeedAndResistanceSkill)},
         { "Lull Def/Res", typeof(LullDefenceAndResistanceSkill)},
-        { "Dragonskin", typeof(DragonskinSkill)}
+        { "Dragonskin", typeof(DragonskinSkill)},
+        { "Soulblade", typeof(SoulbladeSkill)},
+        { "Light and Dark", typeof(LightAndDarkSkill)},
+        { "Fair Fight", typeof(FairFightSkill)},
+        { "Close Def", typeof(CloseDefSkill)},
+        { "Distant Def", typeof(DistantDefSkill)},
+        { "Sandstorm", typeof(SandstormSkill)}
     };
 }

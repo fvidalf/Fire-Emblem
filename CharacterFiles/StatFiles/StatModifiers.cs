@@ -16,19 +16,19 @@ public class StatModifiers {
     
     private void InitializeModifierMemory() {
         HpModifiers = new Dictionary<EffectType, int>() {
-            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpPenalty, 0}
         };
         AtkModifiers = new Dictionary<EffectType, int>() {
-            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpPenalty, 0}
         };
         SpdModifiers = new Dictionary<EffectType, int>() {
-            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpPenalty, 0}
         };
         DefModifiers = new Dictionary<EffectType, int>() {
-            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpPenalty, 0}
         };
         ResModifiers = new Dictionary<EffectType, int>() {
-            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpAttackBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpAttackPenalty, 0}
+            {EffectType.RegularBonus, 0}, {EffectType.FirstAttackBonus, 0}, {EffectType.FollowUpBonus, 0}, {EffectType.RegularPenalty, 0}, {EffectType.FirstAttackPenalty, 0}, {EffectType.FollowUpPenalty, 0}
         };
     }
     
@@ -37,16 +37,16 @@ public class StatModifiers {
             case Stat.Hp:
                 HpModifiers[effectType] += statEffect.Amount;
                 break;
-            case Stat.Atk:
+            case Stat.Atk or Stat.FirstAttackAtk or Stat.FollowUpAtk:
                 AtkModifiers[effectType] += statEffect.Amount;
                 break;
-            case Stat.Spd:
+            case Stat.Spd or Stat.FirstAttackSpd:
                 SpdModifiers[effectType] += statEffect.Amount;
                 break;
-            case Stat.Def:
+            case Stat.Def or Stat.FirstAttackDef or Stat.FollowUpDef:
                 DefModifiers[effectType] += statEffect.Amount;
                 break;
-            case Stat.Res:
+            case Stat.Res or Stat.FirstAttackRes or Stat.FollowUpRes:
                 ResModifiers[effectType] += statEffect.Amount;
                 break;
         }
@@ -99,8 +99,10 @@ public class StatModifiers {
     private void NeutralizeAtkPenalty(CharacterModel characterModel) {
         characterModel.Atk += int.Abs(AtkModifiers[EffectType.RegularPenalty]);
         characterModel.FirstAttackAtk += int.Abs(AtkModifiers[EffectType.FirstAttackPenalty]);
+        characterModel.FollowUpAtk += int.Abs(AtkModifiers[EffectType.FollowUpPenalty]);
         AtkModifiers[EffectType.RegularPenalty] = 0;
         AtkModifiers[EffectType.FirstAttackPenalty] = 0;
+        AtkModifiers[EffectType.FollowUpPenalty] = 0;
     }
     
     private void NeutralizeSpdPenalty(CharacterModel characterModel) {
@@ -113,15 +115,19 @@ public class StatModifiers {
     private void NeutralizeDefPenalty(CharacterModel characterModel) {
         characterModel.Def += int.Abs(DefModifiers[EffectType.RegularPenalty]);
         characterModel.FirstAttackDef += int.Abs(DefModifiers[EffectType.FirstAttackPenalty]);
+        characterModel.FollowUpDef += int.Abs(DefModifiers[EffectType.FollowUpPenalty]);
         DefModifiers[EffectType.RegularPenalty] = 0;
         DefModifiers[EffectType.FirstAttackPenalty] = 0;
+        DefModifiers[EffectType.FollowUpPenalty] = 0;
     }
     
     private void NeutralizeResPenalty(CharacterModel characterModel) {
         characterModel.Res += int.Abs(ResModifiers[EffectType.RegularPenalty]);
         characterModel.FirstAttackRes += int.Abs(ResModifiers[EffectType.FirstAttackPenalty]);
+        characterModel.FollowUpRes += int.Abs(ResModifiers[EffectType.FollowUpPenalty]);
         ResModifiers[EffectType.RegularPenalty] = 0;
         ResModifiers[EffectType.FirstAttackPenalty] = 0;
+        ResModifiers[EffectType.FollowUpPenalty] = 0;
     }
     
     private void NeutralizeHpBonus(CharacterModel characterModel) {
@@ -132,10 +138,15 @@ public class StatModifiers {
     }
     
     private void NeutralizeAtkBonus(CharacterModel characterModel) {
+        Console.WriteLine("Neutralizando Atk Bonus");
+        Console.WriteLine($"Atk de {characterModel.Name} antes de neutralizar: {characterModel.Atk}");
         characterModel.Atk -= int.Abs(AtkModifiers[EffectType.RegularBonus]);
         characterModel.FirstAttackAtk -= int.Abs(AtkModifiers[EffectType.FirstAttackBonus]);
+        characterModel.FollowUpAtk -= int.Abs(AtkModifiers[EffectType.FollowUpBonus]);
+        Console.WriteLine($"Atk de {characterModel.Name} después de neutralizar: {characterModel.Atk}");        
         AtkModifiers[EffectType.RegularBonus] = 0;
         AtkModifiers[EffectType.FirstAttackBonus] = 0;
+        AtkModifiers[EffectType.FollowUpBonus] = 0;
     }
     
     private void NeutralizeSpdBonus(CharacterModel characterModel) {
@@ -148,16 +159,18 @@ public class StatModifiers {
     private void NeutralizeDefBonus(CharacterModel characterModel) {
         characterModel.Def -= int.Abs(DefModifiers[EffectType.RegularBonus]);
         characterModel.FirstAttackDef -= int.Abs(DefModifiers[EffectType.FirstAttackBonus]);
+        characterModel.FollowUpDef -= int.Abs(DefModifiers[EffectType.FollowUpBonus]);
         DefModifiers[EffectType.RegularBonus] = 0;
         DefModifiers[EffectType.FirstAttackBonus] = 0;
+        DefModifiers[EffectType.FollowUpBonus] = 0;
     }
     
     private void NeutralizeResBonus(CharacterModel characterModel) {
         characterModel.Res -= int.Abs(ResModifiers[EffectType.RegularBonus]);
         characterModel.FirstAttackRes -= int.Abs(ResModifiers[EffectType.FirstAttackBonus]);
+        characterModel.FollowUpRes -= int.Abs(ResModifiers[EffectType.FollowUpBonus]);
         ResModifiers[EffectType.RegularBonus] = 0;
         ResModifiers[EffectType.FirstAttackBonus] = 0;
+        ResModifiers[EffectType.FollowUpBonus] = 0;
     }
-    
-    
 }
