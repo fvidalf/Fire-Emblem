@@ -3,10 +3,10 @@
 public enum EffectType {
     RegularBonus,
     FirstAttackBonus,
-    FollowUpAttackBonus,
+    FollowUpBonus,
     RegularPenalty,
     FirstAttackPenalty,
-    FollowUpAttackPenalty,
+    FollowUpPenalty,
     BonusNeutralizer,
     PenaltyNeutralizer
 }

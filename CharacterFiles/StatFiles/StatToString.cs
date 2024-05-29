@@ -13,6 +13,9 @@
             { Stat.FirstAttackSpd, "FirstAttackSpd" },
             { Stat.FirstAttackDef, "FirstAttackDef" },
             { Stat.FirstAttackRes, "FirstAttackRes" },
+            { Stat.FollowUpAtk, "FollowUpAtk"},
+            { Stat.FollowUpRes, "FollowUpRes"},
+            { Stat.FollowUpDef, "FollowUpDef"}
         };
         
         public static readonly Dictionary<Stat, string> RegularizeMap = new Dictionary<Stat, string>
@@ -21,6 +24,9 @@
             { Stat.FirstAttackSpd, "Spd" },
             { Stat.FirstAttackDef, "Def" },
             { Stat.FirstAttackRes, "Res" },
+            { Stat.FollowUpAtk, "Atk"},
+            { Stat.FollowUpRes, "Def"},
+            { Stat.FollowUpDef, "Res"},
             { Stat.HpBonus, "Hp"},
             { Stat.AtkBonus, "Atk"},
             { Stat.SpdBonus, "Spd"},

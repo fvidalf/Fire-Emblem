@@ -1,5 +1,4 @@
-﻿using Fire_Emblem.CharacterFiles;
-using Fire_Emblem.CharacterFiles.StatFiles;
+﻿using Fire_Emblem.CharacterFiles.StatFiles;
 
 namespace Fire_Emblem.Skills.SkillEffectFiles;
 

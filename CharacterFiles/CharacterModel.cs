@@ -4,13 +4,16 @@ using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverRival;
-using Fire_Emblem.Skills.SingleCharacterSkills.SkillsOverSelf;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
 
 public class CharacterModel {
+
+    private static int _nextId = 0;
+    public int Id { get; private set; } = _nextId++;
 
     public string Name { get; set; }
     public string Weapon { get; set; }
@@ -42,6 +45,8 @@ public class CharacterModel {
             }
         }
     }
+    
+    public bool HasUsedHpSkill { get; set; }
 
     public int Atk { get; set; }
     public int Spd { get; set; }
@@ -54,6 +59,10 @@ public class CharacterModel {
     public int FirstAttackDef { get; set; }
     public int FirstAttackRes { get; set; }
     
+    public int FollowUpAtk { get; set; }
+    public int FollowUpDef { get; set; }
+    public int FollowUpRes { get; set; }
+
     public CharacterModel? MostRecentRival { get; private set; }
 
     public bool IsDead;
@@ -81,6 +90,7 @@ public class CharacterModel {
         Skills = skills;
         Hp = hp;
         BaseHp = hp;
+        HasUsedHpSkill = false;
         Atk = atk;
         BaseAtk = atk;
         Spd = spd;
@@ -89,10 +99,9 @@ public class CharacterModel {
         BaseDef = def;
         Res = res;
         BaseRes = res;
-
-        PrepareSkills();
         StatModifiers = new StatModifiers();
 
+        PrepareSkills();
     }
 
     private void PrepareSkills() {
@@ -144,6 +153,8 @@ public class CharacterModel {
     }
 
     public void ResetSkills() {
+        //ReloadSkills();
+        
         foreach (var skill in SingleSkills) {
             skill.IsActivated = false;
             skill.Reset();
@@ -154,6 +165,7 @@ public class CharacterModel {
     private void ResetStats() {
         ResetCharacterStats();
         ResetModifiedStats();
+        ResetStatModifiers();
     }
     
     private void ResetCharacterStats() {
@@ -165,23 +177,34 @@ public class CharacterModel {
     
     private void ResetAtk() {
         Atk = BaseAtk;
+        FirstAttackAtk = 0;
+        FollowUpAtk = 0;
     }
     
     private void ResetSpd() {
         Spd = BaseSpd;
+        FirstAttackSpd = 0;
     }
     
     private void ResetDef() {
         Def = BaseDef;
+        FirstAttackDef = 0;
+        FollowUpDef = 0;
     }
     
     private void ResetRes() {
         Res = BaseRes;
+        FirstAttackRes = 0;
+        FollowUpRes = 0;
     }
 
     public void ResetModifiedStats() {
         _selfModifiedStats = new SkillEffect();
         _rivalModifiedStats = new SkillEffect();
+    }
+    
+    private void ResetStatModifiers() {
+        StatModifiers = new StatModifiers();
     }
     
     public void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
@@ -202,5 +225,14 @@ public class CharacterModel {
 
     public void NeutralizeStats(List<Stat> statsToNeutralize) {
         StatModifiers.NeutralizeStats(this, statsToNeutralize);
+    }
+
+    private void ReloadSkills() {
+        var newSkills = new List<IBaseSkill>();
+        foreach (var skill in SingleSkills) {
+            var newSkill = Activator.CreateInstance(skill.GetType()) as SingleCharacterSkill;
+            newSkills.Add(newSkill);
+        }
+        Skills = newSkills.ToArray();
     }
 }

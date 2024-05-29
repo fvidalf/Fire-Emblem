@@ -1,4 +1,5 @@
-﻿using Fire_Emblem_View;
+﻿using System.Diagnostics;
+using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 namespace Fire_Emblem.GameFiles;
 
@@ -28,7 +29,7 @@ public class CombatHandler {
         _secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
     }
     
-    public void HandleCombat() {
+    public void HandleCombat() { 
         ExecuteCommonRound(_firstPlayerCharacter, _secondPlayerCharacter);
         if (_doesRoundEnd) return;
         ExecuteCommonRound(_secondPlayerCharacter, _firstPlayerCharacter);
@@ -51,7 +52,6 @@ public class CombatHandler {
     private void HandleCharacterSkills() {
         SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
         SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
-        
         _skillHandler.ApplyCharacterSkills(_firstPlayerCharacter, _secondPlayerCharacter);
         _skillHandler.HandleSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
     }
@@ -66,7 +66,8 @@ public class CombatHandler {
     }
     
     private void HandleRegularAttack(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
-        _characterHandler.Attack(attackingCharacter, defendingCharacter);
+        
+        _characterHandler.Attack(attackingCharacter, defendingCharacter, _roundPhase);
         if (defendingCharacter.IsDead) {
             _gameStatus.RemoveCharacter(defendingCharacter);
             _doesRoundEnd = true;
