@@ -70,7 +70,7 @@ public class CharacterHandler {
     }
     
     public void ApplySkill(CharacterModel applier, IBaseSkill skill, RoundStatus roundStatus) {
-        Console.WriteLine($"{applier.Name} aplica {skill.Name}");
+        Console.WriteLine($"{applier.Name}-{applier.Id} intenta aplicar {skill.Name}");
         skill.Apply(roundStatus);
         var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
         UpdateModifiedStats(applier, characterPairedToSkillEffect);

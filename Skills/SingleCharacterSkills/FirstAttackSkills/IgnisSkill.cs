@@ -10,11 +10,9 @@ public class IgnisSkill: FirstAttackSkill {
         : base("Ignis") { }
 
     protected override void ConcreteApply() {
-        var characterStat = GetCharacterStat(Character, Stat.Atk);
-        var characterStatValue = GetCharacterStatValue(characterStat, Stat.Atk);
-        
-        var increaseInStat = (double) 0.5d * characterStatValue;
-        var newStatEffect = new StatEffect(Stat.FirstAttackAtk, (int) increaseInStat);
+        var characterAtk = Character.BaseAtk;
+        var increaseInAtk = (double) 0.5d * characterAtk;
+        var newStatEffect = new StatEffect(Stat.FirstAttackAtk, (int) increaseInAtk);
         UpdateStat(Character, EffectType.FirstAttackBonus, newStatEffect);
     }
 

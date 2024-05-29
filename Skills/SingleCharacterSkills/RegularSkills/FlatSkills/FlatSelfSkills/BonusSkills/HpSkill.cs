@@ -15,10 +15,10 @@ public class HpSkill: FlatSelfSkill {
             }) {}
 
     protected override void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
+        if (Character.HasUsedHpSkill) return; 
+        Character.HasUsedHpSkill = true;
         var characterStat = GetCharacterStat(Character, statEffect.Stat);
-        var characterStatValue = GetCharacterStatValue(characterStat, statEffect.Stat);
-
-        int newStatValue = (int) characterStatValue + statEffect.Amount;
-        characterStat.SetValue(Character, newStatValue);
+        var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
+        UpdateCharacterStat(characterStat, Character, newStatEffect);
     }
 }

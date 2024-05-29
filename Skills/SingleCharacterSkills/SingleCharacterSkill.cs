@@ -35,10 +35,10 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
     
     protected virtual void UpdateStat(CharacterModel characterModel, EffectType effectType, StatEffect statEffect) {
         var characterStat = GetCharacterStat(characterModel, statEffect.Stat);
-        
-        UpdateCharacterStat(characterStat, characterModel, statEffect);
-        UpdateCharacterModifiers(characterModel, effectType, statEffect);
-        UpdateModifiedStats(effectType, statEffect);
+        var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
+        UpdateCharacterStat(characterStat, characterModel, newStatEffect);
+        UpdateCharacterModifiers(characterModel, effectType, newStatEffect);
+        UpdateModifiedStats(effectType, newStatEffect);
     }
     
     protected PropertyInfo GetCharacterStat(CharacterModel characterModel, Stat stat) {
@@ -47,7 +47,7 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
         return characterStat;
     }
 
-    private void UpdateCharacterStat(PropertyInfo characterStat, CharacterModel characterModel, StatEffect statEffect) {
+    protected void UpdateCharacterStat(PropertyInfo characterStat, CharacterModel characterModel, StatEffect statEffect) {
         var characterStatValue = GetCharacterStatValue(characterStat, statEffect.Stat);
 
         int newStatValue = (int)characterStatValue + statEffect.Amount;
@@ -66,10 +66,12 @@ public abstract class SingleCharacterSkill: ISingleCharacterSkill {
     protected void UpdateModifiedStats(EffectType effectType, StatEffect statEffect) {
         if (SkillEffect.StatEffectsByEffectType.ContainsKey(effectType)) {
             var statEffects = SkillEffect.StatEffectsByEffectType[effectType];
-            statEffects.Add(statEffect);
+            var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
+            statEffects.Add(newStatEffect);
         }
         else {
-            var statEffects = new List<StatEffect> {statEffect};
+            var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
+            var statEffects = new List<StatEffect> {newStatEffect};
             SkillEffect.StatEffectsByEffectType[effectType] = statEffects;
         }
     }

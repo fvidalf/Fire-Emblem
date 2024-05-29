@@ -29,7 +29,7 @@ public class CombatHandler {
         _secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
     }
     
-    public void HandleCombat() {
+    public void HandleCombat() { 
         ExecuteCommonRound(_firstPlayerCharacter, _secondPlayerCharacter);
         if (_doesRoundEnd) return;
         ExecuteCommonRound(_secondPlayerCharacter, _firstPlayerCharacter);
@@ -52,12 +52,6 @@ public class CombatHandler {
     private void HandleCharacterSkills() {
         SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
         SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
-        
-        Console.WriteLine("Atk1 antes de aplicar skills: " + _firstPlayerCharacter.Atk);
-        Console.WriteLine("FirstAttackAtk1 antes de aplicar skills: " + _firstPlayerCharacter.FirstAttackAtk);
-        Console.WriteLine("Atk2 antes de aplicar skills: " + _secondPlayerCharacter.Atk);
-        Console.WriteLine("FirstAttackAtk2 antes de aplicar skills: " + _secondPlayerCharacter.FirstAttackAtk);
-        
         _skillHandler.ApplyCharacterSkills(_firstPlayerCharacter, _secondPlayerCharacter);
         _skillHandler.HandleSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
     }
@@ -72,8 +66,6 @@ public class CombatHandler {
     }
     
     private void HandleRegularAttack(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
-        Console.WriteLine("Atk1 antes de atacar: " + _firstPlayerCharacter.Atk);
-        Console.WriteLine("FirstAttackAtk1 antes de atacar: " + _firstPlayerCharacter.FirstAttackAtk);
         
         _characterHandler.Attack(attackingCharacter, defendingCharacter, _roundPhase);
         if (defendingCharacter.IsDead) {

@@ -138,12 +138,9 @@ public class StatModifiers {
     }
     
     private void NeutralizeAtkBonus(CharacterModel characterModel) {
-        Console.WriteLine("Neutralizando Atk Bonus");
-        Console.WriteLine($"Atk de {characterModel.Name} antes de neutralizar: {characterModel.Atk}");
         characterModel.Atk -= int.Abs(AtkModifiers[EffectType.RegularBonus]);
         characterModel.FirstAttackAtk -= int.Abs(AtkModifiers[EffectType.FirstAttackBonus]);
         characterModel.FollowUpAtk -= int.Abs(AtkModifiers[EffectType.FollowUpBonus]);
-        Console.WriteLine($"Atk de {characterModel.Name} después de neutralizar: {characterModel.Atk}");        
         AtkModifiers[EffectType.RegularBonus] = 0;
         AtkModifiers[EffectType.FirstAttackBonus] = 0;
         AtkModifiers[EffectType.FollowUpBonus] = 0;

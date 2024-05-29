@@ -11,6 +11,7 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
     protected override void ConcreteApply(RoundStatus roundStatus) {
         DetermineTarget(roundStatus);
         if (IsConditionMet()) {
+            Console.WriteLine($"{roundStatus.ActivatingCharacterModel.Name} aplica efectivamente {Name}");
             foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
                 var effectType = statEffects.Key;
                 foreach (var statEffect in statEffects.Value) {

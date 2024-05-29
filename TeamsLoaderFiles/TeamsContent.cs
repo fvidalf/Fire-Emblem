@@ -76,11 +76,7 @@ public class TeamsContent {
     
     private string[] GetUnitSkillNamesFromUnit(string unit) {
         var firstWhitespace = unit.IndexOf(' ');
-        Console.WriteLine("unit: " + unit);
         var unitSkillNames = unit.Trim()[(firstWhitespace + 2)..^1].Split(',');
-        foreach (var name in unitSkillNames) {
-            Console.WriteLine(name);
-        }
         return unitSkillNames;
     }
 }

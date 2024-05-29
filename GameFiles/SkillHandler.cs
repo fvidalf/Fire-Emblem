@@ -2,6 +2,7 @@
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
