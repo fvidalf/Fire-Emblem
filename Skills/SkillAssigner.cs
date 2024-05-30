@@ -130,6 +130,8 @@ public static class SkillAssigner {
         { "Mirror Stance", typeof(MirrorStanceSkill)},
         { "Steady Posture", typeof(SteadyPostureSkill)},
         { "Swift Stance", typeof(SwiftStanceSkill)},
-        { "Bracing Stance", typeof(BracingStanceSkill)}
+        { "Bracing Stance", typeof(BracingStanceSkill)},
+        { "Golden Lotus", typeof(GoldenLotusSkill)},
+        { "Dragon Wall", typeof(DragonWallSkill)}
     };
 }

@@ -109,17 +109,15 @@ public class CharacterHandler {
     private static double GetPercentageDamageModifier(CharacterModel target, int roundPhase) {
         double percentageDamageModifier = 0;
         var damageModifiers = target.GetDamageModifiers();
-        if (damageModifiers.GetRegularDamagePercentageReduction() != 0) {
-            var newAmount = damageModifiers.GetRegularDamagePercentageReduction();
-            percentageDamageModifier += (double) 1 - (1 - percentageDamageModifier) * (1 - newAmount);
-        }
+        var regularAmount = damageModifiers.GetRegularDamagePercentageReduction();
+        percentageDamageModifier = (double) 1 - (1 - percentageDamageModifier) * (1 - regularAmount);
         if (damageModifiers.GetFirstAttackDamagePercentageReduction() != 0 && roundPhase != 2) {
-            var newAmount = damageModifiers.GetFirstAttackDamagePercentageReduction();
-            percentageDamageModifier += (double) 1 - (1 - percentageDamageModifier) * (1 - newAmount);
+            var firstAttackAmount = damageModifiers.GetFirstAttackDamagePercentageReduction();
+            percentageDamageModifier = (double) 1 - (1 - percentageDamageModifier) * (1 - firstAttackAmount);
             damageModifiers.ResetFirstAttackDamagePercentageReduction();
         } else if (roundPhase == 2) {
-            var newAmount = damageModifiers.GetFollowUpDamagePercentageReduction();
-            percentageDamageModifier += (double) 1 - (1 - percentageDamageModifier) * (1 - newAmount);
+            var followUpAmount = damageModifiers.GetFollowUpDamagePercentageReduction();
+            percentageDamageModifier = (double) 1 - ((1 - percentageDamageModifier) * (1 - followUpAmount));
             damageModifiers.ResetFollowUpDamagePercentageReduction();
         }
         return percentageDamageModifier;

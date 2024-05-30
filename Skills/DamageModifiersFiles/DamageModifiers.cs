@@ -29,31 +29,38 @@ public class DamageModifiers {
     }
     
     public double GetRegularDamageIncrease() {
-        return DamageModifiersByEffectType[EffectType.RegularDamageIncrease];
+        var regularDamageIncrease = DamageModifiersByEffectType[EffectType.RegularDamageIncrease];
+        return regularDamageIncrease;
     }
     
     public double GetFirstAttackDamageIncrease() {
-        return DamageModifiersByEffectType[EffectType.FirstAttackDamageIncrease];
+        var firstAttackDamageIncrease = DamageModifiersByEffectType[EffectType.FirstAttackDamageIncrease];
+        return firstAttackDamageIncrease;
     }
     
     public double GetFollowUpDamageIncrease() {
-        return DamageModifiersByEffectType[EffectType.FollowUpDamageIncrease];
+        var followUpDamageIncrease = DamageModifiersByEffectType[EffectType.FollowUpDamageIncrease];
+        return followUpDamageIncrease;
     }
     
     public double GetRegularDamagePercentageReduction() {
-        return DamageModifiersByEffectType[EffectType.RegularDamagePercentageReduction];
+        var regularDamagePercentageReduction = DamageModifiersByEffectType[EffectType.RegularDamagePercentageReduction];
+        return regularDamagePercentageReduction;
     }
     
     public double GetFirstAttackDamagePercentageReduction() {
-        return DamageModifiersByEffectType[EffectType.FirstAttackDamagePercentageReduction];
+        var firstAttackDamagePercentageReduction = DamageModifiersByEffectType[EffectType.FirstAttackDamagePercentageReduction];
+        return firstAttackDamagePercentageReduction;
     }
     
     public double GetFollowUpDamagePercentageReduction() {
-        return DamageModifiersByEffectType[EffectType.FollowUpDamagePercentageReduction];
+        var followUpDamagePercentageReduction = DamageModifiersByEffectType[EffectType.FollowUpDamagePercentageReduction];
+        return followUpDamagePercentageReduction;
     }
     
     public double GetRegularDamageAbsoluteReduction() {
-        return DamageModifiersByEffectType[EffectType.RegularDamageAbsoluteReduction];
+        var regularDamageAbsoluteReduction = DamageModifiersByEffectType[EffectType.RegularDamageAbsoluteReduction];
+        return regularDamageAbsoluteReduction;
     }
     
     public void ResetRegularDamageIncrease() {
