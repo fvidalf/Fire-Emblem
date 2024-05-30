@@ -1,6 +1,7 @@
 ﻿using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.RemoteSkills;
+using Fire_Emblem.Skills.MultiCharacterSkills.StanceSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.FlatDamageModifierSkills;
@@ -12,7 +13,7 @@ using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.C
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BoostSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BrazenSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterBonusSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
 using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
@@ -120,6 +121,15 @@ public static class SkillAssigner {
         { "Blue Skies", typeof(BlueSkiesSkill)},
         { "Remote Sparrow", typeof(RemoteSparrowSkill)},
         { "Remote Mirror", typeof(RemoteMirrorSkill)},
-        { "Remote Sturdy", typeof(RemoteSturdySkill)}
+        { "Remote Sturdy", typeof(RemoteSturdySkill)},
+        { "Darting Stance", typeof(DartingStanceSkill)},
+        { "Steady Stance", typeof(SteadyStanceSkill)},
+        { "Warding Stance", typeof(WardingStanceSkill)},
+        { "Kestrel Stance", typeof(KestrelStanceSkill)},
+        { "Sturdy Stance", typeof(SturdyStanceSkill)},
+        { "Mirror Stance", typeof(MirrorStanceSkill)},
+        { "Steady Posture", typeof(SteadyPostureSkill)},
+        { "Swift Stance", typeof(SwiftStanceSkill)},
+        { "Bracing Stance", typeof(BracingStanceSkill)}
     };
 }

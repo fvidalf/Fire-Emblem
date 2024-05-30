@@ -1,7 +1,7 @@
 ﻿using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
-namespace Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterBonusSkills;
+namespace Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterSkills;
 
 public class ChaosStyleSkill: StarterSkill {
     

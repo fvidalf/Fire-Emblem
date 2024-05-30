@@ -1,7 +1,7 @@
 ﻿using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
-namespace Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterBonusSkills.RemoteBonusSkills;
+namespace Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterSkills.RemoteBonusSkills;
 
 public class RemoteSturdyBonusSkill: StarterSkill {
     
