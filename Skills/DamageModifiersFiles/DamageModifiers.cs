@@ -6,34 +6,81 @@ public class DamageModifiers {
     public Dictionary<EffectType, double> DamageModifiersByEffectType { get; set; }
     
     public DamageModifiers() {
-        DamageModifiersByEffectType = new Dictionary<EffectType, double>();
+        DamageModifiersByEffectType = new Dictionary<EffectType, double>
+        {
+            {EffectType.RegularDamageIncrease, 0},
+            {EffectType.FirstAttackDamageIncrease, 0},
+            {EffectType.FollowUpDamageIncrease, 0},
+            {EffectType.RegularDamagePercentageReduction, 0},
+            {EffectType.FirstAttackDamagePercentageReduction, 0},
+            {EffectType.FollowUpDamagePercentageReduction, 0},
+            {EffectType.RegularDamageAbsoluteReduction, 0}
+        };
     }
     
     public void UpdateDamageModifier(DamageModification damageModification) {
         var effectType = damageModification.EffectType;
         var amount = damageModification.Amount;
-        if (DamageModifiersByEffectType.ContainsKey(effectType)) {
-            DamageModifiersByEffectType[effectType] += amount;
-        } else {
-            DamageModifiersByEffectType[effectType] = amount;
-        }
+        DamageModifiersByEffectType[effectType] += amount;
     }
     
     public DamageModifiers GetDamageModifiers() {
-        OrderByEffectType();
         return this;
     }
     
-    private void OrderByEffectType() {
-        var orderedDamageModifiers = DamageModifiersByEffectType.OrderBy(x => x.Key);
-        DamageModifiersByEffectType = GetDictFromOrderedDamageModifiers(orderedDamageModifiers);
+    public double GetRegularDamageIncrease() {
+        return DamageModifiersByEffectType[EffectType.RegularDamageIncrease];
     }
     
-    private Dictionary<EffectType, double> GetDictFromOrderedDamageModifiers(IOrderedEnumerable<KeyValuePair<EffectType, double>> orderedDamageModifiers) {
-        var orderedDamagedModifiersAsDict = new Dictionary<EffectType, double>();
-        foreach (var damageModifier in orderedDamageModifiers) {
-            orderedDamagedModifiersAsDict[damageModifier.Key] = damageModifier.Value;
-        }
-        return orderedDamagedModifiersAsDict;
+    public double GetFirstAttackDamageIncrease() {
+        return DamageModifiersByEffectType[EffectType.FirstAttackDamageIncrease];
+    }
+    
+    public double GetFollowUpDamageIncrease() {
+        return DamageModifiersByEffectType[EffectType.FollowUpDamageIncrease];
+    }
+    
+    public double GetRegularDamagePercentageReduction() {
+        return DamageModifiersByEffectType[EffectType.RegularDamagePercentageReduction];
+    }
+    
+    public double GetFirstAttackDamagePercentageReduction() {
+        return DamageModifiersByEffectType[EffectType.FirstAttackDamagePercentageReduction];
+    }
+    
+    public double GetFollowUpDamagePercentageReduction() {
+        return DamageModifiersByEffectType[EffectType.FollowUpDamagePercentageReduction];
+    }
+    
+    public double GetRegularDamageAbsoluteReduction() {
+        return DamageModifiersByEffectType[EffectType.RegularDamageAbsoluteReduction];
+    }
+    
+    public void ResetRegularDamageIncrease() {
+        DamageModifiersByEffectType[EffectType.RegularDamageIncrease] = 0;
+    }
+    
+    public void ResetFirstAttackDamageIncrease() {
+        DamageModifiersByEffectType[EffectType.FirstAttackDamageIncrease] = 0;
+    }
+    
+    public void ResetFollowUpDamageIncrease() {
+        DamageModifiersByEffectType[EffectType.FollowUpDamageIncrease] = 0;
+    }
+    
+    public void ResetRegularDamagePercentageReduction() {
+        DamageModifiersByEffectType[EffectType.RegularDamagePercentageReduction] = 0;
+    }
+    
+    public void ResetFirstAttackDamagePercentageReduction() {
+        DamageModifiersByEffectType[EffectType.FirstAttackDamagePercentageReduction] = 0;
+    }
+    
+    public void ResetFollowUpDamagePercentageReduction() {
+        DamageModifiersByEffectType[EffectType.FollowUpDamagePercentageReduction] = 0;
+    }
+    
+    public void ResetRegularDamageAbsoluteReduction() {
+        DamageModifiersByEffectType[EffectType.RegularDamageAbsoluteReduction] = 0;
     }
 }

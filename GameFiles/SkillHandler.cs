@@ -159,11 +159,23 @@ public class SkillHandler {
                 case EffectType.RegularDamageIncrease:
                     NotifyRegularDamageIncrease(character, (int) amount);
                     break;
-                case EffectType.RegularDamageAbsoluteReduction:
-                    NotifyRegularAbsoluteDamageReduction(character, (int) amount);
+                case EffectType.FirstAttackDamageIncrease:
+                    NotifyFirstAttackDamageIncrease(character, (int) amount);
+                    break;
+                case EffectType.FollowUpDamageIncrease:
+                    NotifyFollowUpDamageIncrease(character, (int) amount);
                     break;
                 case EffectType.RegularDamagePercentageReduction:
                     NotifyRegularPercentageDamageReduction(character, amount);
+                    break;
+                case EffectType.FirstAttackDamagePercentageReduction:
+                    NotifyFirstAttackPercentageDamageReduction(character, amount);
+                    break;
+                case EffectType.FollowUpDamagePercentageReduction:
+                    NotifyFollowUpDamagePercentageReduction(character, amount);
+                    break;
+                case EffectType.RegularDamageAbsoluteReduction:
+                    NotifyRegularAbsoluteDamageReduction(character, (int) amount);
                     break;
             }
         }
@@ -175,9 +187,15 @@ public class SkillHandler {
         }
     }
     
-    private void NotifyRegularAbsoluteDamageReduction(CharacterModel character, int amount) {
+    private void NotifyFirstAttackDamageIncrease(CharacterModel character, int amount) {
         if (amount != 0) {
-            _view.WriteLine($"{character.Name} recibirá -{amount} daño en cada ataque");
+            _view.WriteLine($"{character.Name} realizará +{amount} daño extra en su primer ataque");
+        }
+    }
+    
+    private void NotifyFollowUpDamageIncrease(CharacterModel character, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} realizará +{amount} daño extra en su Follow-Up");
         }
     }
     
@@ -185,6 +203,26 @@ public class SkillHandler {
         if (amount != 0) {
             var percentage = Math.Round(amount * 100, 0);
             _view.WriteLine($"{character.Name} reducirá el daño de los ataques del rival en un {percentage}%");
+        }
+    }
+    
+    private void NotifyFirstAttackPercentageDamageReduction(CharacterModel character, double amount) {
+        if (amount != 0) {
+            var percentage = Math.Round(amount * 100, 0);
+            _view.WriteLine($"{character.Name} reducirá el daño del primer ataque del rival en un {percentage}%");
+        }
+    }
+    
+    private void NotifyFollowUpDamagePercentageReduction(CharacterModel character, double amount) {
+        if (amount != 0) {
+            var percentage = Math.Round(amount * 100, 0);
+            _view.WriteLine($"{character.Name} reducirá el daño del Follow-Up del rival en un {percentage}%");
+        }
+    }
+    
+    private void NotifyRegularAbsoluteDamageReduction(CharacterModel character, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} recibirá -{amount} daño en cada ataque");
         }
     }
 }

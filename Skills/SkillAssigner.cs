@@ -1,5 +1,6 @@
 ﻿using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
+using Fire_Emblem.Skills.MultiCharacterSkills.RemoteSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.FlatDamageModifierSkills;
@@ -115,6 +116,10 @@ public static class SkillAssigner {
         { "Sympathetic", typeof(SympatheticSkill)},
         { "Lunar Brace", typeof(LunarBraceSkill)},
         { "Bushido", typeof(BushidoSkill)},
-        { "Dodge", typeof(DodgeSkill)}
+        { "Dodge", typeof(DodgeSkill)},
+        { "Blue Skies", typeof(BlueSkiesSkill)},
+        { "Remote Sparrow", typeof(RemoteSparrowSkill)},
+        { "Remote Mirror", typeof(RemoteMirrorSkill)},
+        { "Remote Sturdy", typeof(RemoteSturdySkill)}
     };
 }
