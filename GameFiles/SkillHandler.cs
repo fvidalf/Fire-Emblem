@@ -1,6 +1,7 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
+using Fire_Emblem.Skills.DamageModifiersFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers;
@@ -156,16 +157,34 @@ public class SkillHandler {
             var amount = damageModifiers.DamageModifiersByEffectType[effectType];
             switch (effectType) {
                 case EffectType.RegularDamageIncrease:
-                    NotifyDamageIncrease(character, amount);
+                    NotifyRegularDamageIncrease(character, (int) amount);
+                    break;
+                case EffectType.RegularDamageAbsoluteReduction:
+                    NotifyRegularAbsoluteDamageReduction(character, (int) amount);
+                    break;
+                case EffectType.RegularDamagePercentageReduction:
+                    NotifyRegularPercentageDamageReduction(character, amount);
                     break;
             }
         }
     }
     
-    private void NotifyDamageIncrease(CharacterModel character, int amount) {
+    private void NotifyRegularDamageIncrease(CharacterModel character, int amount) {
         if (amount != 0) {
-            var diffSign = amount > 0 ? "+" : "";
-            _view.WriteLine($"{character.Name} realizará {diffSign}{amount} daño extra en cada ataque");
+            _view.WriteLine($"{character.Name} realizará +{amount} daño extra en cada ataque");
+        }
+    }
+    
+    private void NotifyRegularAbsoluteDamageReduction(CharacterModel character, int amount) {
+        if (amount != 0) {
+            _view.WriteLine($"{character.Name} recibirá -{amount} daño en cada ataque");
+        }
+    }
+    
+    private void NotifyRegularPercentageDamageReduction(CharacterModel character, double amount) {
+        if (amount != 0) {
+            var percentage = Math.Round(amount * 100, 0);
+            _view.WriteLine($"{character.Name} reducirá el daño de los ataques del rival en un {percentage}%");
         }
     }
 }

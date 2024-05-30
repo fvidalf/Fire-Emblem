@@ -1,6 +1,8 @@
 ﻿using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.FlatDamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.FirstAttackSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.FollowUpSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
@@ -103,6 +105,16 @@ public static class SkillAssigner {
         { "Close Def", typeof(CloseDefSkill)},
         { "Distant Def", typeof(DistantDefSkill)},
         { "Sandstorm", typeof(SandstormSkill)},
-        { "Bravery", typeof(BraverySkill)}
+        { "Bravery", typeof(BraverySkill)},
+        { "Gentility", typeof(GentilitySkill)},
+        { "Bow Guard", typeof(BowGuardSkill)},
+        { "Axe Guard", typeof(AxeGuardSkill)},
+        { "Magic Guard", typeof(MagicGuardSkill)},
+        { "Lance Guard", typeof(LanceGuardSkill)},
+        { "Arms Shield", typeof(ArmsShieldSkill)},
+        { "Sympathetic", typeof(SympatheticSkill)},
+        { "Lunar Brace", typeof(LunarBraceSkill)},
+        { "Bushido", typeof(BushidoSkill)},
+        { "Dodge", typeof(DodgeSkill)}
     };
 }

@@ -13,7 +13,7 @@ public abstract class MultiCharacterSkill: IBaseSkill {
     protected CharacterModel? Character;
     protected RoundStatus RoundStatus;
     
-    protected MultiCharacterSkill(string name, StatModifierSkill[] skills) {
+    protected MultiCharacterSkill(string name, ISingleCharacterSkill[] skills) {
         Name = name;
         IsActivated = false; 
         Skills = skills;

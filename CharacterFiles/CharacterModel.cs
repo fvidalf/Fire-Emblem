@@ -3,6 +3,7 @@ using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
+using Fire_Emblem.Skills.DamageModifiersFiles;
 using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
@@ -233,10 +234,10 @@ public class CharacterModel {
     }
     
     public DamageModifiers GetDamageModifiers() {
-        return _damageModifiers;
+        return _damageModifiers.GetDamageModifiers();
     }
     
-    public void UpdateDamageModifiers(EffectType effectType, int amount) {
-        _damageModifiers.UpdateDamageModifier(effectType, amount);
+    public void UpdateDamageModifiers(DamageModification damageModification) {
+        _damageModifiers.UpdateDamageModifier(damageModification);
     }
 }

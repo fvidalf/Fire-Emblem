@@ -62,8 +62,14 @@ public class CharacterHandler {
     private static void ExecuteAttack(CharacterModel attacker, int thisTurnAtk, int thisTurnDef, int thisTurnRes, CharacterModel target) {
         var discount = attacker.IsPhysical() ? thisTurnDef : thisTurnRes;
         var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(attacker, target))) - discount), 0);
-        var damageModifier = GetTotalDamageModifier(attacker, target, damage);
-        var finalDamage = Math.Max(damage + damageModifier, 0);
+        var absoluteDamageModifier = GetAbsoluteDamageModifier(attacker, target, damage);
+        var damageWithAbsoluteModifier = Math.Max(damage + absoluteDamageModifier, 0);
+        
+        var percentageDamageModifier = GetPercentageDamageModifier(attacker, target, damage);
+        var damageWithPercentageModifier = damageWithAbsoluteModifier * (1 - percentageDamageModifier);
+            
+        var roundedDamage = Math.Round(damageWithPercentageModifier, 9);
+        var finalDamage = Convert.ToInt32(Math.Floor(roundedDamage));
         target.Hp -= finalDamage;
         _view.WriteLine($"{attacker.Name} ataca a {target.Name} con {finalDamage} de daño");
     }
@@ -72,14 +78,14 @@ public class CharacterHandler {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
 
-    private static int GetTotalDamageModifier(CharacterModel attacker, CharacterModel target, int damage) {
-        var attackerDamageIncrease = GetTotalAttackerDamageIncrease(attacker, damage);
-        var targetDamageReduction = GetTotalTargetDamageReduction(target, damage);
+    private static double GetAbsoluteDamageModifier(CharacterModel attacker, CharacterModel target, int damage) {
+        var attackerDamageIncrease = GetAttackerAbsoluteDamageIncrease(attacker, damage);
+        var targetDamageReduction = GetTargetAbsoluteDamageReduction(target, damage);
         return attackerDamageIncrease - targetDamageReduction;
     }
 
-    private static int GetTotalAttackerDamageIncrease(CharacterModel attacker, int damage) {
-        var totalDamageIncrease = 0;
+    private static double GetAttackerAbsoluteDamageIncrease(CharacterModel attacker, int damage) {
+        double totalDamageIncrease = 0;
         var damageModifiers = attacker.GetDamageModifiers();
         foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
             var amount = damageModifiers.DamageModifiersByEffectType[effectType];
@@ -92,18 +98,32 @@ public class CharacterHandler {
         return totalDamageIncrease;
     }
     
-    private static int GetTotalTargetDamageReduction(CharacterModel target, int damage) {
-        var totalDamageReduction = 0;
+    private static double GetTargetAbsoluteDamageReduction(CharacterModel target, int damage) {
+        double totalDamageReduction = 0;
+        var damageModifiers = target.GetDamageModifiers();
+        foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
+            var amount = damageModifiers.DamageModifiersByEffectType[effectType];
+            switch (effectType) {
+                case EffectType.RegularDamageAbsoluteReduction:
+                    totalDamageReduction += amount;
+                    break;
+            }
+        }
+        return totalDamageReduction;
+    }
+    
+    private static double GetPercentageDamageModifier(CharacterModel attacker, CharacterModel target, int damage) {
+        double percentageDamageModifier = 0;
         var damageModifiers = target.GetDamageModifiers();
         foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
             var amount = damageModifiers.DamageModifiersByEffectType[effectType];
             switch (effectType) {
                 case EffectType.RegularDamagePercentageReduction:
-                    totalDamageReduction += Convert.ToInt32(Math.Floor((double) damage * amount));
+                    percentageDamageModifier += (double) 1 - (1 - percentageDamageModifier) * (1 - amount);
                     break;
             }
         }
-        return totalDamageReduction;
+        return percentageDamageModifier;
     }
     
     public void ApplySkill(CharacterModel applier, IBaseSkill skill, RoundStatus roundStatus) {
