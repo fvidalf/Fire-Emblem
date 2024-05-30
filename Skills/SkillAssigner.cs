@@ -1,24 +1,23 @@
-﻿using Fire_Emblem.Skills.MultiCharacterSkills;
-using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
-using Fire_Emblem.Skills.MultiCharacterSkills.RemoteSkills;
-using Fire_Emblem.Skills.MultiCharacterSkills.StanceSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills.FlatDamageModifierSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.FirstAttackSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.FollowUpSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
-using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalRivalSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BoostSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BrazenSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.FlatSkills.FlatSelfSkills.BonusSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.RegularSkills.FlatSkills.FlatSelfSkills.SacrificeSkills;
+﻿using Fire_Emblem.Skills.MultiSkills;
+using Fire_Emblem.Skills.MultiSkills.LullSkills;
+using Fire_Emblem.Skills.MultiSkills.RemoteSkills;
+using Fire_Emblem.Skills.MultiSkills.StanceSkills;
+using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
+using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.FlatDamageModifierSkills;
+using Fire_Emblem.Skills.SingleSkills.FirstAttackSkills;
+using Fire_Emblem.Skills.SingleSkills.FollowUpSkills;
+using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalRivalSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BoostSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.BrazenSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.StarterSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponAgilitySkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponFocusSkill;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.ConditionalSkills.ConditionalSelfSkills.WeaponSkills.WeaponPowerSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.FlatSkills.FlatSelfSkills.BonusSkills;
+using Fire_Emblem.Skills.SingleSkills.RegularSkills.FlatSkills.FlatSelfSkills.SacrificeSkills;
 
 namespace Fire_Emblem.Skills;
 
@@ -131,7 +130,13 @@ public static class SkillAssigner {
         { "Steady Posture", typeof(SteadyPostureSkill)},
         { "Swift Stance", typeof(SwiftStanceSkill)},
         { "Bracing Stance", typeof(BracingStanceSkill)},
+        { "Fierce Stance", typeof(FierceStanceSkill)},
         { "Golden Lotus", typeof(GoldenLotusSkill)},
-        { "Dragon Wall", typeof(DragonWallSkill)}
+        { "Dragon Wall", typeof(DragonWallSkill)},
+        { "Aegis Shield", typeof(AegisShieldSkill)},
+        { "Chivalry", typeof(ChivalrySkill)},
+        { "Extra Chivalry", typeof(ExtraChivalrySkill)},
+        { "Poetic Justice", typeof(PoeticJusticeSkill)},
+        { "Prescience", typeof(PrescienceSkill)}
     };
 }

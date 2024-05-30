@@ -1,8 +1,8 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
-using Fire_Emblem.Skills.SingleCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
+using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;

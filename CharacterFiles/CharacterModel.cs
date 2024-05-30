@@ -4,11 +4,10 @@ using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.DamageModifiersFiles;
-using Fire_Emblem.Skills.MultiCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
-using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
-using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
+using Fire_Emblem.Skills.MultiSkills;
+using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
+using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -23,7 +22,7 @@ public class CharacterModel {
     public string Gender { get; set; }
     public string DeathQuote { get; set; }
     public IBaseSkill[] Skills { get; private set; }
-    public ISingleCharacterSkill[] SingleSkills { get; private set; }
+    public ISingleSkill[] SingleSkills { get; private set; }
     public RoundStatus RoundStatus { get; private set; }
 
     public int BaseHp { get; private set; }
@@ -113,26 +112,26 @@ public class CharacterModel {
         SingleSkills = OrderSkills(SingleSkills);
     }
     
-    private ISingleCharacterSkill[] GetSingleSkills() {
-        var singleSkills = new List<ISingleCharacterSkill>();
+    private ISingleSkill[] GetSingleSkills() {
+        var singleSkills = new List<ISingleSkill>();
         foreach (var skill in Skills) {
             singleSkills = AddSkillToList(skill, singleSkills);
         }
         return singleSkills.ToArray();
     }
     
-    private List<ISingleCharacterSkill> AddSkillToList(IBaseSkill skill, List<ISingleCharacterSkill> decomposedSkills) {
-        if (skill is MultiCharacterSkill multiCharacterSkill) {
+    private List<ISingleSkill> AddSkillToList(IBaseSkill skill, List<ISingleSkill> decomposedSkills) {
+        if (skill is MultiSkill multiCharacterSkill) {
             decomposedSkills.AddRange(multiCharacterSkill.DecomposeIntoList());
         }
-        else if (skill is ISingleCharacterSkill singleCharacterSkill) {
+        else if (skill is ISingleSkill singleCharacterSkill) {
             decomposedSkills.Add(singleCharacterSkill);     
         }
         return decomposedSkills;
     }
     
-    private ISingleCharacterSkill[] OrderSkills(ISingleCharacterSkill[] skills) {
-        var orderedSkills = new List<ISingleCharacterSkill>();
+    private ISingleSkill[] OrderSkills(ISingleSkill[] skills) {
+        var orderedSkills = new List<ISingleSkill>();
         foreach (var skill in skills) {
             if (skill is BonusNeutralizer or PenaltyNeutralizer) {
                 orderedSkills.Add(skill);
