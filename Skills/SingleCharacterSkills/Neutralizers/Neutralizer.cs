@@ -4,7 +4,7 @@ using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers;
 
-public abstract class Neutralizer: SingleCharacterSkill, ITargetedSkill {
+public abstract class Neutralizer: StatModifierSkill, ITargetedSkill {
     
     protected List<Stat> StatsToNeutralize;
 
@@ -15,9 +15,8 @@ public abstract class Neutralizer: SingleCharacterSkill, ITargetedSkill {
     
     public override void Apply(RoundStatus roundStatus) {
         base.Apply(roundStatus);
-        DetermineTarget(roundStatus);
+        DetermineTarget();
         ConcreteApply(roundStatus);
-        IsActivated = true;
     }
     
     protected void SetResponseForNeutralizing(EffectType effectType) {
@@ -32,7 +31,7 @@ public abstract class Neutralizer: SingleCharacterSkill, ITargetedSkill {
         Character.NeutralizeStats(StatsToNeutralize);
     }
 
-    public abstract void DetermineTarget(RoundStatus roundStatus);
+    public abstract void DetermineTarget();
     
     protected abstract void ConcreteApply(RoundStatus roundStatus);
 }

@@ -2,7 +2,7 @@
 
 namespace Fire_Emblem.Skills.SingleCharacterSkills.FollowUpSkills;
 
-public abstract class FollowUpSkill : SingleCharacterSkill, ITargetedSkill {
+public abstract class FollowUpSkill : StatModifierSkill, ITargetedSkill {
     
     
     protected FollowUpSkill(string name)
@@ -10,13 +10,12 @@ public abstract class FollowUpSkill : SingleCharacterSkill, ITargetedSkill {
     }
 
     public override void Apply(RoundStatus roundStatus) {
-        DetermineTarget(roundStatus);
         base.Apply(roundStatus);
+        DetermineTarget();
         ConcreteApply(roundStatus);
-        IsActivated = true;
     }
 
     protected abstract void ConcreteApply(RoundStatus roundStatus);
 
-    public abstract void DetermineTarget(RoundStatus gamestatus);
+    public abstract void DetermineTarget();
 }

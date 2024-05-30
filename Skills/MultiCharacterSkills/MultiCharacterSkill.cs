@@ -5,15 +5,15 @@ using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.MultiCharacterSkills;
 
-public abstract class MultiCharacterSkill: IMultiCharacterSkill {
+public abstract class MultiCharacterSkill: IBaseSkill {
     
     public string Name { get; set; }
     public bool IsActivated { get; set; }
-    protected SingleCharacterSkill[] Skills;
+    protected ISingleCharacterSkill[] Skills;
     protected CharacterModel? Character;
     protected RoundStatus RoundStatus;
     
-    protected MultiCharacterSkill(string name, SingleCharacterSkill[] skills) {
+    protected MultiCharacterSkill(string name, StatModifierSkill[] skills) {
         Name = name;
         IsActivated = false; 
         Skills = skills;
@@ -26,31 +26,8 @@ public abstract class MultiCharacterSkill: IMultiCharacterSkill {
             skill.Apply(roundStatus);
         }
     }
-    
-    public Dictionary<CharacterModel, SkillEffect> GetModifiedStats() {
-        var modifiedStats = new Dictionary<CharacterModel, SkillEffect>();
-        foreach (var skill in Skills) {
-            modifiedStats = JoinByCharacter(modifiedStats, skill.GetModifiedStats());
-        }
-        return modifiedStats;
-    }
-    
-    private Dictionary<CharacterModel, SkillEffect> JoinByCharacter( Dictionary<CharacterModel, SkillEffect> modifiedStats, Dictionary<CharacterModel, SkillEffect> newStats) {
-        foreach (var (oldCharacter, oldSkillEffect) in modifiedStats) {
-            foreach (var (newCharacter, newSkillEffect) in newStats) {
-                if (oldCharacter == newCharacter) {
-                    oldSkillEffect.Join(newSkillEffect);
-                }
-            }
-        }
-        return modifiedStats;
-    }
-    
-    public virtual void Reset() {
-        IsActivated = false;
-    }
 
-    public List<SingleCharacterSkill> DecomposeIntoList() {
+    public List<ISingleCharacterSkill> DecomposeIntoList() {
         return Skills.ToList();
     }
 }

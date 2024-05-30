@@ -8,7 +8,7 @@ public abstract class FlatSelfSkill: FlatSkill{
     protected FlatSelfSkill(string name, Dictionary<EffectType, List<StatEffect>> statsToModify)
         : base(name, statsToModify) {}
 
-    public override void DetermineTarget(RoundStatus roundStatus) {
-        Character = roundStatus.ActivatingCharacterModel;
+    public override void DetermineTarget() {
+        Character = RoundStatus.ActivatingCharacterModel;
     }
 }

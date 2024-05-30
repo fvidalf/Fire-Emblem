@@ -30,6 +30,7 @@ public class CombatHandler {
     }
     
     public void HandleCombat() { 
+        HandleCharacterSkills();
         ExecuteCommonRound(_firstPlayerCharacter, _secondPlayerCharacter);
         if (_doesRoundEnd) return;
         ExecuteCommonRound(_secondPlayerCharacter, _firstPlayerCharacter);
@@ -38,13 +39,11 @@ public class CombatHandler {
     }
 
     private void ExecuteCommonRound(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
-        HandleCharacterSkills();
         HandleRegularAttack(firstPlayerCharacter, secondPlayerCharacter);
         HandleRoundEnd();
     }
 
     private void ExecuteFollowUpRound() {
-        HandleCharacterSkills();
         HandleFollowUpAttack();
         HandleRoundEnd();
     }

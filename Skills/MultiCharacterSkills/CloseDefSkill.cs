@@ -7,7 +7,7 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 public class CloseDefSkill: MultiCharacterSkill {
     
     public CloseDefSkill()
-        : base("Close Def", new SingleCharacterSkill[] {
+        : base("Close Def", new StatModifierSkill[] {
             new CloseDefBonusSkill(),
             new CloseDefNeutralizer()
         }) {

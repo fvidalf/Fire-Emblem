@@ -2,6 +2,7 @@
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -61,22 +62,64 @@ public class CharacterHandler {
     private static void ExecuteAttack(CharacterModel attacker, int thisTurnAtk, int thisTurnDef, int thisTurnRes, CharacterModel target) {
         var discount = attacker.IsPhysical() ? thisTurnDef : thisTurnRes;
         var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(attacker, target))) - discount), 0);
-        target.Hp -= damage;
-        _view.WriteLine($"{attacker.Name} ataca a {target.Name} con {damage} de daño");
+        var damageModifier = GetTotalDamageModifier(attacker, target, damage);
+        var finalDamage = Math.Max(damage + damageModifier, 0);
+        target.Hp -= finalDamage;
+        _view.WriteLine($"{attacker.Name} ataca a {target.Name} con {finalDamage} de daño");
     }
     
     private static double GetWeaponTriangleAdvantage(CharacterModel attacker, CharacterModel target) {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
+
+    private static int GetTotalDamageModifier(CharacterModel attacker, CharacterModel target, int damage) {
+        var attackerDamageIncrease = GetTotalAttackerDamageIncrease(attacker, damage);
+        var targetDamageReduction = GetTotalTargetDamageReduction(target, damage);
+        return attackerDamageIncrease - targetDamageReduction;
+    }
+
+    private static int GetTotalAttackerDamageIncrease(CharacterModel attacker, int damage) {
+        var totalDamageIncrease = 0;
+        var damageModifiers = attacker.GetDamageModifiers();
+        foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
+            var amount = damageModifiers.DamageModifiersByEffectType[effectType];
+            switch (effectType) {
+                case EffectType.RegularDamageIncrease:
+                    totalDamageIncrease += amount;
+                    break;
+            }
+        }
+        return totalDamageIncrease;
+    }
+    
+    private static int GetTotalTargetDamageReduction(CharacterModel target, int damage) {
+        var totalDamageReduction = 0;
+        var damageModifiers = target.GetDamageModifiers();
+        foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
+            var amount = damageModifiers.DamageModifiersByEffectType[effectType];
+            switch (effectType) {
+                case EffectType.RegularDamagePercentageReduction:
+                    totalDamageReduction += Convert.ToInt32(Math.Floor((double) damage * amount));
+                    break;
+            }
+        }
+        return totalDamageReduction;
+    }
     
     public void ApplySkill(CharacterModel applier, IBaseSkill skill, RoundStatus roundStatus) {
         Console.WriteLine($"{applier.Name}-{applier.Id} intenta aplicar {skill.Name}");
         skill.Apply(roundStatus);
-        var characterPairedToSkillEffect = GetStatsModifiedBySkill((SingleCharacterSkill)skill);
-        UpdateModifiedStats(applier, characterPairedToSkillEffect);
+        if (skill is StatModifierSkill modifierSkill) {
+            var characterPairedToSkillEffect = GetStatsModifiedBySkill(modifierSkill);
+            UpdateModifiedStats(applier, characterPairedToSkillEffect);
+        }
     }
     
-    private Dictionary<CharacterModel, SkillEffect> GetStatsModifiedBySkill(IBaseSkill skill) {
+    private void UpdateDamageModifiers(CharacterModel applier, DamageModifierSkill skill) {
+        throw new NotImplementedException();
+    }
+    
+    private Dictionary<CharacterModel, SkillEffect> GetStatsModifiedBySkill(StatModifierSkill skill) {
         return skill.GetModifiedStats();
     }
     

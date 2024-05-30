@@ -7,7 +7,7 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 public class DragonskinSkill: MultiCharacterSkill {
     
     public DragonskinSkill()
-        : base("Dragonskin", new SingleCharacterSkill[] {
+        : base("Dragonskin", new StatModifierSkill[] {
             new DragonskinBonus(),
             new DragonskinNeutralize()
         }) {

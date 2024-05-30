@@ -14,7 +14,7 @@ public class SoulbladeSkill: ConditionalRivalSkill {
     
     protected override void ConcreteApply(RoundStatus roundStatus) {
         SetStatsToModify();
-        DetermineTarget(roundStatus);
+        DetermineTarget();
         if (IsConditionMet()) {
             foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
                 var effectType = statEffects.Key;

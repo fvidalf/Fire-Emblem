@@ -7,7 +7,7 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 public class DistantDefSkill: MultiCharacterSkill {
     
     public DistantDefSkill()
-        : base("Distant Def", new SingleCharacterSkill[] {
+        : base("Distant Def", new StatModifierSkill[] {
             new DistantDefBonusSkill(),
             new DistantDefNeutralizer()
         }) {

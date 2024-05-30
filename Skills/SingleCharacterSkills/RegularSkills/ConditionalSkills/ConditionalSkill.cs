@@ -9,7 +9,7 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
         : base(name, statsToModify) {}
     
     protected override void ConcreteApply(RoundStatus roundStatus) {
-        DetermineTarget(roundStatus);
+        DetermineTarget();
         if (IsConditionMet()) {
             Console.WriteLine($"{roundStatus.ActivatingCharacterModel.Name} aplica efectivamente {Name}");
             foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
@@ -21,7 +21,7 @@ public abstract class ConditionalSkill: RegularSkill, ITargetedSkill {
         }
     }
 
-    public abstract void DetermineTarget(RoundStatus roundStatus);
+    public abstract void DetermineTarget();
     
     protected abstract bool IsConditionMet();
 }

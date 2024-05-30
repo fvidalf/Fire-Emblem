@@ -15,7 +15,7 @@ public abstract class PenaltyNeutralizer: Neutralizer {
         NeutralizeStats();
     }
     
-    public override void DetermineTarget(RoundStatus roundStatus) {
-        Character = roundStatus.ActivatingCharacterModel;
+    public override void DetermineTarget() {
+        Character = RoundStatus.ActivatingCharacterModel;
     }
 }

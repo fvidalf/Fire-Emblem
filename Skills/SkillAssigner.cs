@@ -1,5 +1,6 @@
 ﻿using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.FirstAttackSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.FollowUpSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
@@ -101,6 +102,7 @@ public static class SkillAssigner {
         { "Fair Fight", typeof(FairFightSkill)},
         { "Close Def", typeof(CloseDefSkill)},
         { "Distant Def", typeof(DistantDefSkill)},
-        { "Sandstorm", typeof(SandstormSkill)}
+        { "Sandstorm", typeof(SandstormSkill)},
+        { "Bravery", typeof(BraverySkill)}
     };
 }

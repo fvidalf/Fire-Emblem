@@ -1,9 +1,11 @@
-﻿using Fire_Emblem_View;
+﻿using System.Numerics;
+using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.MultiCharacterSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
@@ -20,7 +22,7 @@ public class CharacterModel {
     public string Gender { get; set; }
     public string DeathQuote { get; set; }
     public IBaseSkill[] Skills { get; private set; }
-    public SingleCharacterSkill[] SingleSkills { get; private set; }
+    public ISingleCharacterSkill[] SingleSkills { get; private set; }
     public RoundStatus RoundStatus { get; private set; }
 
     public int BaseHp { get; private set; }
@@ -69,6 +71,7 @@ public class CharacterModel {
 
     private SkillEffect _selfModifiedStats = new SkillEffect();
     private SkillEffect _rivalModifiedStats = new SkillEffect();
+    private DamageModifiers _damageModifiers = new DamageModifiers();
     
     public CharacterModel(
         string name,
@@ -109,26 +112,26 @@ public class CharacterModel {
         SingleSkills = OrderSkills(SingleSkills);
     }
     
-    private SingleCharacterSkill[] GetSingleSkills() {
-        var singleSkills = new List<SingleCharacterSkill>();
+    private ISingleCharacterSkill[] GetSingleSkills() {
+        var singleSkills = new List<ISingleCharacterSkill>();
         foreach (var skill in Skills) {
             singleSkills = AddSkillToList(skill, singleSkills);
         }
         return singleSkills.ToArray();
     }
     
-    private List<SingleCharacterSkill> AddSkillToList(IBaseSkill skill, List<SingleCharacterSkill> decomposedSkills) {
+    private List<ISingleCharacterSkill> AddSkillToList(IBaseSkill skill, List<ISingleCharacterSkill> decomposedSkills) {
         if (skill is MultiCharacterSkill multiCharacterSkill) {
             decomposedSkills.AddRange(multiCharacterSkill.DecomposeIntoList());
         }
-        else if (skill is SingleCharacterSkill singleCharacterSkill) {
+        else if (skill is ISingleCharacterSkill singleCharacterSkill) {
             decomposedSkills.Add(singleCharacterSkill);     
         }
         return decomposedSkills;
     }
     
-    private SingleCharacterSkill[] OrderSkills(SingleCharacterSkill[] skills) {
-        var orderedSkills = new List<SingleCharacterSkill>();
+    private ISingleCharacterSkill[] OrderSkills(ISingleCharacterSkill[] skills) {
+        var orderedSkills = new List<ISingleCharacterSkill>();
         foreach (var skill in skills) {
             if (skill is BonusNeutralizer or PenaltyNeutralizer) {
                 orderedSkills.Add(skill);
@@ -153,10 +156,7 @@ public class CharacterModel {
     }
 
     public void ResetSkills() {
-        //ReloadSkills();
-        
         foreach (var skill in SingleSkills) {
-            skill.IsActivated = false;
             skill.Reset();
         }
         ResetStats();
@@ -166,6 +166,7 @@ public class CharacterModel {
         ResetCharacterStats();
         ResetModifiedStats();
         ResetStatModifiers();
+        ResetDamageModifiers();
     }
     
     private void ResetCharacterStats() {
@@ -207,6 +208,10 @@ public class CharacterModel {
         StatModifiers = new StatModifiers();
     }
     
+    private void ResetDamageModifiers() {
+        _damageModifiers = new DamageModifiers();
+    }
+    
     public void UpdateSelfModifiedStats(SkillEffect newSkillEffect) {
         _selfModifiedStats.Join(newSkillEffect);
     }
@@ -226,13 +231,12 @@ public class CharacterModel {
     public void NeutralizeStats(List<Stat> statsToNeutralize) {
         StatModifiers.NeutralizeStats(this, statsToNeutralize);
     }
-
-    private void ReloadSkills() {
-        var newSkills = new List<IBaseSkill>();
-        foreach (var skill in SingleSkills) {
-            var newSkill = Activator.CreateInstance(skill.GetType()) as SingleCharacterSkill;
-            newSkills.Add(newSkill);
-        }
-        Skills = newSkills.ToArray();
+    
+    public DamageModifiers GetDamageModifiers() {
+        return _damageModifiers;
+    }
+    
+    public void UpdateDamageModifiers(EffectType effectType, int amount) {
+        _damageModifiers.UpdateDamageModifier(effectType, amount);
     }
 }

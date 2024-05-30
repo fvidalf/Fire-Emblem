@@ -8,7 +8,7 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 public class LightAndDarkSkill: MultiCharacterSkill {
     
     public LightAndDarkSkill()
-        : base("Light and Dark", new SingleCharacterSkill[] {
+        : base("Light and Dark", new StatModifierSkill[] {
             new LightAndDarkPenaltySkill(),
             new AgneasArrowSkill(),
             new BeorcsBlessingSkill()

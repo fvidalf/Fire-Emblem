@@ -15,7 +15,7 @@ public abstract class BonusNeutralizer: Neutralizer {
         NeutralizeStats();
     }
     
-    public override void DetermineTarget(RoundStatus roundStatus) {
-        Character = roundStatus.RivalCharacterModel;
+    public override void DetermineTarget() {
+        Character = RoundStatus.RivalCharacterModel;
     }
 }

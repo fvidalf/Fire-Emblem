@@ -4,5 +4,5 @@ namespace Fire_Emblem.Skills;
 
 public interface ITargetedSkill {
     
-    void DetermineTarget(RoundStatus roundStatus);
+    void DetermineTarget();
 }

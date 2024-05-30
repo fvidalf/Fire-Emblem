@@ -21,7 +21,7 @@ public class LunaSkill: FirstAttackSkill {
         UpdateStat(Character, EffectType.FirstAttackPenalty, newResEffect);
     }
 
-    public override void DetermineTarget(RoundStatus roundStatus) {
-        Character = roundStatus.RivalCharacterModel;
+    public override void DetermineTarget() {
+        Character = RoundStatus.RivalCharacterModel;
     }
 }

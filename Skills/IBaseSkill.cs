@@ -6,10 +6,5 @@ namespace Fire_Emblem.Skills;
 
 public interface IBaseSkill {
     string Name { get; set; }
-    bool IsActivated { get; set; }
     public void Apply(RoundStatus roundStatus);
-    
-    void Reset();
-    
-    Dictionary<CharacterModel, SkillEffect> GetModifiedStats();
 }

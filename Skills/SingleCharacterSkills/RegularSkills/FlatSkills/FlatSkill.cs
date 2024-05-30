@@ -9,7 +9,7 @@ public abstract class FlatSkill: RegularSkill, ITargetedSkill {
     : base(name, statsToModify) {}
     
     protected override void ConcreteApply(RoundStatus roundStatus) {
-        DetermineTarget(roundStatus);
+        DetermineTarget();
         foreach (KeyValuePair<EffectType, List<StatEffect>> statEffects in StatsToModify) {
             var effectType = statEffects.Key;
             foreach (var statEffect in statEffects.Value) {
@@ -18,5 +18,5 @@ public abstract class FlatSkill: RegularSkill, ITargetedSkill {
         }
     }
 
-    public abstract void DetermineTarget(RoundStatus roundStatus);
+    public abstract void DetermineTarget();
 }

@@ -2,6 +2,7 @@
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.SingleCharacterSkills;
+using Fire_Emblem.Skills.SingleCharacterSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleCharacterSkills.Neutralizers.PenaltyNeutralizers;
@@ -27,38 +28,38 @@ public class SkillHandler {
         ApplySkillsJointly(orderedSkills);
     }
     
-    private Tuple<CharacterModel, SingleCharacterSkill>[] JoinSkills(CharacterModel[] characters) {
-        var skillsPairedToCharacter = new List<Tuple<CharacterModel, SingleCharacterSkill>>();
+    private Tuple<CharacterModel, ISingleCharacterSkill>[] JoinSkills(CharacterModel[] characters) {
+        var skillsPairedToCharacter = new List<Tuple<CharacterModel, ISingleCharacterSkill>>();
         foreach (var character in characters) {
             foreach (var skill in character.SingleSkills) {
-                skillsPairedToCharacter.Add(new Tuple<CharacterModel, SingleCharacterSkill>(character, skill));
+                skillsPairedToCharacter.Add(new Tuple<CharacterModel, ISingleCharacterSkill>(character, skill));
             }
         }
         return skillsPairedToCharacter.ToArray();
     }
     
-    private Tuple<CharacterModel, SingleCharacterSkill>[] OrderSkills(Tuple<CharacterModel, SingleCharacterSkill>[] skillsPairedToCharacter) {
-        var firstSkillsToApply = new List<Tuple<CharacterModel, SingleCharacterSkill>>();
-        var lastSkillsToApply = new List<Tuple<CharacterModel, SingleCharacterSkill>>();
+    private Tuple<CharacterModel, ISingleCharacterSkill>[] OrderSkills(Tuple<CharacterModel, ISingleCharacterSkill>[] skillsPairedToCharacter) {
+        var firstSkillsToApply = new List<Tuple<CharacterModel, ISingleCharacterSkill>>();
+        var lastSkillsToApply = new List<Tuple<CharacterModel, ISingleCharacterSkill>>();
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
             if (skill is BonusNeutralizer or PenaltyNeutralizer) {
-                lastSkillsToApply.Add(new Tuple<CharacterModel, SingleCharacterSkill>(character, skill));
+                lastSkillsToApply.Add(new Tuple<CharacterModel, ISingleCharacterSkill>(character, skill));
             }
             else {
-                firstSkillsToApply.Add(new Tuple<CharacterModel, SingleCharacterSkill>(character, skill));
+                firstSkillsToApply.Add(new Tuple<CharacterModel, ISingleCharacterSkill>(character, skill));
             }
         }
         firstSkillsToApply.AddRange(lastSkillsToApply);
         return firstSkillsToApply.ToArray();
     }
 
-    private void ApplySkillsJointly(Tuple<CharacterModel, SingleCharacterSkill>[] skillsPairedToCharacter) {
+    private void ApplySkillsJointly(Tuple<CharacterModel, ISingleCharacterSkill>[] skillsPairedToCharacter) {
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
-            if (!skill.IsActivated) _characterHandler.ApplySkill(character, skill, character.RoundStatus);
+            _characterHandler.ApplySkill(character, skill, character.RoundStatus);
         }
     }
     
@@ -67,6 +68,10 @@ public class SkillHandler {
         var secondPlayerSkillEffects = secondPlayerCharacterModel.GetSkillEffects();
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
         NotifySkillEffects(skillEffects);
+        var firstPlayerDamageModifiers = firstPlayerCharacterModel.GetDamageModifiers();
+        var secondPlayerDamageModifiers = secondPlayerCharacterModel.GetDamageModifiers();
+        NotifyDamageModifiers(firstPlayerCharacterModel, firstPlayerDamageModifiers);
+        NotifyDamageModifiers(secondPlayerCharacterModel, secondPlayerDamageModifiers);
     }
     
     private Dictionary<CharacterModel, List<Tuple<EffectType, Stat, int>>> JoinPlayerSkillEffects(Dictionary<CharacterModel, SkillEffect> firstPlayerSkillEffects, Dictionary<CharacterModel, SkillEffect> secondPlayerSkillEffects) {
@@ -144,5 +149,23 @@ public class SkillHandler {
     
     private void NotifyBonusNeutralizer(CharacterModel characterModel, Stat stat) {
         _view.WriteLine($"Los bonus de {StatToString.RegularizeMap[stat]} de {characterModel.Name} fueron neutralizados");
+    }
+    
+    private void NotifyDamageModifiers(CharacterModel character, DamageModifiers damageModifiers) {
+        foreach (var effectType in damageModifiers.DamageModifiersByEffectType.Keys) {
+            var amount = damageModifiers.DamageModifiersByEffectType[effectType];
+            switch (effectType) {
+                case EffectType.RegularDamageIncrease:
+                    NotifyDamageIncrease(character, amount);
+                    break;
+            }
+        }
+    }
+    
+    private void NotifyDamageIncrease(CharacterModel character, int amount) {
+        if (amount != 0) {
+            var diffSign = amount > 0 ? "+" : "";
+            _view.WriteLine($"{character.Name} realizará {diffSign}{amount} daño extra en cada ataque");
+        }
     }
 }

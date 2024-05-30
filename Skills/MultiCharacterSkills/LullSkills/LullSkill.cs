@@ -4,11 +4,11 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills.LullSkills;
 
 public abstract class LullSkill: MultiCharacterSkill {
 
-    protected SingleCharacterSkill PenaltySkill;
-    protected SingleCharacterSkill NeutralizeSkill;
+    protected StatModifierSkill PenaltySkill;
+    protected StatModifierSkill NeutralizeSkill;
     
-    public LullSkill(string name, SingleCharacterSkill penaltySkill, SingleCharacterSkill neutralizeSkill)
-        : base(name, new SingleCharacterSkill[] {penaltySkill, neutralizeSkill})
+    public LullSkill(string name, StatModifierSkill penaltySkill, StatModifierSkill neutralizeSkill)
+        : base(name, new StatModifierSkill[] {penaltySkill, neutralizeSkill})
     {
         PenaltySkill = penaltySkill;
         NeutralizeSkill = neutralizeSkill;

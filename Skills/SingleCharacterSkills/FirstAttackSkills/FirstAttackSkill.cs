@@ -2,7 +2,7 @@
 
 namespace Fire_Emblem.Skills.SingleCharacterSkills.FirstAttackSkills;
 
-public abstract class FirstAttackSkill : SingleCharacterSkill, ITargetedSkill {
+public abstract class FirstAttackSkill : StatModifierSkill, ITargetedSkill {
     
     
     protected FirstAttackSkill(string name)
@@ -10,13 +10,12 @@ public abstract class FirstAttackSkill : SingleCharacterSkill, ITargetedSkill {
     }
 
     public override void Apply(RoundStatus roundStatus) {
-        DetermineTarget(roundStatus);
         base.Apply(roundStatus);
+        DetermineTarget();
         ConcreteApply();
-        IsActivated = true;
     }
 
     protected abstract void ConcreteApply();
 
-    public abstract void DetermineTarget(RoundStatus gamestatus);
+    public abstract void DetermineTarget();
 }

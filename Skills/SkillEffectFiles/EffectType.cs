@@ -8,5 +8,12 @@ public enum EffectType {
     FirstAttackPenalty,
     FollowUpPenalty,
     BonusNeutralizer,
-    PenaltyNeutralizer
+    PenaltyNeutralizer,
+    RegularDamageIncrease,
+    FirstAttackDamageIncrease,
+    FollowUpDamageIncrease,
+    RegularDamagePercentageReduction,
+    FirstAttackDamagePercentageReduction,
+    FollowUpDamagePercentageReduction,
+    RegularDamageAbsoluteReduction
 }

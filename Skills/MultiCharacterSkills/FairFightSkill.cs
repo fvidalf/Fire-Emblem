@@ -9,7 +9,7 @@ namespace Fire_Emblem.Skills.MultiCharacterSkills;
 public class FairFightSkill: MultiCharacterSkill {
     
     public FairFightSkill()
-        : base("Light and Dark", new SingleCharacterSkill[] {
+        : base("Light and Dark", new StatModifierSkill[] {
             new FairFightSelfBonusSkill(),
             new FairFightRivalBonusSkill()
         }) {
