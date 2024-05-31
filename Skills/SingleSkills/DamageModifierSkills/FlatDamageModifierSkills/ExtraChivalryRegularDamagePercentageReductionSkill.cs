@@ -7,7 +7,7 @@ namespace Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.FlatDamageModifie
 public class ExtraChivalryRegularDamagePercentageReductionSkill: DamageModifierSkill {
     
     public ExtraChivalryRegularDamagePercentageReductionSkill()
-        : base("Extra Chivalry Regular Damage Percentage Reduction",
+        : base("Extra Chivalry: Regular Damage Percentage Reduction",
             new DamageModification(EffectType.RegularDamagePercentageReduction, 0)
         ) {
     }

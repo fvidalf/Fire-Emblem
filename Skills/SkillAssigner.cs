@@ -137,6 +137,10 @@ public static class SkillAssigner {
         { "Chivalry", typeof(ChivalrySkill)},
         { "Extra Chivalry", typeof(ExtraChivalrySkill)},
         { "Poetic Justice", typeof(PoeticJusticeSkill)},
-        { "Prescience", typeof(PrescienceSkill)}
+        { "Prescience", typeof(PrescienceSkill)},
+        { "Dragon's Wrath", typeof(DragonsWrathSkill)},
+        { "Guard Bearing", typeof(GuardBearingSkill)},
+        { "Back at You", typeof(BackAtYouSkill)},
+        { "Moon-Twin Wing", typeof(MoonTwinWingSkill)}
     };
 }

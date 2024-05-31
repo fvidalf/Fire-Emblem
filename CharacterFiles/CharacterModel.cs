@@ -68,6 +68,9 @@ public class CharacterModel {
     public CharacterModel? MostRecentRival { get; private set; }
 
     public bool IsDead;
+    
+    public bool HasUsedGuardBearingForAttacking { get; set; }
+    public bool HasUsedGuardBearingForDefending { get; set; }
 
     private SkillEffect _selfModifiedStats = new SkillEffect();
     private SkillEffect _rivalModifiedStats = new SkillEffect();
