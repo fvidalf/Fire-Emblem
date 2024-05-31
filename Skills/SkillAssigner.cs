@@ -141,6 +141,7 @@ public static class SkillAssigner {
         { "Dragon's Wrath", typeof(DragonsWrathSkill)},
         { "Guard Bearing", typeof(GuardBearingSkill)},
         { "Back at You", typeof(BackAtYouSkill)},
-        { "Moon-Twin Wing", typeof(MoonTwinWingSkill)}
+        { "Moon-Twin Wing", typeof(MoonTwinWingSkill)},
+        { "Laguz Friend", typeof(LaguzFriendSkill)}
     };
 }
