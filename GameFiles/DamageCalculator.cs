@@ -5,8 +5,21 @@ namespace Fire_Emblem.GameFiles;
 public static class DamageCalculator {
     public static int CalculateFinalDamage(CharacterModel attacker, CharacterModel target, int roundPhase) {
         var damage = CalculateOriginalDamage(attacker, target, roundPhase);
-        var finalDamage = CalculateDamageWithDiscounts(damage, attacker, target, roundPhase);
+        var damageWithExtras = GetDamageExtras(attacker, roundPhase) + damage;
+        var damageWithPercentDiscount = damageWithExtras * (1 - GetPercentageDamageModifier(target, roundPhase));
+        var damageWithAbsoluteDiscount = damageWithPercentDiscount - GetAbsoluteDamageDiscounts(target);
+        var roundedDamage = Math.Round(damageWithAbsoluteDiscount, 9);
+        var finalDamage = Math.Max(Convert.ToInt32(Math.Floor(roundedDamage)), 0);
         return finalDamage;
+    }
+
+    private static int CalculateOriginalDamage(CharacterModel attacker, CharacterModel target, int roundPhase) {
+        var thisTurnAtk = GetThisTurnAtk(attacker, roundPhase);
+        var thisTurnDef = GetThisTurnDef(target, roundPhase);
+        var thisTurnRes = GetThisTurnRes(target, roundPhase);
+        var discount = attacker.IsPhysical() ? thisTurnDef : thisTurnRes;
+        var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(attacker, target))) - discount), 0);
+        return damage;
     }
     
     private static int GetThisTurnAtk(CharacterModel attacker, int roundPhase) {
@@ -39,36 +52,25 @@ public static class DamageCalculator {
         return thisTurnRes;
     }
     
-    public static int CalculateOriginalDamage(CharacterModel attacker, CharacterModel target, int roundPhase) {
-        var thisTurnAtk = GetThisTurnAtk(attacker, roundPhase);
-        var thisTurnDef = GetThisTurnDef(target, roundPhase);
-        var thisTurnRes = GetThisTurnRes(target, roundPhase);
-        var discount = attacker.IsPhysical() ? thisTurnDef : thisTurnRes;
-        var damage = Math.Max((Convert.ToInt32(Math.Floor(thisTurnAtk * GetWeaponTriangleAdvantage(attacker, target))) - discount), 0);
-        return damage;
-    }
-    
     private static double GetWeaponTriangleAdvantage(CharacterModel attacker, CharacterModel target) {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
-
-    public static int CalculateDamageWithDiscounts(int damage, CharacterModel attacker, CharacterModel target, int roundPhase) {
-        var absoluteDamageModifier = GetAbsoluteDamageModifier(attacker, target, roundPhase);
-        var damageWithAbsoluteModifier = Math.Max(damage + absoluteDamageModifier, 0);
-        var percentageDamageModifier = GetPercentageDamageModifier(target, roundPhase);
-        var damageWithPercentageModifier = damageWithAbsoluteModifier * (1 - percentageDamageModifier);
-        var roundedDamage = Math.Round(damageWithPercentageModifier, 9);
-        var finalDamage = Convert.ToInt32(Math.Floor(roundedDamage));
+    
+    public static int CalculateDamageWithOnlyGoodThings(CharacterModel attacker, CharacterModel target, int roundPhase) {
+        var originalDamage = CalculateOriginalDamage(attacker, target, roundPhase);
+        var absoluteDamageModifier = GetDamageExtras(attacker, roundPhase);
+        var damageWithAbsoluteModifier = Math.Max(originalDamage + absoluteDamageModifier, 0);
+        var finalDamage = Convert.ToInt32(Math.Floor(damageWithAbsoluteModifier));
         return finalDamage;
     }
 
     private static double GetAbsoluteDamageModifier(CharacterModel attacker, CharacterModel target, int roundPhase) {
-        var attackerDamageIncrease = GetAttackerAbsoluteDamageIncrease(attacker, roundPhase);
-        var targetDamageReduction = GetTargetAbsoluteDamageReduction(target);
+        var attackerDamageIncrease = GetDamageExtras(attacker, roundPhase);
+        var targetDamageReduction = GetAbsoluteDamageDiscounts(target);
         return attackerDamageIncrease - targetDamageReduction;
     }
 
-    private static double GetAttackerAbsoluteDamageIncrease(CharacterModel attacker, int roundPhase) {
+    private static double GetDamageExtras(CharacterModel attacker, int roundPhase) {
         double absoluteDamageIncrease = 0;
         var damageModifiers = attacker.GetDamageModifiers();
         absoluteDamageIncrease += damageModifiers.GetRegularDamageIncrease();
@@ -80,7 +82,7 @@ public static class DamageCalculator {
         return absoluteDamageIncrease;
     }
     
-    private static double GetTargetAbsoluteDamageReduction(CharacterModel target) {
+    private static double GetAbsoluteDamageDiscounts(CharacterModel target) {
         double absoluteDamageReduction = 0;
         var damageModifiers = target.GetDamageModifiers();
         absoluteDamageReduction += damageModifiers.GetRegularDamageAbsoluteReduction();

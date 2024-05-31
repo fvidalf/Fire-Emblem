@@ -21,7 +21,17 @@ public class DamageModifiers {
     public void UpdateDamageModifier(DamageModification damageModification) {
         var effectType = damageModification.EffectType;
         var amount = damageModification.Amount;
-        DamageModifiersByEffectType[effectType] += amount;
+
+        switch (effectType) {
+            case (EffectType.RegularDamageIncrease or EffectType.FirstAttackDamageIncrease or EffectType.FollowUpDamageIncrease or EffectType.RegularDamageAbsoluteReduction):
+                DamageModifiersByEffectType[effectType] += amount;
+                break;
+            case (EffectType.RegularDamagePercentageReduction or EffectType.FirstAttackDamagePercentageReduction or EffectType.FollowUpDamagePercentageReduction):
+                DamageModifiersByEffectType[effectType] = 1 - (1 - DamageModifiersByEffectType[effectType]) * (1 - amount);
+                break;
+        }
+        
+        
     }
     
     public DamageModifiers GetDamageModifiers() {

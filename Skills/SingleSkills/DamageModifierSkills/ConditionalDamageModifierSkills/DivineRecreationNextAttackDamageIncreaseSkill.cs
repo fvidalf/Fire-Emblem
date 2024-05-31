@@ -29,8 +29,8 @@ public class DivineRecreationNextAttackDamageIncreaseSkill: ConditionalDamageMod
         var target = RoundStatus.ActivatingCharacterModel;
         
         var isRivalFirstToAttack = RoundStatus.RivalCharacterModel == RoundStatus.FirstCharacterModel;
-        var originalDamage = DamageCalculator.CalculateOriginalDamage(attacker, target, RoundStatus.RoundPhase);
-        var finalDamage = DamageCalculator.CalculateDamageWithDiscounts(originalDamage, attacker, target, RoundStatus.RoundPhase);
+        var originalDamage = DamageCalculator.CalculateDamageWithOnlyGoodThings(attacker, target, RoundStatus.RoundPhase);
+        var finalDamage = DamageCalculator.CalculateFinalDamage(attacker, target, RoundStatus.RoundPhase);
         
         if (isRivalFirstToAttack) {
             DamageModification.SetEffectType(EffectType.FirstAttackDamageIncrease);
@@ -38,7 +38,7 @@ public class DivineRecreationNextAttackDamageIncreaseSkill: ConditionalDamageMod
             DamageModification.SetEffectType(EffectType.FollowUpDamageIncrease);
             
         }
-        var rivalDamageDiff = originalDamage - finalDamage + attacker.SavedDamageDiff;
+        var rivalDamageDiff = originalDamage - finalDamage;
         target.SavedDamageDiff = rivalDamageDiff;
         
         DamageModification.SetAmount(rivalDamageDiff);
