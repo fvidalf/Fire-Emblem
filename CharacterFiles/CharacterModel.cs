@@ -71,6 +71,8 @@ public class CharacterModel {
     
     public bool HasUsedGuardBearingForAttacking { get; set; }
     public bool HasUsedGuardBearingForDefending { get; set; }
+    
+    public int SavedDamageDiff { get; set; }
 
     private SkillEffect _selfModifiedStats = new SkillEffect();
     private SkillEffect _rivalModifiedStats = new SkillEffect();
@@ -105,6 +107,10 @@ public class CharacterModel {
         BaseDef = def;
         Res = res;
         BaseRes = res;
+        HasUsedGuardBearingForAttacking = false;
+        HasUsedGuardBearingForDefending = false;
+        SavedDamageDiff = 0;
+        
         StatModifiers = new StatModifiers();
 
         PrepareSkills();
@@ -177,6 +183,7 @@ public class CharacterModel {
         ResetSpd();
         ResetDef();
         ResetRes();
+        SavedDamageDiff = 0;
     }
     
     private void ResetAtk() {

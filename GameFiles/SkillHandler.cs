@@ -3,6 +3,7 @@ using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.DamageModifiersFiles;
 using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
@@ -39,18 +40,29 @@ public class SkillHandler {
     
     private Tuple<CharacterModel, ISingleSkill>[] OrderSkills(Tuple<CharacterModel, ISingleSkill>[] skillsPairedToCharacter) {
         var firstSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
+        var middleSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         var lastSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
             if (skill is BonusNeutralizer or PenaltyNeutralizer) {
+                middleSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+            }
+            else if (skill is DivineRecreationNextAttackDamageIncreaseSkill) {
                 lastSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
             }
             else {
                 firstSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
             }
         }
+        firstSkillsToApply.AddRange(middleSkillsToApply);
+        lastSkillsToApply.Reverse();
         firstSkillsToApply.AddRange(lastSkillsToApply);
+        foreach (var pair in firstSkillsToApply) {
+            var character = pair.Item1;
+            var skill = pair.Item2;
+            Console.WriteLine($"{character.Name} tiene {skill.Name}");
+        }
         return firstSkillsToApply.ToArray();
     }
 

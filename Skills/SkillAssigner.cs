@@ -142,6 +142,7 @@ public static class SkillAssigner {
         { "Guard Bearing", typeof(GuardBearingSkill)},
         { "Back at You", typeof(BackAtYouSkill)},
         { "Moon-Twin Wing", typeof(MoonTwinWingSkill)},
-        { "Laguz Friend", typeof(LaguzFriendSkill)}
+        { "Laguz Friend", typeof(LaguzFriendSkill)},
+        { "Divine Recreation", typeof(DivineRecreationSkill)}
     };
 }
