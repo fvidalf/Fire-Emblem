@@ -3,6 +3,7 @@ using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.Skills.DamageModifiersFiles;
 using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
@@ -40,24 +41,31 @@ public class SkillHandler {
     
     private Tuple<CharacterModel, ISingleSkill>[] OrderSkills(Tuple<CharacterModel, ISingleSkill>[] skillsPairedToCharacter) {
         var firstSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
-        var middleSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
-        var lastSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
+        var secondSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
+        var thirdSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
+        var fourthSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         foreach (var pair in skillsPairedToCharacter) {
             var character = pair.Item1;
             var skill = pair.Item2;
-            if (skill is BonusNeutralizer or PenaltyNeutralizer) {
-                middleSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
-            }
-            else if (skill is DivineRecreationNextAttackDamageIncreaseSkill) {
-                lastSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
-            }
-            else {
-                firstSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+            switch (skill) {
+                case BonusNeutralizer or PenaltyNeutralizer:
+                    secondSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                    break;
+                case DivineRecreationNextAttackDamageIncreaseSkill:
+                    fourthSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                    break;
+                case DamageModifierSkill:
+                    thirdSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                    break;
+                default:
+                    firstSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                    break;
             }
         }
-        firstSkillsToApply.AddRange(middleSkillsToApply);
-        lastSkillsToApply.Reverse();
-        firstSkillsToApply.AddRange(lastSkillsToApply);
+        firstSkillsToApply.AddRange(secondSkillsToApply);
+        firstSkillsToApply.AddRange(thirdSkillsToApply);
+        fourthSkillsToApply.Reverse();
+        firstSkillsToApply.AddRange(fourthSkillsToApply);
         foreach (var pair in firstSkillsToApply) {
             var character = pair.Item1;
             var skill = pair.Item2;

@@ -28,7 +28,7 @@ public class LunarBraceSkill: ConditionalDamageModifierSkill {
     
     protected override bool IsConditionMet() {
         var isActivatingFirstToAttack = RoundStatus.ActivatingCharacterModel == RoundStatus.FirstCharacterModel;
-        var isPhysical = RoundStatus.ActivatingCharacterModel.IsPhysical();
+        var isPhysical = RoundStatus.FirstCharacterModel.IsPhysical();
         return isActivatingFirstToAttack && isPhysical;
     }
     

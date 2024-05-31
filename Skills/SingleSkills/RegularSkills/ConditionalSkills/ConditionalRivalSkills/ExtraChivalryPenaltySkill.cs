@@ -15,7 +15,7 @@ public class ExtraChivalryPenaltySkill: ConditionalRivalSkill {
         }) {}
 
     protected override bool IsConditionMet() {
-        var isRivalAtOrAboveHalfHp = Character.Hp >= Character.BaseHp / 2;
+        var isRivalAtOrAboveHalfHp = Character.Hp >= (double) Character.BaseHp / 2;
         return isRivalAtOrAboveHalfHp;
     }
 }
