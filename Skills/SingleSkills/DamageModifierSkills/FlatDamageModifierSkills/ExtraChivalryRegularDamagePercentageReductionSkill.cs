@@ -24,6 +24,6 @@ public class ExtraChivalryRegularDamagePercentageReductionSkill: DamageModifierS
         Console.WriteLine($"Rival hp as percentage: {rivalHpAsPercentage}");
         var damageReduction = Math.Floor(rivalHpAsPercentage / 2) / 100;
         Console.WriteLine($"Damage reduction: {damageReduction}");
-        DamageModification.SetAmount(damageReduction);
+        DamageModification.Amount = damageReduction;
     }
 }

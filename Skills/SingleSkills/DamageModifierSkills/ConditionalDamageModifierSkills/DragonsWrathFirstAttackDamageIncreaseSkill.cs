@@ -24,7 +24,7 @@ public class DragonsWrathFirstAttackDamageIncreaseSkill: ConditionalDamageModifi
     private void SetDamageIncrease() {
         var damageIncrease = (RoundStatus.ActivatingCharacterModel.Atk - RoundStatus.RivalCharacterModel.Res) * 0.25;
         damageIncrease = Math.Floor(damageIncrease);
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

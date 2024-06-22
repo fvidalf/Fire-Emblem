@@ -1,12 +1,13 @@
 ﻿using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.Skills.DamageModifiersFiles;
+using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.GameFiles;
 
 public static class DamageCalculator {
     public static int CalculateFinalDamage(CharacterModel attacker, CharacterModel target, int roundPhase) {
         var damage = CalculateOriginalDamage(attacker, target, roundPhase);
-        var damageWithExtras = GetDamageExtras(attacker, roundPhase) + damage;
+        var damageWithExtras = GetDamageIncreases(attacker, roundPhase) + damage;
         var damageWithPercentDiscount = damageWithExtras * (1 - GetPercentageDamageModifier(target, roundPhase));
         var damageWithAbsoluteDiscount = damageWithPercentDiscount - GetAbsoluteDamageDiscounts(target);
         var roundedDamage = Math.Round(damageWithAbsoluteDiscount, 9);
@@ -14,9 +15,9 @@ public static class DamageCalculator {
         return finalDamage;
     }
     
-    public static int CalculateDamageWithOnlyGoodThings(CharacterModel attacker, CharacterModel target, int roundPhase) {
+    public static int CalculateDamageWithOnlyIncreases(CharacterModel attacker, CharacterModel target, int roundPhase) {
         var originalDamage = CalculateOriginalDamage(attacker, target, roundPhase);
-        var absoluteDamageModifier = GetDamageExtras(attacker, roundPhase);
+        var absoluteDamageModifier = GetDamageIncreases(attacker, roundPhase);
         var damageWithAbsoluteModifier = Math.Max(originalDamage + absoluteDamageModifier, 0);
         var finalDamage = Convert.ToInt32(Math.Floor(damageWithAbsoluteModifier));
         return finalDamage;
@@ -56,11 +57,16 @@ public static class DamageCalculator {
         return WeaponTriangleAdvantage.GetAdvantage(attacker, target);
     }
     
-    private static double GetDamageExtras(CharacterModel attacker, int roundPhase) {
+    private static double GetDamageIncreases(CharacterModel attacker, int roundPhase) {
         double absoluteDamageIncrease = 0;
         var damageModifiers = attacker.GetDamageModifiers();
-        absoluteDamageIncrease += damageModifiers.GetRegularDamageIncrease();
-        var turnBasedIncrease = roundPhase != 2 ? damageModifiers.GetFirstAttackDamageIncrease() : damageModifiers.GetFollowUpDamageIncrease();
+        absoluteDamageIncrease += damageModifiers.GetDamageModifier(EffectType.RegularDamageIncrease);
+        double turnBasedIncrease;
+        if (roundPhase != 2) {
+            turnBasedIncrease = damageModifiers.GetDamageModifier(EffectType.FirstAttackDamageIncrease);
+        } else {
+            turnBasedIncrease = damageModifiers.GetDamageModifier(EffectType.FollowUpDamageIncrease);
+        }
         absoluteDamageIncrease += turnBasedIncrease;
         return absoluteDamageIncrease;
     }
@@ -69,33 +75,37 @@ public static class DamageCalculator {
         double percentageDamageModifier = 0;
         var damageModifiers = target.GetDamageModifiers();
         percentageDamageModifier = AddRegularDamagePercentageReduction(damageModifiers, percentageDamageModifier);
-        percentageDamageModifier = roundPhase != 2 ? AddFirstAttackDamagePercentageReduction(damageModifiers, percentageDamageModifier) : AddFollowUpDamagePercentageReduction(damageModifiers, percentageDamageModifier);
+        if (roundPhase != 2) {
+            percentageDamageModifier = AddFirstAttackDamagePercentageReduction(damageModifiers, percentageDamageModifier);
+        } else {
+            percentageDamageModifier = AddFollowUpDamagePercentageReduction(damageModifiers, percentageDamageModifier);
+        }
         return percentageDamageModifier;
     }
     
     private static double AddRegularDamagePercentageReduction(DamageModifiers damageModifiers, double percentageDamageModifier) {
-        var regularAmount = damageModifiers.GetRegularDamagePercentageReduction();
+        var regularAmount = damageModifiers.GetDamageModifier(EffectType.RegularDamagePercentageReduction);
         return AddPercentageReduction(percentageDamageModifier, regularAmount);
     }
     
     private static double AddPercentageReduction(double originalValue, double percentageReduction) {
-        return (double) 1 - (1 - originalValue) * (1 - percentageReduction);
+        return 1 - (1 - originalValue) * (1 - percentageReduction);
     }
     
     private static double AddFirstAttackDamagePercentageReduction(DamageModifiers damageModifiers, double percentageDamageModifier) {
-        var firstAttackAmount = damageModifiers.GetFirstAttackDamagePercentageReduction();
+        var firstAttackAmount = damageModifiers.GetDamageModifier(EffectType.FirstAttackDamagePercentageReduction);
         return AddPercentageReduction(percentageDamageModifier, firstAttackAmount);
     }
     
     private static double AddFollowUpDamagePercentageReduction(DamageModifiers damageModifiers, double percentageDamageModifier) {
-        var followUpAmount = damageModifiers.GetFollowUpDamagePercentageReduction();
+        var followUpAmount = damageModifiers.GetDamageModifier(EffectType.FollowUpDamagePercentageReduction);
         return AddPercentageReduction(percentageDamageModifier, followUpAmount);
     }
     
     private static double GetAbsoluteDamageDiscounts(CharacterModel target) {
         double absoluteDamageReduction = 0;
         var damageModifiers = target.GetDamageModifiers();
-        absoluteDamageReduction += damageModifiers.GetRegularDamageAbsoluteReduction();
+        absoluteDamageReduction += damageModifiers.GetDamageModifier(EffectType.RegularDamageAbsoluteReduction);
         return absoluteDamageReduction;
     }
 }

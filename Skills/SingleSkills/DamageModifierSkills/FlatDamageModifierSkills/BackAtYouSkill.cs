@@ -26,7 +26,7 @@ public class BackAtYouSkill: ConditionalDamageModifierSkill {
         var hpLost = RoundStatus.ActivatingCharacterModel.BaseHp - RoundStatus.ActivatingCharacterModel.Hp;
         Console.WriteLine($"Hp lost: {hpLost}");
         var damageIncrease = hpLost / 2;
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

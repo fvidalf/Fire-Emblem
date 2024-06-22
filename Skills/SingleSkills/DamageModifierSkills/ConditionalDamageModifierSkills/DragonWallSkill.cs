@@ -27,7 +27,7 @@ public class DragonWallSkill: ConditionalDamageModifierSkill {
         Console.WriteLine($"resDiff: {resDiff}");
         Console.WriteLine($"resDiffAsPercentage: {resDiffAsPercentage}");
         Console.WriteLine($"Damage increase: {damageIncrease}");
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

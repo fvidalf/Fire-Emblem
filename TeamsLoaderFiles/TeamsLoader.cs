@@ -1,6 +1,7 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 using System.Text.Json;
+using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 
 namespace Fire_Emblem.TeamsLoaderFiles;
@@ -15,18 +16,22 @@ public class TeamsLoader {
         _teamFilesReader = new TeamFilesReader(teamsFolder);
     }
     
-    public CharacterModel[][] GetTeams() {
+    public Team[] GetTeams() {
+        var teamsContent = GetTeamsContent();
+        TeamVerifier.VerifyTeams(teamsContent);
+        var charactersInfo = GetCharactersFromJson();
+        return GetTeamsFromInfo(teamsContent, charactersInfo);
+    }
+    
+    private TeamsContent GetTeamsContent() {
         var userOption = AskForTeam();
         var lines = _teamFilesReader.ReadTeamFile(userOption);
-        var teamsContent = new TeamsContent(lines);
-        TeamVerifier.VerifyTeams(teamsContent);
-        return LoadTeams(teamsContent);
+        return new TeamsContent(lines);
     }
 
     private int AskForTeam() {
         _view.WriteLine("Elige un archivo para cargar los equipos");
         ShowTeamFiles();
-
         var userOption = GetUserOption();
         return userOption;
     }
@@ -43,14 +48,7 @@ public class TeamsLoader {
         do {
             userString = _view.ReadLine();
         } while (!int.TryParse(userString, out var _));
-        
         return int.Parse(userString);
-    }
-
-    private CharacterModel[][] LoadTeams(TeamsContent teamsContent) {
-        var charactersInfo = GetCharactersFromJson();
-        var teamCharacters = GetTeamCharacters(teamsContent, charactersInfo);
-        return teamCharacters;
     }
     
     private List<CharacterInfo> GetCharactersFromJson() {
@@ -60,17 +58,23 @@ public class TeamsLoader {
         return charactersInfo;
     }
 
-    private CharacterModel[][] GetTeamCharacters(TeamsContent teamsContent, List<CharacterInfo> charactersInfo) {
-        var teamCharacters = new CharacterModel[2][];
-        
+    private Team[] GetTeamsFromInfo(TeamsContent teamsContent, List<CharacterInfo> charactersInfo) {
+        var teamCharacters = new Team[2];
         for (var teamIndex = 0; teamIndex < 2; teamIndex++) {
-            var numberOfUnits = teamsContent.GetNumberOfUnitsOfTeam(teamIndex);
-            teamCharacters[teamIndex] = new CharacterModel[numberOfUnits];
-            for (var unitIndex = 0; unitIndex < numberOfUnits; unitIndex++) {
-                teamCharacters[teamIndex][unitIndex] = GetCharacterFromInfo(teamsContent, charactersInfo, teamIndex, unitIndex);
-            }
+            var newTeam = GetSingleTeamFromInfo(teamsContent, charactersInfo, teamIndex);
+            teamCharacters[teamIndex] = newTeam;
         }
         return teamCharacters;
+    }
+    
+    private Team GetSingleTeamFromInfo(TeamsContent teamsContent, List<CharacterInfo> charactersInfo, int teamIndex) {
+        var numberOfUnits = teamsContent.GetNumberOfUnitsOfTeam(teamIndex);
+        var team = new Team();
+        for (var unitIndex = 0; unitIndex < numberOfUnits; unitIndex++) {
+            var currentCharacter = GetCharacterFromInfo(teamsContent, charactersInfo, teamIndex, unitIndex);
+            team.AddCharacter(currentCharacter);
+        }
+        return team;
     }
     
     private CharacterModel GetCharacterFromInfo(TeamsContent teamsContent, List<CharacterInfo> charactersInfo, int teamIndex, int unitIndex) {

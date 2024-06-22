@@ -5,7 +5,7 @@ using Fire_Emblem.TeamsLoaderFiles;
 namespace Fire_Emblem.GameFiles;
 
 public class Teams {
-    private CharacterModel[][] _teams;
+    private Team[] _teams;
     private TeamsLoader _teamsLoader;
     
     public Teams(View view, string teamsFolder) {
@@ -16,6 +16,7 @@ public class Teams {
         _teams = _teamsLoader.GetTeams();
     }
 
+    /*
     public void RemoveCharacter(CharacterModel character) {
         var teamIndexToRemoveFrom = FindTeamIndexWithCharacter(character);
         var teamToRemoveFrom = _teams[teamIndexToRemoveFrom];
@@ -24,10 +25,19 @@ public class Teams {
         tempTeam.Remove(character);
         _teams[teamIndexToRemoveFrom] = tempTeam.ToArray();
     }
+    */
+
+    public void RemoveCharacter(CharacterModel character) {
+        var teamIndexToRemoveFrom = FindTeamIndexWithCharacter(character);
+        var teamToRemoveFrom = _teams[teamIndexToRemoveFrom];
+        teamToRemoveFrom.RemoveCharacter(character);
+    }
+    
     
     private int FindTeamIndexWithCharacter(CharacterModel character) {
         for (var i = 0; i < _teams.Length; i++) {
-            if (_teams[i].Contains(character)) {
+            var currentTeam = _teams[i];
+            if (currentTeam.Contains(character)) {
                 return i;
             }
         }
@@ -35,14 +45,16 @@ public class Teams {
     }
     
     public CharacterModel GetCharacterFromTeam(int playerIndex, int characterIndex) {
-        return _teams[playerIndex][characterIndex];
+        var team = _teams[playerIndex];
+        return team.GetCharacterByIndex(characterIndex);
     }
     
-    public CharacterModel[] GetTeam(int playerIndex) {
+    public Team GetTeam(int playerIndex) {
         return _teams[playerIndex];
     }
     
     public bool IsTeamEmpty(int playerIndex) {
-        return _teams[playerIndex].Length == 0;
+        var team = _teams[playerIndex];
+        return team.IsEmpty();
     }
 }

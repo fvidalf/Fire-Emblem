@@ -2,8 +2,6 @@
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.SingleSkills;
-using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
-using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -38,44 +36,39 @@ public class CharacterHandler {
     }
     
     private static void ResetAtkModifiers(CharacterModel attacker, int roundPhase) {
-        if (attacker.FirstAttackAtk != 0 && roundPhase != 2) {
-            attacker.FirstAttackAtk = 0;
-        } else if (roundPhase == 2) {
+        attacker.FirstAttackAtk = 0;
+        if (roundPhase == 2) {
             attacker.FollowUpAtk = 0;
         }
     }
     
     private static void ResetDefModifiers(CharacterModel target, int roundPhase) {
-        if (target.FirstAttackDef != 0 && roundPhase != 2) {
-            target.FirstAttackDef = 0;
-        } else if (roundPhase == 2) {
+        target.FirstAttackDef = 0;
+        if (roundPhase == 2) {
             target.FollowUpDef = 0;
         }
     }
     
     private static void ResetResModifiers(CharacterModel target, int roundPhase) {
-        if (target.FirstAttackRes != 0 && roundPhase != 2) {
-            target.FirstAttackRes = 0;
-        } else if (roundPhase == 2) {
+        target.FirstAttackRes = 0;
+        if (roundPhase == 2) {
             target.FollowUpRes = 0;
         }
     }
     
     private static void ResetAbsoluteDamageModifiers(CharacterModel attacker, int roundPhase) {
         var attackerDamageModifiers = attacker.GetDamageModifiers();
-        if (attackerDamageModifiers.GetFirstAttackDamageIncrease() != 0 && roundPhase != 2) {
-            attackerDamageModifiers.ResetFirstAttackDamageIncrease();
-        } else if (roundPhase == 2) {
-            attackerDamageModifiers.ResetFollowUpDamageIncrease();
+        attackerDamageModifiers.ResetDamageModifier(EffectType.FirstAttackDamageIncrease);
+        if (roundPhase == 2) {
+            attackerDamageModifiers.ResetDamageModifier(EffectType.FollowUpDamageIncrease);
         }
     }
 
     private static void ResetPercentageDamageModifiers(CharacterModel target, int roundPhase) {
         var targetDamageModifiers = target.GetDamageModifiers();
-        if (targetDamageModifiers.GetFirstAttackDamagePercentageReduction() != 0 && roundPhase != 2) {
-            targetDamageModifiers.ResetFirstAttackDamagePercentageReduction();
-        } else if (roundPhase == 2) {
-            targetDamageModifiers.ResetFollowUpDamagePercentageReduction();
+        targetDamageModifiers.ResetDamageModifier(EffectType.FirstAttackDamagePercentageReduction);
+        if (roundPhase == 2) {
+            targetDamageModifiers.ResetDamageModifier(EffectType.FollowUpDamagePercentageReduction);
         }
     }
     

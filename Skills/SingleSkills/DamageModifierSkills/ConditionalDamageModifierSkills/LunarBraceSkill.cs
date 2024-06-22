@@ -23,7 +23,7 @@ public class LunarBraceSkill: ConditionalDamageModifierSkill {
     private void SetDamageIncrease() {
         var rivalDef = RoundStatus.RivalCharacterModel.Def;
         var damageIncrease = Convert.ToInt32(Math.Floor(rivalDef * 0.3));
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

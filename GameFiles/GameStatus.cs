@@ -6,16 +6,13 @@ public class GameStatus {
     public int FirstPlayerIndex;
     public int SecondPlayerIndex;
     private Dictionary<int, CharacterModel> _currentCharacterByPlayer = new();
-    private Teams _teams;
+    private readonly Teams _teams;
     public int Round;
     
-    public GameStatus() {
+    public GameStatus(Teams teams) {
         FirstPlayerIndex = 0;
         SecondPlayerIndex = 1;
-        Round = 1; 
-    }
-    
-    public void SetTeams(Teams teams) {
+        Round = 1;
         _teams = teams;
     }
     
@@ -51,7 +48,12 @@ public class GameStatus {
     }
 
     public bool HasPlayerWon(Player player) {
-        var playerIndex = ((int)player + 1) % 2;
-        return _teams.IsTeamEmpty(playerIndex);
+        var rivalPlayerIndex = GetRivalPlayerIndex(player);
+        return _teams.IsTeamEmpty(rivalPlayerIndex);
+    }
+    
+    private int GetRivalPlayerIndex(Player player) {
+        var rivalPlayerIndex = ((int)player + 1) % 2;
+        return rivalPlayerIndex;
     }
 }

@@ -26,12 +26,12 @@ public class GuardBearingRegularDamageReductionSkill: DamageModifierSkill {
         
         if (!activatingCharacter.HasUsedGuardBearingForDefending && !isUnitFirstToAttack) {
             activatingCharacter.HasUsedGuardBearingForDefending = true;
-            DamageModification.SetAmount(0.6);
+            DamageModification.Amount = 0.6;
         } else if (!activatingCharacter.HasUsedGuardBearingForAttacking && isUnitFirstToAttack) {
             activatingCharacter.HasUsedGuardBearingForAttacking = true;
-            DamageModification.SetAmount(0.6);
+            DamageModification.Amount = 0.6;
         } else {
-            DamageModification.SetAmount(0.3);
+            DamageModification.Amount = 0.3;
         }
     }
     

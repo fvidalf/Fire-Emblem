@@ -24,7 +24,7 @@ public class MoonTwinWingRegularDamageReductionSkill: ConditionalDamageModifierS
         var spdDiff = RoundStatus.ActivatingCharacterModel.Spd - RoundStatus.RivalCharacterModel.Spd;
         var spdDiffAsPercentage = (double) spdDiff / 100;
         var damageIncrease = Math.Min(spdDiffAsPercentage * 4, 0.4);
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

@@ -27,7 +27,7 @@ public class DodgeSkill: ConditionalDamageModifierSkill {
         Console.WriteLine($"spdDiff: {spdDiff}");
         Console.WriteLine($"spdDiffAsPercentage: {spdDiffAsPercentage}");
         Console.WriteLine($"Damage increase: {damageIncrease}");
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
     
     protected override bool IsConditionMet() {

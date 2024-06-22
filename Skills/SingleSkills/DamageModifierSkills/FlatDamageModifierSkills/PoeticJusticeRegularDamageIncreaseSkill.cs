@@ -20,6 +20,6 @@ public class PoeticJusticeRegularDamageIncreaseSkill: DamageModifierSkill {
     private void SetDamageIncrease() {
         var rivalAtk = RoundStatus.RivalCharacterModel.Atk;
         var damageIncrease = Convert.ToInt32(Math.Floor(rivalAtk * 0.15));
-        DamageModification.SetAmount(damageIncrease);
+        DamageModification.Amount = damageIncrease;
     }
 }

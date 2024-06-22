@@ -1,7 +1,6 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
-using Fire_Emblem.Skills.DamageModifiersFiles;
 using Fire_Emblem.Skills.SingleSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
@@ -66,11 +65,6 @@ public class SkillHandler {
         firstSkillsToApply.AddRange(thirdSkillsToApply);
         fourthSkillsToApply.Reverse();
         firstSkillsToApply.AddRange(fourthSkillsToApply);
-        foreach (var pair in firstSkillsToApply) {
-            var character = pair.Item1;
-            var skill = pair.Item2;
-            Console.WriteLine($"{character.Name} tiene {skill.Name}");
-        }
         return firstSkillsToApply.ToArray();
     }
 

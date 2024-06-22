@@ -3,7 +3,6 @@ using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.SingleSkills.RegularSkills;
 
-// Regular Bonus: A bonus skill that is applied at the start of the turn and lasts indefinitely.
 public abstract class RegularSkill: StatModifierSkill {
     
     protected Dictionary<EffectType, List<StatEffect>> StatsToModify;

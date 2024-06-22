@@ -13,7 +13,6 @@ public class Game
     public Game(View view, string teamsFolder)
     {
         _view = view;
-        _gameStatus = new GameStatus();
         _teams = new Teams(view, teamsFolder);
     }
 
@@ -30,12 +29,12 @@ public class Game
 
     private void LoadTeams() {
         _teams.LoadTeams();
-        _gameStatus.SetTeams(_teams);
+        _gameStatus = new GameStatus(_teams);
     }
 
     private void StartGameLoop() {
         while (true) {
-            CheckIfPlayerHasWon();
+            CheckIfAnyPlayerHasWon();
             PrepareCharacters();
             HandleRoundStart();
             HandleCombat();
@@ -54,7 +53,7 @@ public class Game
         WriteWeaponTriangleAdvantage();
     }
 
-    public void HandleCombat() {
+    private void HandleCombat() {
         var combatHandler = new CombatHandler(_gameStatus, _view);
         combatHandler.HandleCombat();
     }
@@ -63,12 +62,16 @@ public class Game
         _gameStatus.AdvanceRound();
     }
     
-    private void CheckIfPlayerHasWon() {
-        if (_gameStatus.HasPlayerWon(Player.Player1)) {
-            throw new PlayerHasWonException("Player 1 ganó");
+    private void CheckIfAnyPlayerHasWon() {
+        for (var playerIndex = 0; playerIndex < 2; playerIndex++) {
+            var player = (Player) playerIndex;
+            CheckIfPlayerHasWon(player);
         }
-        if (_gameStatus.HasPlayerWon(Player.Player2)) {
-            throw new PlayerHasWonException("Player 2 ganó");
+    }
+    
+    private void CheckIfPlayerHasWon(Player player) {
+        if (_gameStatus.HasPlayerWon(player)) {
+            throw new PlayerHasWonException($"Player {(int)player + 1} ganó");
         }
     }
 
@@ -113,8 +116,9 @@ public class Game
 
     private void ShowCharacterOptions(int playerIndex) {
         var team = _teams.GetTeam(playerIndex);
-        for (var unitIndex = 0; unitIndex < team.Length; unitIndex++) {
-            _view.WriteLine($"{unitIndex}: {team[unitIndex].Name}");
+        for (var unitIndex = 0; unitIndex < team.Length(); unitIndex++) {
+            var unit = team.GetCharacterByIndex(unitIndex);
+            _view.WriteLine($"{unitIndex}: {unit.Name}");
         }
     }
     
