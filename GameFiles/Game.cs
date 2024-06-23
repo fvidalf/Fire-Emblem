@@ -1,13 +1,14 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.GameFiles.GameStatusFiles;
 using Fire_Emblem.TeamsLoaderFiles;
 
 namespace Fire_Emblem.GameFiles;
 
 public class Game
 { 
-    private Teams _teams;
-    private View _view;
+    private readonly Teams _teams;
+    private readonly View _view;
     private GameStatus _gameStatus;
     
     public Game(View view, string teamsFolder)
@@ -41,26 +42,6 @@ public class Game
             AdvanceRound();
         }
     }
-
-    private void HandleRoundStart() {
-        WriteRoundStartMessage();
-    }
-    
-    private void WriteRoundStartMessage() {
-        var firstPlayerIndex = _gameStatus.FirstPlayerIndex;
-        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
-        _view.WriteLine($"Round {_gameStatus.Round}: {firstPlayerCharacter.Name} (Player {firstPlayerIndex + 1}) comienza");
-        WriteWeaponTriangleAdvantage();
-    }
-
-    private void HandleCombat() {
-        var combatHandler = new CombatHandler(_gameStatus, _view);
-        combatHandler.HandleCombat();
-    }
-    
-    private void AdvanceRound() {
-        _gameStatus.AdvanceRound();
-    }
     
     private void CheckIfAnyPlayerHasWon() {
         for (var playerIndex = 0; playerIndex < 2; playerIndex++) {
@@ -74,7 +55,7 @@ public class Game
             throw new PlayerHasWonException($"Player {(int)player + 1} ganó");
         }
     }
-
+    
     private void PrepareCharacters() {
         SetCharacters();
         ResetCharacterSkills();
@@ -85,26 +66,11 @@ public class Game
         SetCharacterForPlayer(_gameStatus.SecondPlayerIndex);
     }
     
-    private void ResetCharacterSkills() {
-        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
-        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
-        
-        firstPlayerCharacter.ResetSkills();
-        secondPlayerCharacter.ResetSkills();
-    }
-
     private void SetCharacterForPlayer(int playerIndex) {    
         var character = AskForCharacter(playerIndex);
         _gameStatus.SetCharacterForPlayer(playerIndex, character); 
     }
     
-    private void WriteWeaponTriangleAdvantage() {
-        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
-        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
-        var advantageMessage = WeaponTriangleAdvantage.GetAdvantageMessage(firstPlayerCharacter, secondPlayerCharacter);
-        _view.WriteLine(advantageMessage);
-    }
-
     private CharacterModel AskForCharacter(int playerIndex) {
         _view.WriteLine($"Player {playerIndex + 1} selecciona una opción");
         ShowCharacterOptions(playerIndex);
@@ -128,5 +94,40 @@ public class Game
             userString = _view.ReadLine();
         } while (!int.TryParse(userString, out var _));
         return int.Parse(userString);
+    }
+    
+    private void ResetCharacterSkills() {
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
+        
+        firstPlayerCharacter.ResetSkills();
+        secondPlayerCharacter.ResetSkills();
+    }
+
+    private void HandleRoundStart() {
+        WriteRoundStartMessage();
+    }
+    
+    private void WriteRoundStartMessage() {
+        var firstPlayerIndex = _gameStatus.FirstPlayerIndex;
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        _view.WriteLine($"Round {_gameStatus.Round}: {firstPlayerCharacter.Name} (Player {firstPlayerIndex + 1}) comienza");
+        WriteWeaponTriangleAdvantage();
+    }
+    
+    private void WriteWeaponTriangleAdvantage() {
+        var firstPlayerCharacter = _gameStatus.GetFirstPlayerCharacter();
+        var secondPlayerCharacter = _gameStatus.GetSecondPlayerCharacter();
+        var advantageMessage = WeaponTriangleAdvantage.GetAdvantageMessage(firstPlayerCharacter, secondPlayerCharacter);
+        _view.WriteLine(advantageMessage);
+    }
+
+    private void HandleCombat() {
+        var combatHandler = new CombatHandler(_gameStatus, _view);
+        combatHandler.HandleCombat();
+    }
+    
+    private void AdvanceRound() {
+        _gameStatus.AdvanceRound();
     }
 }

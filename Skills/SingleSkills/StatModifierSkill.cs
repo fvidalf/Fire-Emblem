@@ -39,7 +39,7 @@ public abstract class StatModifierSkill: ISingleSkill {
     }
     
     protected PropertyInfo GetCharacterStat(CharacterModel characterModel, Stat stat) {
-        var statAsString = StatToString.Map[stat];
+        var statAsString = StatSimplifier.Map[stat];
         var characterStat = characterModel.GetType().GetProperty(statAsString);
         return characterStat;
     }

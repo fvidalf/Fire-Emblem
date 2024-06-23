@@ -14,14 +14,11 @@ namespace Fire_Emblem.CharacterFiles;
 
 public class CharacterModel {
 
-    private static int _nextId = 0;
-    public int Id { get; private set; } = _nextId++;
-
-    public string Name { get; set; }
-    public string Weapon { get; set; }
-    public string Gender { get; set; }
+    public string Name { get; }
+    public string Weapon { get; }
+    public string Gender { get; }
     public string DeathQuote { get; set; }
-    public IBaseSkill[] Skills { get; private set; }
+    private IBaseSkill[] Skills { get; }
     public ISingleSkill[] SingleSkills { get; private set; }
     public RoundStatus RoundStatus { get; private set; }
 
@@ -50,14 +47,12 @@ public class CharacterModel {
     
     public bool HasUsedHpSkill { get; set; }
 
-    public int Atk { get; set; }
-    public int Spd { get; set; }
-    public int Def { get; set; }
-    public int Res { get; set; }
+    public int Atk { get; private set; }
+    public int Spd { get; private set; }
+    public int Def { get; private set; }
+    public int Res { get; private set; }
     
-    public int FirstAttackHp { get; set; }
     public int FirstAttackAtk { get; set; }
-    public int FirstAttackSpd { get; set; }
     public int FirstAttackDef { get; set; }
     public int FirstAttackRes { get; set; }
     
@@ -194,7 +189,6 @@ public class CharacterModel {
     
     private void ResetSpd() {
         Spd = BaseSpd;
-        FirstAttackSpd = 0;
     }
     
     private void ResetDef() {
@@ -239,7 +233,98 @@ public class CharacterModel {
     }
 
     public void NeutralizeStats(List<Stat> statsToNeutralize) {
-        StatModifiers.NeutralizeStats(this, statsToNeutralize);
+        foreach (var stat in statsToNeutralize) {
+            var isBonus = StatSimplifier.IsBonusMap[stat];
+            if (isBonus) {
+                NeutralizeBonus(stat);
+            } else {
+                NeutralizePenalty(stat);
+            }
+        }
+    }
+    
+    private void NeutralizeBonus(Stat stat) {
+        var simplifiedStat = StatSimplifier.SimplifyStatMap[stat];
+        var statModifier = StatModifiers.GetStatModifier(simplifiedStat);
+        switch (simplifiedStat) {
+            case Stat.Atk:
+                NeutralizeAtkBonus(statModifier);
+                break;
+            case Stat.Spd:
+                NeutralizeSpdBonus(statModifier);
+                break;
+            case Stat.Def:
+                NeutralizeDefBonus(statModifier);
+                break;
+            case Stat.Res:
+                NeutralizeResBonus(statModifier);
+                break;
+        }
+        statModifier.ResetBonuses();
+    }
+
+    private void NeutralizePenalty(Stat stat) {
+        var simplifiedStat = StatSimplifier.SimplifyStatMap[stat];
+        var statModifier = StatModifiers.GetStatModifier(simplifiedStat);
+        switch (simplifiedStat) {
+            case Stat.Atk:
+                NeutralizeAtkPenalty(statModifier);
+                break;
+            case Stat.Spd:
+                NeutralizeSpdPenalty(statModifier);
+                break;
+            case Stat.Def:
+                NeutralizeDefPenalty(statModifier);
+                break;
+            case Stat.Res:
+                NeutralizeResPenalty(statModifier);
+                break;
+        }
+        statModifier.ResetPenalties();
+    }
+    
+    private void NeutralizeAtkBonus(StatModifier statModifier) {
+        Atk -= int.Abs(statModifier.GetModifier(EffectType.RegularBonus));
+        FirstAttackAtk -= int.Abs(statModifier.GetModifier(EffectType.FirstAttackBonus));
+        FollowUpAtk -= int.Abs(statModifier.GetModifier(EffectType.FollowUpBonus));
+    }
+    
+    private void NeutralizeSpdBonus(StatModifier statModifier) {
+        Spd -= int.Abs(statModifier.GetModifier(EffectType.RegularBonus));
+    }
+    
+    private void NeutralizeDefBonus(StatModifier statModifier) {
+        Def -= int.Abs(statModifier.GetModifier(EffectType.RegularBonus));
+        FirstAttackDef -= int.Abs(statModifier.GetModifier(EffectType.FirstAttackBonus));
+        FollowUpDef -= int.Abs(statModifier.GetModifier(EffectType.FollowUpBonus));
+    }
+    
+    private void NeutralizeResBonus(StatModifier statModifier){
+        Res -= int.Abs(statModifier.GetModifier(EffectType.RegularBonus));
+        FirstAttackRes -= int.Abs(statModifier.GetModifier(EffectType.FirstAttackBonus));
+        FollowUpRes -= int.Abs(statModifier.GetModifier(EffectType.FollowUpBonus));
+    }
+    
+    private void NeutralizeAtkPenalty(StatModifier statModifier) {
+        Atk += int.Abs(statModifier.GetModifier(EffectType.RegularPenalty));
+        FirstAttackAtk += int.Abs(statModifier.GetModifier(EffectType.FirstAttackPenalty));
+        FollowUpAtk += int.Abs(statModifier.GetModifier(EffectType.FollowUpPenalty));
+    }
+    
+    private void NeutralizeSpdPenalty(StatModifier statModifier) {
+        Spd += int.Abs(statModifier.GetModifier(EffectType.RegularPenalty));
+    }
+    
+    private void NeutralizeDefPenalty(StatModifier statModifier) {
+        Def += int.Abs(statModifier.GetModifier(EffectType.RegularPenalty));
+        FirstAttackDef += int.Abs(statModifier.GetModifier(EffectType.FirstAttackPenalty));
+        FollowUpDef += int.Abs(statModifier.GetModifier(EffectType.FollowUpPenalty));
+    }
+    
+    private void NeutralizeResPenalty(StatModifier statModifier) {
+        Res += int.Abs(statModifier.GetModifier(EffectType.RegularPenalty));
+        FirstAttackRes += int.Abs(statModifier.GetModifier(EffectType.FirstAttackPenalty));
+        FollowUpRes += int.Abs(statModifier.GetModifier(EffectType.FollowUpPenalty));
     }
     
     public DamageModifiers GetDamageModifiers() {

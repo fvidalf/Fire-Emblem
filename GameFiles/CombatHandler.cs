@@ -1,5 +1,6 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
+using Fire_Emblem.GameFiles.GameStatusFiles;
 namespace Fire_Emblem.GameFiles;
 
 public class CombatHandler {

@@ -55,6 +55,11 @@ public class TeamsContent {
         return unitName;
     }
     
+    private string GetUnitNameFromUnit(string unit) {
+        var firstWhitespace = unit.IndexOf(' ');
+        return firstWhitespace != -1 ? unit[..firstWhitespace] : unit[..];
+    }
+    
     public string[] GetUnitSkillNames(int teamIndex, int unitIndex) {
         var unit = _teams[teamIndex][unitIndex];
         var unitSkillNames = Array.Empty<string>();
@@ -67,11 +72,6 @@ public class TeamsContent {
     private bool AreThereSkills(string unit) {
         var firstWhitespace = unit.IndexOf(' ');
         return firstWhitespace != -1;
-    }
-    
-    private string GetUnitNameFromUnit(string unit) {
-        var firstWhitespace = unit.IndexOf(' ');
-        return firstWhitespace != -1 ? unit[..firstWhitespace] : unit[..];
     }
     
     private string[] GetUnitSkillNamesFromUnit(string unit) {
