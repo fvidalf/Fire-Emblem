@@ -39,7 +39,6 @@ public class DivineRecreationNextAttackDamageIncreaseSkill: ConditionalDamageMod
             
         }
         var rivalDamageDiff = originalDamage - finalDamage;
-        target.SavedDamageDiff = rivalDamageDiff;
         
         DamageModification.Amount = rivalDamageDiff;
     }

@@ -1,10 +1,11 @@
 ﻿using Fire_Emblem.CharacterFiles.StatFiles;
+using Fire_Emblem.Skills.SkillEffectFiles.SortedEffectsFiles;
 
 namespace Fire_Emblem.Skills.SkillEffectFiles;
 
 public class SkillEffect
 {
-    public Dictionary<EffectType, List<StatEffect>> StatEffectsByEffectType { get; set; }
+    public Dictionary<EffectType, List<StatEffect>> StatEffectsByEffectType { get; }
     
     public SkillEffect() {
         StatEffectsByEffectType = new Dictionary<EffectType, List<StatEffect>>();
@@ -19,12 +20,12 @@ public class SkillEffect
     }
 
     private void AddNewStatEffects(EffectType newEffectType, List<StatEffect> newStatEffects) {
-        if (this.StatEffectsByEffectType.ContainsKey(newEffectType)) {
+        if (StatEffectsByEffectType.ContainsKey(newEffectType)) {
             foreach (var newStatEffect in newStatEffects) {
                 AddNewStatEffectToExistingKey(newEffectType, newStatEffect);
             }
         } else {
-            this.StatEffectsByEffectType[newEffectType] = newStatEffects;
+            StatEffectsByEffectType[newEffectType] = newStatEffects;
         }
     }
     
@@ -40,26 +41,32 @@ public class SkillEffect
         }
         if (!foundStat) oldStatEffects.Add(newStatEffect);
     }
+    
+    public SortedEffects GetSortedEffects() {
+        var simpleEffects = CollapseIntoList();
+        var sortedEffects = new SortedEffects(simpleEffects);
+        return sortedEffects;
+    }
 
-    public List<Tuple<EffectType, Stat, int>> CollapseIntoList() {
-        var collapsedList = new List<Tuple<EffectType, Stat, int>>();
+    private List<SimpleEffect> CollapseIntoList() {
+        var collapsedList = new List<SimpleEffect>();
         foreach (var statEffectsByEffectType in StatEffectsByEffectType) {
             AddStatEffectsToList(collapsedList, statEffectsByEffectType);
         }
         return collapsedList;
     }
-    
-    private void AddStatEffectsToList(List<Tuple<EffectType, Stat, int>> collapsedList, KeyValuePair<EffectType, List<StatEffect>> statEffectsByEffectType) {
+
+    private void AddStatEffectsToList(List<SimpleEffect> collapsedList, KeyValuePair<EffectType, List<StatEffect>> statEffectsByEffectType) {
         var effectType = statEffectsByEffectType.Key;
         var statEffects = statEffectsByEffectType.Value;
-        
+
         foreach (var statEffect in statEffects) {
-            collapsedList.Add(new Tuple<EffectType, Stat, int>(effectType, statEffect.Stat, statEffect.Amount));
+            collapsedList.Add(new SimpleEffect(effectType, statEffect.Stat, statEffect.Amount));
         }
         if (statEffects.Count == 0) AddDummyStatEffectToList(collapsedList, effectType);
     }
-    
-    private void AddDummyStatEffectToList(List<Tuple<EffectType, Stat, int>> collapsedList, EffectType effectType) {
-        collapsedList.Add(new Tuple<EffectType, Stat, int>(effectType, Stat.Null, 0));
+
+    private void AddDummyStatEffectToList(List<SimpleEffect> collapsedList, EffectType effectType) {
+        collapsedList.Add(new SimpleEffect(effectType, Stat.Null, 0));
     }
 }

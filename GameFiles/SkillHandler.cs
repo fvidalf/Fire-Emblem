@@ -7,6 +7,7 @@ using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModi
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
 using Fire_Emblem.Skills.SkillEffectFiles;
+using Fire_Emblem.Skills.SkillEffectFiles.SortedEffectsFiles;
 
 namespace Fire_Emblem.GameFiles;
 
@@ -23,7 +24,7 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
     private static Tuple<CharacterModel, ISingleSkill>[] JoinSkills(CharacterModel[] characters) {
         var skillsPairedToCharacter = new List<Tuple<CharacterModel, ISingleSkill>>();
         foreach (var character in characters) {
-            foreach (var skill in character.SingleSkills) {
+            foreach (var skill in character.SingleBaseSkills) {
                 skillsPairedToCharacter.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
             }
         }
@@ -71,36 +72,27 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
         var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
         
-        NotifyCharacterSkillEffects(firstPlayerCharacter, skillEffects);
+        NotifyCharacterSkillEffects(firstPlayerCharacter, skillEffects[firstPlayerCharacter]);
         NotifyDamageModifiers(firstPlayerCharacter);
-        NotifyCharacterSkillEffects(secondPlayerCharacter, skillEffects);
+        NotifyCharacterSkillEffects(secondPlayerCharacter, skillEffects[secondPlayerCharacter]);
         NotifyDamageModifiers(secondPlayerCharacter);
     }
     
-    private Dictionary<CharacterModel, List<Tuple<EffectType, Stat, int>>> JoinPlayerSkillEffects(Dictionary<CharacterModel, SkillEffect> firstPlayerSkillEffects, Dictionary<CharacterModel, SkillEffect> secondPlayerSkillEffects) {
-        var joinedSkillEffects = new Dictionary<CharacterModel, List<Tuple<EffectType, Stat, int>>>();
+    private Dictionary<CharacterModel, SortedEffects> JoinPlayerSkillEffects(Dictionary<CharacterModel, SkillEffect> firstPlayerSkillEffects, Dictionary<CharacterModel, SkillEffect> secondPlayerSkillEffects) {
+        var joinedSkillEffects = new Dictionary<CharacterModel, SortedEffects>();
         foreach (var character in firstPlayerSkillEffects.Keys) {
             var firstPlayerEffects = firstPlayerSkillEffects[character];
             var secondPlayerEffects = secondPlayerSkillEffects[character];
 
             firstPlayerEffects.Join(secondPlayerEffects); 
-            var sortedEffects = GetSortedEffects(firstPlayerEffects);
+            var sortedEffects = firstPlayerEffects.GetSortedEffects();
             joinedSkillEffects[character] = sortedEffects;
         }
         return joinedSkillEffects;
     }
     
-    private List<Tuple<EffectType, Stat, int>> GetSortedEffects(SkillEffect effects) {
-        var simpleEffects = effects.CollapseIntoList();
-        var effectsSortedByEffectType = simpleEffects.OrderBy(effect => effect.Item1);
-        var effectsSortedByStat = effectsSortedByEffectType.ThenBy(effect => effect.Item2);
-       
-        return effectsSortedByStat.ToList();
-    }
-    
-    private void NotifyCharacterSkillEffects(CharacterModel character, Dictionary<CharacterModel,  List<Tuple<EffectType, Stat, int>>> skillEffects) {
-        var characterSkillEffects = skillEffects[character];
-        foreach (var (effectType, stat, amount) in characterSkillEffects) {
+    private void NotifyCharacterSkillEffects(CharacterModel character, SortedEffects skillEffects) {
+        foreach (var (effectType, stat, amount) in skillEffects) {
             switch (effectType) {
                 case EffectType.FirstAttackBonus or EffectType.FirstAttackPenalty:
                     NotifyFirstAttackSkill(character, stat, amount);

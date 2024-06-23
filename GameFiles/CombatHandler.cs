@@ -6,8 +6,8 @@ namespace Fire_Emblem.GameFiles;
 public class CombatHandler {
 
     private bool _doesRoundEnd;
-    private CharacterModel _firstPlayerCharacter = null!;
-    private CharacterModel _secondPlayerCharacter = null!;
+    private CharacterModel _firstPlayerCharacter;
+    private CharacterModel _secondPlayerCharacter;
     private int _roundPhase;
     private readonly CharacterHandler _characterHandler;
     private readonly SkillHandler _skillHandler;

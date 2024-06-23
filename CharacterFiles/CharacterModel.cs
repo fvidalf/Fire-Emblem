@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-using Fire_Emblem_View;
-using Fire_Emblem.CharacterFiles.StatFiles;
+﻿using Fire_Emblem.CharacterFiles.StatFiles;
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.DamageModifiersFiles;
@@ -8,6 +6,7 @@ using Fire_Emblem.Skills.MultiSkills;
 using Fire_Emblem.Skills.SingleSkills;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.PenaltyNeutralizers;
+using Fire_Emblem.Skills.SkillCollections;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -18,17 +17,17 @@ public class CharacterModel {
     public string Weapon { get; }
     public string Gender { get; }
     public string DeathQuote { get; set; }
-    private IBaseSkill[] Skills { get; }
-    public ISingleSkill[] SingleSkills { get; private set; }
+    private BaseSkillCollection BaseSkills { get; }
+    public SingleSkillCollection SingleBaseSkills { get; private set; }
     public RoundStatus RoundStatus { get; private set; }
 
     public int BaseHp { get; private set; }
-    public int BaseAtk { get; private set; }
-    public int BaseSpd { get; private set; }
-    public int BaseDef { get; private set; }
-    public int BaseRes { get; private set; }
+    public int BaseAtk { get; }
+    public int BaseSpd { get; }
+    public int BaseDef { get; }
+    public int BaseRes { get; }
     
-    public StatModifiers StatModifiers { get; set; }
+    public StatModifiers StatModifiers { get; private set; }
 
     private int _hp;
 
@@ -67,8 +66,6 @@ public class CharacterModel {
     public bool HasUsedGuardBearingForAttacking { get; set; }
     public bool HasUsedGuardBearingForDefending { get; set; }
     
-    public int SavedDamageDiff { get; set; }
-
     private SkillEffect _selfModifiedStats = new SkillEffect();
     private SkillEffect _rivalModifiedStats = new SkillEffect();
     private DamageModifiers _damageModifiers = new DamageModifiers();
@@ -78,19 +75,18 @@ public class CharacterModel {
         string weapon,
         string gender,
         string deathQuote,
-        IBaseSkill[] skills,
+        BaseSkillCollection baseSkills,
         int hp,
         int atk,
         int spd,
         int def,
-        int res,
-        View view
+        int res
     ) {
         Name = name;
         Weapon = weapon;
         Gender = gender;
         DeathQuote = deathQuote;
-        Skills = skills;
+        BaseSkills = baseSkills;
         Hp = hp;
         BaseHp = hp;
         HasUsedHpSkill = false;
@@ -104,7 +100,6 @@ public class CharacterModel {
         BaseRes = res;
         HasUsedGuardBearingForAttacking = false;
         HasUsedGuardBearingForDefending = false;
-        SavedDamageDiff = 0;
         
         StatModifiers = new StatModifiers();
 
@@ -112,16 +107,16 @@ public class CharacterModel {
     }
 
     private void PrepareSkills() {
-        SingleSkills = GetSingleSkills();
-        SingleSkills = OrderSkills(SingleSkills);
+        SingleBaseSkills = GetSingleSkills();
+        SingleBaseSkills = OrderSkills(SingleBaseSkills);
     }
     
-    private ISingleSkill[] GetSingleSkills() {
+    private SingleSkillCollection GetSingleSkills() {
         var singleSkills = new List<ISingleSkill>();
-        foreach (var skill in Skills) {
+        foreach (var skill in BaseSkills) {
             singleSkills = AddSkillToList(skill, singleSkills);
         }
-        return singleSkills.ToArray();
+        return new SingleSkillCollection(singleSkills.ToArray());
     }
     
     private List<ISingleSkill> AddSkillToList(IBaseSkill skill, List<ISingleSkill> decomposedSkills) {
@@ -134,16 +129,16 @@ public class CharacterModel {
         return decomposedSkills;
     }
     
-    private ISingleSkill[] OrderSkills(ISingleSkill[] skills) {
+    private SingleSkillCollection OrderSkills(SingleSkillCollection baseSkills) {
         var orderedSkills = new List<ISingleSkill>();
-        foreach (var skill in skills) {
+        foreach (var skill in baseSkills) {
             if (skill is BonusNeutralizer or PenaltyNeutralizer) {
                 orderedSkills.Add(skill);
             } else {
                 orderedSkills.Insert(0, skill);
             }
         }
-        return orderedSkills.ToArray();
+        return new SingleSkillCollection(orderedSkills.ToArray());
     }
     
     public bool IsPhysical() {
@@ -160,7 +155,7 @@ public class CharacterModel {
     }
 
     public void ResetSkills() {
-        foreach (var skill in SingleSkills) {
+        foreach (var skill in SingleBaseSkills) {
             skill.Reset();
         }
         ResetStats();
@@ -178,7 +173,6 @@ public class CharacterModel {
         ResetSpd();
         ResetDef();
         ResetRes();
-        SavedDamageDiff = 0;
     }
     
     private void ResetAtk() {
