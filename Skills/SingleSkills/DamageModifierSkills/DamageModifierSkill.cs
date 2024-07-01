@@ -4,12 +4,13 @@ using Fire_Emblem.Skills.DamageModifiersFiles;
 
 namespace Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
 
-public abstract class DamageModifierSkill: ISingleSkill, ITargetedSkill{
+public abstract class DamageModifierSkill: ITimedSkill, ITargetedSkill {
     
     public string Name { get; set; }
     public CharacterModel? Character;
     protected RoundStatus RoundStatus;
     protected DamageModification DamageModification;
+    public TimeToApply TimeToApply { get; set; } = TimeToApply.PreCombat;
     
     protected DamageModifierSkill(string name, DamageModification damageModification) {
         Name = name;

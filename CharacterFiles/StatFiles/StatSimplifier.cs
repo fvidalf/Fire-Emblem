@@ -37,6 +37,7 @@
             { Stat.SpdPenalty, "Spd"},
             { Stat.DefPenalty, "Def"},
             { Stat.ResPenalty, "Res"},
+            { Stat.HpBonusByPercentage, "Hp"}
         };
         
         public static readonly Dictionary<Stat, Stat> SimplifyStatMap = new Dictionary<Stat, Stat>

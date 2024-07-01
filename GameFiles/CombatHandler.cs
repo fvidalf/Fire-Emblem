@@ -30,19 +30,25 @@ public class CombatHandler {
     }
     
     public void HandleCombat() { 
-        HandleCharacterSkills();
+        HandlePreCombatSkills();
         ExecuteCommonRound(_firstPlayerCharacter, _secondPlayerCharacter);
+        HandleCombatSkills();
+        HandleRoundEnd();
         if (_doesRoundEnd) return;
         ExecuteCommonRound(_secondPlayerCharacter, _firstPlayerCharacter);
+        HandleCombatSkills();
+        HandleRoundEnd();
         if (_doesRoundEnd) return;
         ExecuteFollowUpRound();
+        HandleCombatSkills();
+        HandleRoundEnd();
     }
     
-    private void HandleCharacterSkills() {
+    private void HandlePreCombatSkills() {
         SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
         SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
-        _skillHandler.ApplyCharacterSkills(_firstPlayerCharacter, _secondPlayerCharacter);
-        _skillHandler.HandleSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
+        _skillHandler.ApplyPreCombatSkills(_firstPlayerCharacter, _secondPlayerCharacter);
+        _skillHandler.HandlePreCombatSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
     }
     
     private void SetCharacterRoundStatus(CharacterModel activatingCharacter, CharacterModel rivalCharacter) {
@@ -53,10 +59,23 @@ public class CombatHandler {
     private RoundStatus GetRoundStatus(CharacterModel activatingCharacter, CharacterModel rivalCharacter) {
         return new RoundStatus(activatingCharacter, rivalCharacter, _firstPlayerCharacter, _roundPhase);
     }
+    
+    private void HandleCombatSkills() {
+        SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
+        SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
+        _skillHandler.ApplyCombatSkills(_firstPlayerCharacter, _secondPlayerCharacter);
+        _skillHandler.HandleCombatSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
+    }
+    
+    private void HandlePostCombatSkills() {
+        SetCharacterRoundStatus(_firstPlayerCharacter, _secondPlayerCharacter);
+        SetCharacterRoundStatus(_secondPlayerCharacter, _firstPlayerCharacter);
+        _skillHandler.ApplyPostCombatSkills(_firstPlayerCharacter, _secondPlayerCharacter);
+        _skillHandler.HandlePostCombatSkillEffectsNotification(_firstPlayerCharacter, _secondPlayerCharacter);
+    }
 
     private void ExecuteCommonRound(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
         HandleRegularAttack(firstPlayerCharacter, secondPlayerCharacter);
-        HandleRoundEnd();
     }
     
     private void HandleRegularAttack(CharacterModel attackingCharacter, CharacterModel defendingCharacter) {
@@ -69,6 +88,7 @@ public class CombatHandler {
     
     private void HandleRoundEnd() {
         if (_roundPhase == 2 || _doesRoundEnd) {
+            HandlePostCombatSkills();
             ReportHp(_firstPlayerCharacter, _secondPlayerCharacter);
             SwapPlayers();
             UpdateCharacters();
@@ -91,7 +111,6 @@ public class CombatHandler {
 
     private void ExecuteFollowUpRound() {
         HandleFollowUpAttack();
-        HandleRoundEnd();
     }
 
     private void HandleFollowUpAttack() {

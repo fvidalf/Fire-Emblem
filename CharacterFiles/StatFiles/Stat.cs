@@ -23,5 +23,8 @@ public enum Stat {
     SpdPenalty,
     DefPenalty,
     ResPenalty,
+    HpBonusByPercentage,
+    PreCombatHpModification,
+    PostCombatHpModification,
     Null
 }

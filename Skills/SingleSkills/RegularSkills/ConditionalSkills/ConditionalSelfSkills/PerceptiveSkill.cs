@@ -27,7 +27,7 @@ public class PerceptiveSkill: ConditionalSelfSkill {
         int newStatValue = (int) statEffect.Amount * numberOfIncreases + 12;
         var newStatEffect = new StatEffect(statEffect.Stat, newStatValue);
         UpdateCharacterModifiers(characterModel, effectType, newStatEffect);
-        UpdateModifiedStats(effectType, newStatEffect);
+        UpdateSkillEffect(effectType, newStatEffect);
     }
 
     private void UpdateByVariableAmount(StatEffect statEffect, int numberOfIncreases) {

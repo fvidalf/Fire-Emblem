@@ -1,7 +1,9 @@
 ﻿using Fire_Emblem_View;
 using Fire_Emblem.CharacterFiles;
 using Fire_Emblem.CharacterFiles.StatFiles;
+using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.CombatHpModificationSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
 using Fire_Emblem.Skills.SingleSkills.Neutralizers.BonusNeutralizers;
@@ -12,20 +14,34 @@ using Fire_Emblem.Skills.SkillEffectFiles.SortedEffectsFiles;
 namespace Fire_Emblem.GameFiles;
 
 public class SkillHandler(View view, CharacterHandler characterHandler) {
-
-    public void ApplyCharacterSkills(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+    
+    public void ApplyPreCombatSkills(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
         firstPlayerCharacter.ResetModifiedStats();
         secondPlayerCharacter.ResetModifiedStats();
-        var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter});
+        var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter}, TimeToApply.PreCombat);
         var orderedSkills = OrderSkills(joinedSkills);
         ApplySkillsJointly(orderedSkills);
     }
     
-    private static Tuple<CharacterModel, ISingleSkill>[] JoinSkills(CharacterModel[] characters) {
+    public void ApplyCombatSkills(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+        var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter}, TimeToApply.Combat);
+        var orderedSkills = OrderSkills(joinedSkills);
+        ApplySkillsJointly(orderedSkills);
+    }
+    
+    public void ApplyPostCombatSkills(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+        var joinedSkills = JoinSkills(new[] {firstPlayerCharacter, secondPlayerCharacter}, TimeToApply.PostCombat);
+        var orderedSkills = OrderSkills(joinedSkills);
+        ApplySkillsJointly(orderedSkills);
+    }
+    
+    private static Tuple<CharacterModel, ISingleSkill>[] JoinSkills(CharacterModel[] characters, TimeToApply timeToApply) {
         var skillsPairedToCharacter = new List<Tuple<CharacterModel, ISingleSkill>>();
         foreach (var character in characters) {
             foreach (var skill in character.SingleBaseSkills) {
-                skillsPairedToCharacter.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                if (skill is ITimedSkill timedSkill && timedSkill.TimeToApply == timeToApply) {
+                    skillsPairedToCharacter.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                } 
             }
         }
         return skillsPairedToCharacter.ToArray();
@@ -36,12 +52,16 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
         var secondSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         var thirdSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         var fourthSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
+        var fifthSkillsToApply = new List<Tuple<CharacterModel, ISingleSkill>>();
         foreach (var (character, skill) in skillsPairedToCharacter) {
             switch (skill) {
                 case BonusNeutralizer or PenaltyNeutralizer:
                     secondSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
                     break;
                 case DivineRecreationNextAttackDamageIncreaseSkill:
+                    fifthSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
+                    break;
+                case PreCombatHpModificationSkill:
                     fourthSkillsToApply.Add(new Tuple<CharacterModel, ISingleSkill>(character, skill));
                     break;
                 case DamageModifierSkill:
@@ -56,6 +76,7 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
         firstSkillsToApply.AddRange(thirdSkillsToApply);
         fourthSkillsToApply.Reverse();
         firstSkillsToApply.AddRange(fourthSkillsToApply);
+        firstSkillsToApply.AddRange(fifthSkillsToApply);
         return firstSkillsToApply.ToArray();
     }
 
@@ -67,15 +88,35 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
         }
     }
     
-    public void HandleSkillEffectsNotification(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+    public void HandlePreCombatSkillEffectsNotification(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
         var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
         var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
         var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
         
         NotifyCharacterSkillEffects(firstPlayerCharacter, skillEffects[firstPlayerCharacter]);
         NotifyDamageModifiers(firstPlayerCharacter);
+        NotifyHealing(firstPlayerCharacter, skillEffects[firstPlayerCharacter]);
         NotifyCharacterSkillEffects(secondPlayerCharacter, skillEffects[secondPlayerCharacter]);
         NotifyDamageModifiers(secondPlayerCharacter);
+        NotifyHealing(secondPlayerCharacter, skillEffects[secondPlayerCharacter]);
+    }
+    
+    public void HandleCombatSkillEffectsNotification(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+        var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
+        var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
+        var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
+        
+        NotifyInCombatHealing(firstPlayerCharacter, skillEffects[firstPlayerCharacter]);
+        NotifyInCombatHealing(secondPlayerCharacter, skillEffects[secondPlayerCharacter]);
+    }
+    
+    public void HandlePostCombatSkillEffectsNotification(CharacterModel firstPlayerCharacter, CharacterModel secondPlayerCharacter) {
+        var firstPlayerSkillEffects = firstPlayerCharacter.GetSkillEffects();
+        var secondPlayerSkillEffects = secondPlayerCharacter.GetSkillEffects();
+        var skillEffects = JoinPlayerSkillEffects(firstPlayerSkillEffects, secondPlayerSkillEffects);
+        
+        NotifyPostCombatHpModification(firstPlayerCharacter, skillEffects[firstPlayerCharacter]);
+        NotifyPostCombatHpModification(secondPlayerCharacter, skillEffects[secondPlayerCharacter]);
     }
     
     private Dictionary<CharacterModel, SortedEffects> JoinPlayerSkillEffects(Dictionary<CharacterModel, SkillEffect> firstPlayerSkillEffects, Dictionary<CharacterModel, SkillEffect> secondPlayerSkillEffects) {
@@ -215,5 +256,48 @@ public class SkillHandler(View view, CharacterHandler characterHandler) {
         if (amount != 0) {
             view.WriteLine($"{character.Name} recibirá -{amount} daño en cada ataque");
         }
+    }
+    
+    private void NotifyHealing(CharacterModel character, SortedEffects skillEffects) {
+        foreach (var (effectType, stat, amount) in skillEffects) {
+            if (effectType == EffectType.HpBonusByPercentage) {
+                if (amount != 0) {
+                    view.WriteLine($"{character.Name} recuperará HP igual al {amount}% del daño realizado en cada ataque");
+                }
+            }
+            if (effectType == EffectType.HpModificationPreCombat) {
+                if (amount < 0) {
+                    view.WriteLine($"{character.Name} recibe {-amount} de daño antes de iniciar el combate y queda con {character.Hp} HP");
+                
+                }
+            }
+        }
+    }
+    
+    private void NotifyInCombatHealing(CharacterModel character, SortedEffects skillEffects) {
+        foreach (var (effectType, stat, amount) in skillEffects) {
+            if (effectType == EffectType.HpModificationInCombat) {
+                if (amount != 0) {
+                    view.WriteLine($"{character.Name} recupera {amount} HP luego de atacar y queda con {character.Hp} HP.");
+                }
+            }
+        }
+        character.ResetHealingSkillEffect();
+    }
+    
+    private void NotifyPostCombatHpModification(CharacterModel character, SortedEffects skillEffects) {
+        foreach (var (effectType, stat, amount) in skillEffects) {
+            if (effectType == EffectType.HpModificationPostCombat) {
+                if (character.IsDead) {
+                    return;
+                }
+                if (amount > 0) {
+                    view.WriteLine($"{character.Name} recupera {amount} HP despues del combate");
+                } else if (amount < 0) {
+                    view.WriteLine($"{character.Name} recibe {-amount} de daño despues del combate");
+                }
+            }
+        }
+        character.ResetHealingSkillEffect();
     }
 }

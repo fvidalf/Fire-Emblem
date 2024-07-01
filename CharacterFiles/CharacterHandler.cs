@@ -2,6 +2,8 @@
 using Fire_Emblem.GameFiles;
 using Fire_Emblem.Skills;
 using Fire_Emblem.Skills.SingleSkills;
+using Fire_Emblem.Skills.SingleSkills.CombatHealingSkill;
+using Fire_Emblem.Skills.SingleSkills.PreCombatHealingSkills;
 using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.CharacterFiles;
@@ -17,11 +19,14 @@ public class CharacterHandler {
     public void Attack(CharacterModel attacker, CharacterModel target, int roundPhase) {
         ExecuteAttack(attacker, target, roundPhase);
         attacker.SetMostRecentRival(target);
+        attacker.HasJustAttacked = true;
+        attacker.HasAttackedAtLeastOnce = true;
     }
 
     private static void ExecuteAttack(CharacterModel attacker, CharacterModel target, int roundPhase) {
         var finalDamage = DamageCalculator.CalculateFinalDamage(attacker, target, roundPhase);
         target.Hp -= finalDamage;
+        attacker.LastDamageDealt = finalDamage;
         _view.WriteLine($"{attacker.Name} ataca a {target.Name} con {finalDamage} de daño");
 
         ResetUsedModifiers(attacker, target, roundPhase);
@@ -74,25 +79,25 @@ public class CharacterHandler {
     
     public void ApplySkill(CharacterModel applier, IBaseSkill skill, RoundStatus roundStatus) {
         skill.Apply(roundStatus);
-        if (skill is StatModifierSkill modifierSkill) {
-            var characterPairedToSkillEffect = GetStatsModifiedBySkill(modifierSkill);
-            UpdateModifiedStats(applier, characterPairedToSkillEffect);
+        if (skill is IHasSkillEffect modifierSkill) {
+            var characterPairedToSkillEffect = GetSkillEffect(modifierSkill);
+            UpdateSkillEffect(applier, characterPairedToSkillEffect);
         }
     }
     
-    private Dictionary<CharacterModel, SkillEffect> GetStatsModifiedBySkill(StatModifierSkill skill) {
-        return skill.GetModifiedStats();
+    private Dictionary<CharacterModel, SkillEffect> GetSkillEffect(IHasSkillEffect skill) {
+        return skill.GetSkillEffect();
     }
     
-    private void UpdateModifiedStats(CharacterModel applier, Dictionary<CharacterModel, SkillEffect> characterPairedToSkillEffect) {
+    private void UpdateSkillEffect(CharacterModel applier, Dictionary<CharacterModel, SkillEffect> characterPairedToSkillEffect) {
         foreach (var pair in characterPairedToSkillEffect) {
             var character = pair.Key;
             var skillEffect = pair.Value;
             if (character == applier) {
-                applier.UpdateSelfModifiedStats(skillEffect);
+                applier.UpdateSelfSkillEffect(skillEffect);
             }
             else {
-                applier.UpdateRivalModifiedStats(skillEffect);
+                applier.UpdateRivalSkillEffect(skillEffect);
             }
         }
     }

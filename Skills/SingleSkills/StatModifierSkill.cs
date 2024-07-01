@@ -6,12 +6,13 @@ using Fire_Emblem.Skills.SkillEffectFiles;
 
 namespace Fire_Emblem.Skills.SingleSkills;
 
-public abstract class StatModifierSkill: ISingleSkill {
+public abstract class StatModifierSkill: ITimedSkill, IHasSkillEffect {
     
     public string Name { get; set; }
-    public CharacterModel? Character;
-    public SkillEffect SkillEffect { get; set; }
+    protected CharacterModel? Character;
+    protected SkillEffect SkillEffect { get; set; }
     protected RoundStatus RoundStatus;
+    public TimeToApply TimeToApply { get; set; } = TimeToApply.PreCombat;
     
     protected StatModifierSkill(string name) {
         Name = name;
@@ -22,7 +23,7 @@ public abstract class StatModifierSkill: ISingleSkill {
         RoundStatus = roundStatus;
     }
     
-    public Dictionary<CharacterModel, SkillEffect> GetModifiedStats() {
+    public Dictionary<CharacterModel, SkillEffect> GetSkillEffect() {
         return new Dictionary<CharacterModel, SkillEffect> { {Character, SkillEffect} };
     }
     
@@ -35,7 +36,7 @@ public abstract class StatModifierSkill: ISingleSkill {
         var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
         UpdateCharacterStat(characterStat, characterModel, newStatEffect);
         UpdateCharacterModifiers(characterModel, effectType, newStatEffect);
-        UpdateModifiedStats(effectType, newStatEffect);
+        UpdateSkillEffect(effectType, newStatEffect);
     }
     
     protected PropertyInfo GetCharacterStat(CharacterModel characterModel, Stat stat) {
@@ -60,7 +61,7 @@ public abstract class StatModifierSkill: ISingleSkill {
         characterModel.StatModifiers.UpdateModifiers(effectType, statEffect);
     }
     
-    protected void UpdateModifiedStats(EffectType effectType, StatEffect statEffect) {
+    protected void UpdateSkillEffect(EffectType effectType, StatEffect statEffect) {
         if (SkillEffect.StatEffectsByEffectType.ContainsKey(effectType)) {
             var statEffects = SkillEffect.StatEffectsByEffectType[effectType];
             var newStatEffect = new StatEffect(statEffect.Stat, statEffect.Amount);
@@ -72,7 +73,4 @@ public abstract class StatModifierSkill: ISingleSkill {
             SkillEffect.StatEffectsByEffectType[effectType] = statEffects;
         }
     }
-    
-    
-    
 }

@@ -1,5 +1,7 @@
 ﻿using Fire_Emblem.Skills.MultiSkills;
+using Fire_Emblem.Skills.MultiSkills.CombatHealingMultiSkills;
 using Fire_Emblem.Skills.MultiSkills.LullSkills;
+using Fire_Emblem.Skills.MultiSkills.PushSkills;
 using Fire_Emblem.Skills.MultiSkills.RemoteSkills;
 using Fire_Emblem.Skills.MultiSkills.StanceSkills;
 using Fire_Emblem.Skills.SingleSkills.DamageModifierSkills.ConditionalDamageModifierSkills;
@@ -143,6 +145,21 @@ public static class SkillAssigner {
         { "Back at You", typeof(BackAtYouSkill)},
         { "Moon-Twin Wing", typeof(MoonTwinWingSkill)},
         { "Laguz Friend", typeof(LaguzFriendSkill)},
-        { "Divine Recreation", typeof(DivineRecreationSkill)}
+        { "Divine Recreation", typeof(DivineRecreationSkill)},
+        { "Sol", typeof(SolSkill)},
+        { "Nosferatu", typeof(NosferatuSkill)},
+        { "Solar Brace", typeof(SolarBraceSkill)},
+        { "Fury", typeof(FurySkill)},
+        { "Eclipse Brace", typeof(EclipseBraceSkill)},
+        { "Mystic Boost", typeof(MysticBoostSkill)},
+        { "Resonance", typeof(ResonanceSkill)},
+        { "Flare", typeof(FlareSkill)},
+        { "Atk/Spd Push", typeof(AtkSpdPushSkill)},
+        { "Atk/Def Push", typeof(AtkDefPushSkill)},
+        { "Atk/Res Push", typeof(AtkResPushSkill)},
+        { "Spd/Def Push", typeof(SpdDefPushSkill)},
+        { "Spd/Res Push", typeof(SpdResPushSkill)},
+        { "Def/Res Push", typeof(DefResPushSkill)},
+        { "Scendscale", typeof(ScendscaleSkill)}
     };
 }

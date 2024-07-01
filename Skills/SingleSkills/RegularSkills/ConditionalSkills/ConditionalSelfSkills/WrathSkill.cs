@@ -28,7 +28,7 @@ public class WrathSkill: ConditionalSelfSkill {
         var newStatValue = statEffect.Amount * numberOfIncreases;
         var newStatEffect = new StatEffect(statEffect.Stat, newStatValue);
         UpdateCharacterModifiers(characterModel, effectType, newStatEffect);
-        UpdateModifiedStats(effectType, newStatEffect);
+        UpdateSkillEffect(effectType, newStatEffect);
     }
 
     private void UpdateByVariableAmount(StatEffect statEffect, int numberOfIncreases) {

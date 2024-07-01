@@ -15,5 +15,9 @@ public enum EffectType {
     RegularDamagePercentageReduction,
     FirstAttackDamagePercentageReduction,
     FollowUpDamagePercentageReduction,
-    RegularDamageAbsoluteReduction
+    RegularDamageAbsoluteReduction,
+    HpBonusByPercentage,
+    HpModificationPreCombat,
+    HpModificationInCombat,
+    HpModificationPostCombat,
 }
